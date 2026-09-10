@@ -1,0 +1,19 @@
+node_modules/
+.next/
+out/
+dist/
+.cache/
+.env*
+!.env.example
+!.env.code-server.example
+.vercel/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+next-env.d.ts
+*.log
+.DS_Store
+
+# Original conversation input is not application source.
+prompt.md

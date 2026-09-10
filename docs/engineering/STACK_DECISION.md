@@ -1,7 +1,7 @@
 # 기술 스택 선택
 
 기준일: 2026-09-10\
-상태: 사용자가 우선안을 채택했다. 실제 프로젝트 생성·배포·성능 검증은 아직 수행하지 않았다.
+상태: 사용자가 우선안을 채택했고 Next.js 기반 구현을 시작했다. 외부 배포·DB 연결은 사용자 준비 사항이며 아직 검증하지 않았다.
 
 ## 채택한 기본 스택
 
@@ -24,7 +24,8 @@
 | Cloudflare Workers 허용 | 사용자 제시 대안 |
 | 새 도메인 구매 여부 | 사용자가 결정 |
 | 디자인 레퍼런스 | 사용자가 제공 예정 |
-| LLM 비용도 반드시 0원인지 | 답변 대기. 유료 사용을 승인받은 것으로 간주하지 않음 |
+| LLM | 사용자 보유 OpenRouter 크레딧으로 서버 API 호출. 모델·사용량 예산은 연결 시 결정 |
+| 배포·DB 연결 준비 | 사용자가 담당 |
 
 ## Vercel과 공개 Organization 저장소
 
@@ -78,5 +79,7 @@ PawProof가 Cloudflare로 전환한다면 실제 Next.js 코드를 유지하는 
 | 테스트 | 규칙·일정·경로 유틸 단위 테스트, 핵심 사용 흐름 브라우저 테스트 |
 
 버전은 개발 착수 시 배포 환경이 지원하는 안정 버전으로 정하고 정확한 버전과 lockfile을 기록한다. Next.js 실험 기능·베타 런타임·여러 ORM을 동시에 도입하지 않는다. 버전 번호만 최신으로 올리는 작업은 제출 직전에 하지 않는다.
+
+초기 구현은 Next.js 16.3.4, React 19.3.0, TypeScript 5.9.3, pnpm 12.3.4, Node.js 24.x를 사용한다. 정확한 의존성은 루트 `package.json`과 `pnpm-lock.yaml`이 기준이다. OpenRouter는 추후 서버의 규정 추출 어댑터에서 연결한다. [OpenRouter API 안내](https://openrouter.ai/docs/quickstart)
 
 세부 구조는 [아키텍처](ARCHITECTURE.md), 경로 설정은 [개발 환경](DEVELOPMENT_ENVIRONMENT.md), 무료 운영 기준은 [호스팅·비용](../operations/HOSTING_AND_COST.md)을 따른다.
