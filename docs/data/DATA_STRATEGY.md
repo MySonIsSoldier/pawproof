@@ -136,7 +136,7 @@ Kakao Local의 공식 응답에 있는 장소명·주소·좌표·전화·상세
 
 ## 구현 전 확정할 사항
 
-DB 우선안은 Firestore Spark이며, Cloudflare로 전환할 경우 D1을 검토한다. 이 선택은 KTO 데이터의 장기 보관 허용 여부를 바꾸지 않는다. 초기에는 현재 요청의 원문·추출 규정과 서버에 저장할 자체 데이터를 구분하고, 원문과 파생 규정의 요청 간 캐시·영구 적재는 기본 비활성으로 설계한다. 구체적인 저장 경계는 [아키텍처](../engineering/ARCHITECTURE.md), 무료량은 [기술 스택](../engineering/STACK_DECISION.md)을 따른다.
+채택한 DB는 Firestore Spark이며, Cloudflare로 전환할 경우 D1을 검토한다. 이 선택은 KTO 데이터의 장기 보관 허용 여부를 바꾸지 않는다. 초기에는 현재 요청의 원문·추출 규정과 서버에 저장할 자체 데이터를 구분하고, 원문과 파생 규정의 요청 간 캐시·영구 적재는 기본 비활성으로 설계한다. 구체적인 저장 경계는 [아키텍처](../engineering/ARCHITECTURE.md), 무료량은 [기술 스택](../engineering/STACK_DECISION.md)을 따른다.
 
 - 현재 KTO 응답과 정확한 엔드포인트별 계약.
 - 추가 데이터 원본과 이용 조건.

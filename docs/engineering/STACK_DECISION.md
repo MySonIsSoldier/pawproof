@@ -1,11 +1,11 @@
 # 기술 스택 선택
 
 기준일: 2026-09-10\
-상태: 개발 착수용 권고안. 실제 프로젝트 생성·배포·성능 검증은 아직 수행하지 않았다.
+상태: 사용자가 우선안을 채택했다. 실제 프로젝트 생성·배포·성능 검증은 아직 수행하지 않았다.
 
-## 권고안
+## 채택한 기본 스택
 
-**Next.js App Router + TypeScript + pnpm + Vercel Hobby + Cloud Firestore Standard/Spark**를 우선한다. 공개 GitHub Organization 저장소라는 사용자 확인을 반영한 선택이다. Cloudflare는 현재 DNS를 유지하고, Workers + D1은 Vercel 이용 조건이나 실제 배포에 문제가 있을 때 검토할 대안으로 둔다.
+**Next.js App Router + TypeScript + pnpm + Vercel Hobby + Cloud Firestore Standard/Spark**를 기본 스택으로 채택했다. 공개 GitHub Organization 저장소라는 사용자 확인을 반영한 선택이다. Cloudflare는 현재 DNS를 유지하고, Workers + D1은 Vercel 이용 조건이나 실제 배포에 문제가 있을 때 검토할 대안으로 둔다.
 
 공모전 제출까지 시간이 짧으므로 Next.js를 별도 어댑터 없이 배포하고, 서버 운영과 DB 관리를 줄이는 편이 유리하다. 지도·LLM·관광 API 연동과 판정 품질에 개발 시간을 집중한다. 이는 프로젝트 상황에 따른 판단이며, 무료 호스팅이 모든 트래픽과 외부 API 비용을 보장한다는 뜻은 아니다.
 
@@ -15,11 +15,12 @@
 |---|---|
 | GitHub Organization의 공개 저장소 | 사용자 확인 완료 |
 | 무료 호스팅·DB 우선 | 사용자 요구 |
-| Next.js | 사용자 선호를 채택한 권고 |
+| Next.js | 사용자 채택 완료 |
 | OCI → Coolify → code-server 개발 환경 | 사용자 설명. 실제 프록시 구성은 구현 시 확인 |
 | 환경변수와 공통 유틸로 개발 경로·배포 경로 분리 | 사용자 요구 |
 | 클린 코드·단일 책임·아키텍처 경계 | 사용자 요구 |
-| Vercel + Firestore 우선 | 이번 기술 검토의 권고. 계정 연결 전 |
+| Vercel + Firestore 우선 | 사용자 채택 완료. 계정 연결 전 |
+| 현재 코드 작업 | 사용자 1명, `main` 직접 작업, 기능 완료마다 검증 후 커밋 |
 | Cloudflare Workers 허용 | 사용자 제시 대안 |
 | 새 도메인 구매 여부 | 사용자가 결정 |
 | 디자인 레퍼런스 | 사용자가 제공 예정 |
@@ -27,7 +28,7 @@
 
 ## Vercel과 공개 Organization 저장소
 
-공개 저장소의 협업은 무료로 안내된다. Hobby가 제한하는 **비공개 Organization 저장소 배포**와 현재 상황을 구분해야 한다. 다만 GitHub의 협업 권한과 Vercel 대시보드의 팀 권한은 같지 않다. 초기에는 팀장이 배포 설정을 관리하고, 두 사람은 GitHub에서 변경을 검토한다. 실제 연결 때 두 사람의 커밋·PR 배포 동작도 확인한다. [Vercel Git 연동](https://vercel.com/docs/git), [협업 안내](https://vercel.com/docs/deployments/troubleshoot-project-collaboration)
+공개 저장소의 협업은 무료로 안내된다. Hobby가 제한하는 **비공개 Organization 저장소 배포**와 현재 상황을 구분해야 한다. 다만 GitHub의 협업 권한과 Vercel 대시보드의 팀 권한은 같지 않다. 현재는 사용자가 코드와 배포 설정을 혼자 관리하고 `main`에서 작업한다. 실제 연결 때 사용자 커밋과 `main`의 배포 동작을 확인한다. [Vercel Git 연동](https://vercel.com/docs/git), [협업 안내](https://vercel.com/docs/deployments/troubleshoot-project-collaboration)
 
 Hobby는 개인·비상업 용도로 제한된다. 공개 저장소라는 사실만으로 이 조건까지 충족하는 것은 아니다. 현재 공모전 시제품의 실제 운영 방식에 적용 가능한지 확인하고, 수익화·사업 운영 단계에서는 다시 판단한다. 무료 한도 초과 시 기능 사용이 중단될 수 있다. [Hobby 플랜](https://vercel.com/docs/plans/hobby)
 
