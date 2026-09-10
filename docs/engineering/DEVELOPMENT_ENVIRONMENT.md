@@ -1,0 +1,118 @@
+# 개발 환경과 경로 처리
+
+기준일: 2026-09-10\
+상태: 구현 계약. 실제 Next.js 설정 파일·유틸·pnpm 스크립트는 아직 생성하지 않았다.
+
+## 해결할 문제
+
+사용자는 OCI의 Coolify에서 호스팅한 code-server 터미널로 개발한다. 브라우저의 개발 URL에 붙는 프록시 경로와 Next.js가 생성하는 HTML·CSS·JS·API URL이 일치해야 한다. 배포 서비스는 도메인 루트에서 실행한다.
+
+외부 도메인, code-server 버전과 추가 상위 경로, Coolify의 라우팅·WebSocket 설정은 아직 검사하지 않았다. 다음은 공식 동작을 바탕으로 한 기본안이며, 첫 개발 서버 실행 때 실제 주소로 검증한다.
+
+## `/proxy`와 `/absproxy`
+
+code-server는 `/proxy/<port>` 접두사를 업스트림 요청에서 제거하고, `/absproxy/<port>`는 유지한다. 따라서 `/proxy/3000`으로 접속하면서 Next.js에 같은 `basePath`를 설정하는 것만으로는 양쪽 경로가 일치하지 않는다. [code-server 프록시 안내](https://coder.com/docs/code-server/guide)
+
+| 모드 | 브라우저 주소 예시 | Next.js가 받는 경로 | 앱 basePath |
+|---|---|---|---|
+| 직접 로컬 | `http://localhost:3000/trips` | `/trips` | 빈 문자열 |
+| **code-server 권고** | `https://IDE_HOST/absproxy/3000/trips` | `/absproxy/3000/trips` | `/absproxy/3000` |
+| 배포 | `https://SERVICE_HOST/trips` | `/trips` | 빈 문자열 |
+
+`IDE_HOST`, `SERVICE_HOST`는 자리표시자다. code-server 자체가 상위 경로 아래 있다면 공식 `abs-proxy-base-path` 설정과 앱 경로를 함께 확인한다. 외부에 보이는 경로를 추측하여 하드코딩하지 않는다.
+
+기본안은 기존 code-server의 `/absproxy`를 활용한다. 이것이 실제 설치 환경에서 불가능하면 Coolify의 별도 개발 호스트에서 루트 경로로 접속하는 대안을 검토한다. 새 도메인 구매가 선행 조건은 아니다.
+
+## 환경변수 계약
+
+| 변수 | 역할 | 예시·규칙 |
+|---|---|---|
+| `APP_ENV` | 앱 실행 프로필 | `local`, `code-server`, `preview`, `production` |
+| `APP_BASE_PATH` | 브라우저와 서버가 공유하는 경로 접두사 | 기본 `""`, code-server에서는 `/absproxy/3000` |
+| `APP_ORIGIN` | 명시적으로 절대 URL을 만들 때 사용할 외부 origin | 스킴과 호스트, 필요 시 포트. 경로·쿼리 없음 |
+| `DEV_ALLOWED_HOSTS` | 개발 서버를 여는 허용 호스트 | 호스트명 목록. 스킴·경로·포트 없이 지정 |
+| `PORT` | 개발 실행기가 전달할 포트 | 기본 `3000`; 경로의 포트와 일치 확인 |
+| `NEXT_PUBLIC_APP_BASE_PATH` | 브라우저에 노출할 계산된 값 | `APP_BASE_PATH`에서 설정 단계에 생성. 수동 중복 관리 금지 |
+
+`NODE_ENV`는 Next.js의 표준 `development`/`production`/`test` 의미를 유지한다. `NODE_ENV=code-server`처럼 사용자 정의 값으로 바꾸지 않는다. 앱 프로필과 프레임워크 빌드 모드는 별개다.
+
+개발용 설정 예시이며 실제 호스트로 교체해야 한다.
+
+```dotenv
+APP_ENV=code-server
+APP_BASE_PATH=/absproxy/3000
+APP_ORIGIN=https://ide.example.com
+DEV_ALLOWED_HOSTS=ide.example.com
+PORT=3000
+```
+
+배포 빌드에서는 `APP_ENV=production`, `APP_BASE_PATH=`를 사용한다. 프리뷰도 루트 경로를 사용한다. 자동 생성되는 프리뷰 origin은 신뢰하는 플랫폼 설정에서 구하고, 사용자 요청의 임의 `Host` 헤더로 공유 URL을 만들지 않는다.
+
+`.env.example`에는 자리표시자만, 개발 비밀은 Git에서 제외한 로컬 환경 파일에 둔다. 배포 비밀은 호스팅 플랫폼 환경 설정에 둔다. KTO·LLM 키·Firebase 관리 자격증명에는 `NEXT_PUBLIC_` 접두사를 붙이지 않는다.
+
+## 설정을 한 곳에서 해석
+
+`config` 모듈의 `resolveAppConfig`가 환경변수를 검증하고 공개 설정만 분리한다. `next.config.ts`는 이 결과로 `basePath`와 개발용 `allowedDevOrigins`를 설정한다. 브라우저용 경로 값은 명시적으로 하나만 주입하며 서버 환경 전체를 노출하지 않는다.
+
+Next.js의 `basePath`와 `NEXT_PUBLIC_*` 값은 빌드에 반영된다. **같은 빌드 결과물에 런타임 환경변수만 바꿔 프록시용과 루트용을 전환할 수 없다.** 프로필이 바뀌면 개발 서버를 재시작하고, 배포는 해당 프로필로 새로 빌드한다. [basePath](https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath), [환경변수](https://nextjs.org/docs/app/guides/environment-variables)
+
+`assetPrefix`는 CDN용 정적 자산 설정이며 전체 라우팅·public 파일·API 문제를 해결하지 않는다. 이 설계에서는 기본적으로 설정하지 않는다. [assetPrefix](https://nextjs.org/docs/app/api-reference/config/next-config-js/assetPrefix)
+
+`allowedDevOrigins`에는 실제 IDE 호스트를 넣는다. 개발 출처 허용을 전체 공개 CORS나 인증 해제로 대체하지 않는다. [allowedDevOrigins](https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins)
+
+설정 오류는 조용히 보정하기보다 시작·빌드 단계에서 설명과 함께 실패시킨다.
+
+- basePath는 빈 문자열 또는 `/`로 시작하는 경로다. 루트 `/`는 빈 값으로 정규화하고 마지막 `/`는 제거한다.
+- 스킴, 쿼리, 해시, `//`, 역슬래시, `..` 경로 이동이나 인코딩된 우회 경로는 허용하지 않는다.
+- `production`과 `preview`에서는 프록시 basePath를 허용하지 않는다.
+- code-server 프로필의 포트와 경로가 다르면 실행 전에 알린다.
+- 공개 경로 변수에 서로 다른 값이 중복 지정되면 실패시킨다.
+
+## URL 유틸의 책임
+
+모든 URL에 접두사를 붙이는 범용 함수를 만들지 않는다. 자동 처리하는 Next.js 기능과 직접 URL을 만드는 지점을 구분한다.
+
+| 호출 지점 | 사용 규칙 | code-server 결과 예시 |
+|---|---|---|
+| `next/link`, Next router | 논리 경로 `/trips` 그대로 전달. 수동 접두사 추가 금지 | Next가 basePath 처리 |
+| 브라우저 `fetch` | `apiPath('/api/verify')` | `/absproxy/3000/api/verify` |
+| public 폴더 이미지·다운로드 | `publicAssetPath('/images/logo.svg')` | `/absproxy/3000/images/logo.svg` |
+| 직접 만드는 절대 내부 링크 | `absoluteAppUrl('/trips', trustedOrigin)` | origin + basePath + `/trips` |
+| 외부 지도·출처·전화 URL | 내부 경로 유틸에 넣지 않음 | 원래 URL 사용 |
+| CSS·JS 모듈의 import 자산 | 번들러가 처리. CSS에 프록시 경로 하드코딩 금지 | 빌드 결과 검증 |
+
+`apiPath` 등은 **접두사가 없는 내부 논리 경로만 받는 계약**으로 만든다. 이미 basePath가 붙은 경로는 중복 접두사 오류로 거부한다. 쿼리와 해시는 유지하고, 외부 URL과 `//host`는 거부한다. API 경로와 자산 경로도 각 용도에 맞게 검사한다.
+
+Next Image의 public 파일 경로에는 필요한 basePath를 명시한다. 원격 이미지에는 이를 붙이지 않는다. Route Handler에서 직접 만드는 `Location` 헤더, 쿠키의 `Path`, OG 이미지·manifest URL도 검증 목록에 포함한다. 기능마다 프레임워크의 자동 처리를 확인하고 한 번만 접두사를 적용한다.
+
+`utils.ts` 하나에 환경변수·서버 비밀·브라우저 URL 처리를 섞지 않는다. 경로의 순수 함수, 환경 파싱, 서버 전용 설정을 나누고 클라이언트는 공개 설정만 import한다.
+
+## pnpm 실행 계약
+
+아래는 만들 예정인 스크립트 이름이다. 아직 실행 가능한 명령으로 간주하지 않는다.
+
+| 명령 | 역할 |
+|---|---|
+| `pnpm dev` | 선택한 개발 프로필을 읽고 Next 개발 서버 실행 |
+| `pnpm dev:direct` | 로컬 루트 경로로 실행 |
+| `pnpm dev:code-server` | code-server 프로필·포트를 검증한 뒤 실행 |
+| `pnpm build` | 선택된 배포 프로필의 검증 후 빌드 |
+| `pnpm start` | 해당 프로필로 이미 빌드한 Node 서버 실행 |
+
+실행기는 환경 파일을 먼저 읽고 포트를 CLI 인자로 전달한다. Next.js가 `.env`를 읽는 시점만 믿고 서버 시작 포트를 변경하지 않는다. 컨테이너 내 프록시 접근을 위해 필요하면 `0.0.0.0`에 바인딩하되 실제 외부 노출은 Coolify·code-server 라우팅에서 관리한다.
+
+프로필 전환 시 예전 `.next` 산출물을 재사용하지 않도록 한다. 도메인·포트·TLS·WebSocket 전달은 인프라의 책임이고, URL 접두사 생성은 앱 설정의 책임이다. 앱 유틸로 프록시의 WebSocket 설정 오류를 해결하려 하지 않는다.
+
+## 필수 검증
+
+세 환경을 각각 검사한다: 직접 로컬 루트, code-server `/absproxy/3000`, 실제 배포 루트.
+
+1. 최초 페이지의 HTML·CSS·JS 응답이 정상이고 MIME 타입이 맞는지.
+2. 내부 이동, 깊은 경로 직접 접속, 새로고침이 동작하는지.
+3. public 이미지, 지도, API, RSC 요청과 동적 청크가 올바른 경로인지.
+4. hydration 오류·404·리디렉션 반복이 없는지.
+5. code-server 개발 화면에서 WebSocket 연결과 코드 수정 후 HMR이 동작하는지.
+6. 루트 배포의 앱 생성 URL에 개발 프록시 접두사가 남지 않는지.
+7. 빈 값·후행 슬래시·잘못된 origin·중복 접두사·외부 URL 입력을 유틸이 의도대로 처리하는지.
+
+Cloudflare로 전환하면 일반 `next dev`와 별도로 OpenNext의 `workerd` 프리뷰·실제 배포를 검증한다. 프리뷰 포트가 8787이면 `/absproxy/8787`용 빌드가 필요하고, 루트 배포 빌드 검증에는 루트로 접근 가능한 별도 호스트나 포트 전달을 사용한다. 프록시 빌드를 운영에 재사용하지 않는다. [OpenNext 실행 환경](https://developers.cloudflare.com/workers/framework-guides/web-apps/opennext/)
