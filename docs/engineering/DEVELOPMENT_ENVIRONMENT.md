@@ -1,13 +1,27 @@
 # 개발 환경과 경로 처리
 
 기준일: 2026-09-10\
-상태: 구현 계약. 실제 Next.js 설정 파일·유틸·pnpm 스크립트는 아직 생성하지 않았다.
+상태: Next.js 설정·환경 파싱·URL 유틸·pnpm 실행기를 구현했다. 아래 계약과 실제 파일을 함께 관리한다. 외부 Vercel 배포는 아직 수행하지 않았다.
+
+## 구현 파일
+
+| 파일 | 책임 |
+|---|---|
+| [app-config.ts](../../src/config/app-config.ts) | 환경 프로필·포트·basePath·origin·개발 허용 호스트 검증 |
+| [next.config.ts](../../next.config.ts) | 검증된 설정을 Next에 적용하고 공개 basePath 하나만 주입 |
+| [app-urls.ts](../../src/lib/urls/app-urls.ts) | API·public 자산·절대 내부 URL의 순수 생성 함수 |
+| [public.ts](../../src/config/public.ts) | 브라우저에서 사용할 빌드 시점 경로 함수 |
+| [server.ts](../../src/config/server.ts) | OpenRouter·KTO 서버 전용 설정의 지연 검증 |
+| [next.ts](../../scripts/next.ts) | 환경 파일을 먼저 로드한 뒤 Next CLI 실행·종료 신호 전달 |
+| [build-profile.ts](../../scripts/build-profile.ts) | 빌드와 실행의 경로 프로필 일치 확인 |
+
+OpenRouter·KTO 설정 함수는 연결 시에만 키·모델을 요구한다. 현재는 API를 호출하지 않으며 키가 없어도 앱 빌드가 가능하다. Firebase SDK 연결은 사용자 준비 이후의 후속 범위다.
 
 ## 해결할 문제
 
 사용자는 OCI의 Coolify에서 호스팅한 code-server 터미널로 개발한다. 브라우저의 개발 URL에 붙는 프록시 경로와 Next.js가 생성하는 HTML·CSS·JS·API URL이 일치해야 한다. 배포 서비스는 도메인 루트에서 실행한다.
 
-외부 도메인, code-server 버전과 추가 상위 경로, Coolify의 라우팅·WebSocket 설정은 아직 검사하지 않았다. 다음은 공식 동작을 바탕으로 한 기본안이며, 첫 개발 서버 실행 때 실제 주소로 검증한다.
+현재 IDE 환경변수에서 `ide.hothyun.com`과 `/proxy/{{port}}/` 포트 링크를 확인했다. 설치된 code-server는 4.127.0이다. 실제 외부 Coolify·TLS·로그인 세션 경유 동작은 별도 확인 사항이다. 재현 가능한 로컬·프록시 검증 범위는 [구현 기록](../delivery/IMPLEMENTATION_STATUS.md)에 남긴다.
 
 ## `/proxy`와 `/absproxy`
 
@@ -48,7 +62,9 @@ PORT=3000
 
 배포 빌드에서는 `APP_ENV=production`, `APP_BASE_PATH=`를 사용한다. 프리뷰도 루트 경로를 사용한다. 자동 생성되는 프리뷰 origin은 신뢰하는 플랫폼 설정에서 구하고, 사용자 요청의 임의 `Host` 헤더로 공유 URL을 만들지 않는다.
 
-`.env.example`에는 자리표시자만, 개발 비밀은 Git에서 제외한 로컬 환경 파일에 둔다. 배포 비밀은 호스팅 플랫폼 환경 설정에 둔다. KTO·LLM 키·Firebase 관리 자격증명에는 `NEXT_PUBLIC_` 접두사를 붙이지 않는다.
+`.env.example`에는 빈 값만, 개발 비밀은 Git에서 제외한 `.env.local`에 둔다. 프록시 프로필은 `.env.code-server.example`을 참고하여 **`.env.development.local`**에 둔다. 공통 `.env.local`의 프록시 값이 배포 빌드까지 적용되는 것을 피한다. 배포 비밀은 호스팅 플랫폼 환경 설정에 둔다. KTO·LLM 키·Firebase 관리 자격증명에는 `NEXT_PUBLIC_` 접두사를 붙이지 않는다.
+
+`APP_ENV`가 비어 있으면 개발은 `local`, 빌드·실행은 `production`으로 추론하고 Vercel의 `preview`·`production` 값도 지원한다. code-server의 origin은 명시한 `APP_ORIGIN`을 우선하고, 없으면 환경의 `VSCODE_PROXY_URI`에서 가져온다. 프리뷰의 origin은 `VERCEL_URL`을 사용할 수 있다. 운영 origin이 아직 정해지지 않아도 초기 빌드는 가능하며 절대 URL을 생성할 때 검증된 origin을 전달해야 한다.
 
 ## 설정을 한 곳에서 해석
 
@@ -89,7 +105,7 @@ Next Image의 public 파일 경로에는 필요한 basePath를 명시한다. 원
 
 ## pnpm 실행 계약
 
-아래는 만들 예정인 스크립트 이름이다. 아직 실행 가능한 명령으로 간주하지 않는다.
+아래 명령을 구현했다. Node.js 24.x의 TypeScript 실행 기능을 사용하므로 실행기용 별도 번들러를 추가하지 않았다.
 
 | 명령 | 역할 |
 |---|---|
@@ -98,10 +114,17 @@ Next Image의 public 파일 경로에는 필요한 basePath를 명시한다. 원
 | `pnpm dev:code-server` | code-server 프로필·포트를 검증한 뒤 실행 |
 | `pnpm build` | 선택된 배포 프로필의 검증 후 빌드 |
 | `pnpm start` | 해당 프로필로 이미 빌드한 Node 서버 실행 |
+| `pnpm typecheck` | 현재 라우트 타입 생성 후 TypeScript 검사 |
+| `pnpm test` | 환경·URL·빌드 프로필의 순수 함수 테스트 |
+| `pnpm test:e2e` | 직접 개발·프록시 개발·운영 빌드 브라우저 검사 |
 
 실행기는 환경 파일을 먼저 읽고 포트를 CLI 인자로 전달한다. Next.js가 `.env`를 읽는 시점만 믿고 서버 시작 포트를 변경하지 않는다. 컨테이너 내 프록시 접근을 위해 필요하면 `0.0.0.0`에 바인딩하되 실제 외부 노출은 Coolify·code-server 라우팅에서 관리한다.
 
-프로필 전환 시 예전 `.next` 산출물을 재사용하지 않도록 한다. 도메인·포트·TLS·WebSocket 전달은 인프라의 책임이고, URL 접두사 생성은 앱 설정의 책임이다. 앱 유틸로 프록시의 WebSocket 설정 오류를 해결하려 하지 않는다.
+빌드 성공 시 `.next/pawproof-build.json`에 `appEnv`와 `basePath`를 기록하고 `pnpm start`가 일치 여부를 검증한다. 다른 프로필의 빌드로 실행하려면 다시 빌드해야 한다. Next의 개발 서버는 네이티브 잠금과 별도 개발 출력 경로를 사용하므로 두 개발 프로필을 동시에 실행하지 않는다.
+
+도메인·포트·TLS·WebSocket 전달은 인프라의 책임이고, URL 접두사 생성은 앱 설정의 책임이다. 앱 유틸로 프록시의 WebSocket 설정 오류를 해결하려 하지 않는다.
+
+개발 전용 `/dev/check`에서 public 이미지와 클라이언트 API 호출을 점검할 수 있다. 프로덕션에서는 404를 반환하며, `/api/health`는 앱 자체 응답만 확인하고 외부 연결 성공을 주장하지 않는다.
 
 ## 필수 검증
 

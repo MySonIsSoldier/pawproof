@@ -1,0 +1,19 @@
+import "server-only";
+
+function requiredValue(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) throw new Error(`Missing server configuration: ${name}`);
+  return value;
+}
+
+/** Resolve lazily so the app can build before external providers are connected. */
+export function getOpenRouterConfig() {
+  return {
+    apiKey: requiredValue("OPENROUTER_API_KEY"),
+    model: requiredValue("OPENROUTER_MODEL"),
+  };
+}
+
+export function getKtoConfig() {
+  return { serviceKey: requiredValue("KTO_SERVICE_KEY") };
+}

@@ -23,6 +23,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [코드 작성과 검증 원칙](engineering/CODE_STANDARDS.md) | 단일 책임, 타입·실패 처리, 테스트, 협업 |
 | [무료 호스팅·비용·운영](operations/HOSTING_AND_COST.md) | 사용량 예산, DNS, 배포 관리, 대안 전환, 심사 기간 운영 |
 | [구현·검증·제출 계획](delivery/DELIVERY_PLAN.md) | 제출 버전 범위, 역할 분담, 개발 일정, 품질 평가, 시연 |
+| [현재 구현·검증 기록](delivery/IMPLEMENTATION_STATUS.md) | 실제 구현한 파일·실행한 검사·아직 검증하지 않은 연결 |
 | [의사결정 및 대화 히스토리](history/DECISION_HISTORY.md) | 아이디어 발전 과정, 확정한 선택, 수정한 가정, 미결 사항 |
 | [근거 및 참고자료](research/SOURCES.md) | 사용자 제공 자료, 이전 검토에서 확인한 외부 자료, 미확인 자료 |
 

@@ -132,6 +132,13 @@
 - 확인 내용: `/proxy` 접두사 제거, `/absproxy` 유지, 상위 경로 설정과 서브도메인 대안.
 - 적용: [개발 환경](../engineering/DEVELOPMENT_ENVIRONMENT.md). 현재 Coolify·code-server 배포 설정 자체는 아직 확인하지 않았다.
 
+### T6. 초기 구현의 추가 기술 근거
+
+- [OpenRouter API 시작 안내](https://openrouter.ai/docs/quickstart): 서버 API 연결 경로 참고. 실제 모델 호출은 후속 작업.
+- [pnpm 12 설정](https://pnpm.io/settings): 설치 설정을 `pnpm-workspace.yaml`에 관리.
+- 현재 설치한 Next.js 패키지의 `node_modules/next/dist/docs/`에서 basePath·개발 출처·환경변수 문서를 확인했다.
+- 실제 구현·실행 결과는 [구현 기록](../delivery/IMPLEMENTATION_STATUS.md)에 별도로 기록한다.
+
 ## 원본을 확보해야 할 자료
 
 - 공모전 공식 안내 페이지와 최신 수정사항.
