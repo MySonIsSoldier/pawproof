@@ -26,7 +26,7 @@ Pretendard Variable을 로컬 WOFF2로 제공하고 OFL 라이선스를 동봉�
 
 1. `/`: 큰 한국어 제목, 반려견 사진, 곡선 코스와 상태 배지, 시작·체험 CTA, 세 단계 설명, 자주 묻는 질문.
 2. `/plan`: 반려견 프로필·날짜·출발 시각·준비물, 장소 검색, 순서·체류·구역·고정 여부 편집. 데스크톱 2열, 모바일 1열.
-3. 같은 작업 화면에서 검증 결과, 코스 노선도, 문제 요약. 장소 근거는 native dialog로 열어 키보드 포커스·Escape·복귀 지원.
+3. 같은 작업 화면에서 검증 결과, 코스 노선도, 문제 요약. 장소 근거는 Radix Dialog로 열어 키보드 포커스·Escape·복귀 지원.
 4. 대체 후보를 비교하고 적용하면 전체 일정을 재검증. 이전 코스로 되돌리기 제공.
 5. 코스와 연결된 준비표·미확인 문의 문구. 인쇄용 결과 제공.
 
@@ -51,7 +51,9 @@ shadcn/ui의 Radix Select·Popover·Input 및 React DayPicker Calendar 소스를
 
 ## 접근성과 신뢰
 
-44px 이상 주요 터치 영역, 보이는 focus ring, 명시적 label, aria-live 상태 안내, 키보드 순서 변경, native details/dialog. 상태를 색만으로 전달하지 않는다. 고정 요소가 모바일 내용을 가리지 않도록 여백 확보.
+44px 이상 주요 터치 영역, 보이는 focus ring, 명시적 label, aria-live 상태 안내, 키보드 순서 변경, native details와 Radix Dialog. 상태를 색만으로 전달하지 않는다. 고정 요소가 모바일 내용을 가리지 않도록 여백 확보.
+
+공통 컴포넌트·상태 책임은 [UI_DESIGN_SYSTEM.md](docs/engineering/UI_DESIGN_SYSTEM.md)에 기록한다. 개발 환경의 `/dev/design-system`에서 실제 버튼·입력·선택 상태를 확인한다.
 
 출처 원문은 텍스트로 렌더링하고 HTML을 실행하지 않는다. API 조회·콘텐츠 수정·규정 확인 시점을 구분. 실제 공사 데이터에는 `출처: ⓒ한국관광공사` 표기. 확률·가짜 후기·입장 보장·실측하지 않은 성과를 표시하지 않는다.
 

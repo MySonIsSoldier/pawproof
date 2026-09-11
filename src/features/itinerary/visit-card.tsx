@@ -1,7 +1,9 @@
 import type { Place, Visit, VisitResult } from "../../domain/policies/types";
 import { formatTime } from "../../domain/itinerary/time";
 import { StatusBadge } from "../verification/status-badge";
+import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
+import { Checkbox } from "../../components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -64,33 +66,33 @@ export function VisitCard({
           <h3>{place.name}</h3>
         </div>
         <div className="visit-actions">
-          <button
+          <Button
+            variant="icon"
             type="button"
-            className="icon-button"
             aria-label={`${place.name} 위로`}
             disabled={busy || index === 0 || visit.locked}
             onClick={() => move(-1)}
           >
             <Icon name="up" size={16} />
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="icon"
             type="button"
-            className="icon-button"
             aria-label={`${place.name} 아래로`}
             disabled={busy || index === count - 1 || visit.locked}
             onClick={() => move(1)}
           >
             <Icon name="down" size={16} />
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="icon"
             type="button"
-            className="icon-button"
             aria-label={`${place.name} 삭제`}
             disabled={busy || visit.locked}
             onClick={remove}
           >
             <Icon name="close" size={16} />
-          </button>
+          </Button>
         </div>
       </div>
       <p className="place-address">{place.address}</p>
@@ -137,11 +139,13 @@ export function VisitCard({
           </Select>
         </div>
         <label className="lock-check">
-          <input
-            type="checkbox"
+          <Checkbox
+            aria-label="꼭 유지"
             checked={visit.locked}
             disabled={busy}
-            onChange={(e) => update({ ...visit, locked: e.target.checked })}
+            onCheckedChange={(checked) =>
+              update({ ...visit, locked: checked === true })
+            }
           />
           <Icon name="lock" size={14} />꼭 유지
         </label>
@@ -161,23 +165,23 @@ export function VisitCard({
               : problem?.message || "확인된 동반 조건을 충족했어요."}
           </p>
           <div className="verdict-actions">
-            <button
+            <Button
+              variant="link"
               type="button"
-              className="text-button"
               onClick={evidence}
               disabled={stale}
             >
               근거 보기 <Icon name="arrow" size={14} />
-            </button>
+            </Button>
             {result.status !== "available" && (
-              <button
+              <Button
+                variant="link"
                 type="button"
-                className="text-button"
                 onClick={recover}
                 disabled={busy || stale || visit.locked}
               >
                 대체 장소 찾기 <Icon name="swap" size={15} />
-              </button>
+              </Button>
             )}
           </div>
         </div>

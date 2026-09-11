@@ -11,7 +11,7 @@ export function formatTime(minutes: number | null): string {
 export function weekday(date: string): number {
   return new Date(`${date}T12:00:00+09:00`).getUTCDay();
 }
-export function koreaToday(now = new Date()): string {
+export function koreaToday(now: Date): string {
   return new Date(now.getTime() + 9 * 60 * 60 * 1000)
     .toISOString()
     .slice(0, 10);

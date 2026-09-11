@@ -5,6 +5,8 @@
 
 ## 구조 원칙
 
+현재 프론트엔드는 `components/ui`의 shadcn/Radix 공통 컴포넌트, `features/itinerary/state`의 화면별 Zustand 스토어, `hooks`의 TanStack Query 요청·저장·조립 훅, 표현 패널로 나뉜다. 도메인/사용 사례는 이 라이브러리들에 의존하지 않는다. 세부 상태 소유권·초기값·저장·동시성 기준은 [UI 디자인 시스템](UI_DESIGN_SYSTEM.md)을 따른다.
+
 하나의 Next.js 앱 안에서 화면, 사용 사례, 판정 규칙, 외부 서비스 연결을 분리한다. 현재 사용자 혼자 개발하는 제출 버전에 마이크로서비스·별도 API 서버·범용 의존성 주입 프레임워크를 추가하지 않는다. 코드 의존성과 기능별 커밋 규칙은 [코드 원칙](CODE_STANDARDS.md)을 따른다.
 
 ```mermaid
@@ -85,9 +87,9 @@ tests/
 
 ## 결과 모델과 재현성
 
-결과에는 `schemaVersion`, `rulesVersion`, `verifiedAt`, 장소별 상태·사유 코드·근거·남은 확인사항을 포함한다. LLM 공급자·모델·추출 설정 버전은 운영 진단에 필요한 범위로 기록한다.
+현재 결과 계약에는 `rulesVersion`, `verifiedAt`, 장소별 상태·판정 항목(kind)·근거·준비사항(needs)을 포함한다. 향후 응답 `schemaVersion`과 LLM 모델·추출 설정 버전의 운영 진단 기록을 보강할 수 있으며, 현재 구현한 필드와 구분한다.
 
-`fetchedAt`(조회), `sourceModifiedAt`(콘텐츠 수정), `policyConfirmedAt`(규정의 실제 확인)을 구분한다. 판정 응답에서 이 시점을 보여주는 것과 서버에 장기 보관하는 것은 별도 결정이다.
+현재 정책은 `fetchedAt`(조회), `modifiedAt`(콘텐츠 수정)을 제공한다. 업체 규정의 실제 확인 일시는 별도 확보되지 않았다고 표시하며 `policyConfirmedAt`을 저장/제공하는 기능은 아직 없다. 판정 응답에서 시점을 보여주는 것과 서버에 장기 보관하는 것은 별도 결정이다.
 
 여행 일시는 `Asia/Seoul` 기준으로 해석하고, 서버 타임존이 UTC여도 동일한 판정이 나오게 한다. 내부 시각 저장은 오프셋이 있는 값으로 하고, ‘날짜만 있는 방문일’을 무조건 UTC 자정으로 바꾸지 않는다.
 

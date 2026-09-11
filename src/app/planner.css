@@ -211,7 +211,9 @@
   flex-wrap: wrap;
   gap: 8px;
 }
-.equipment-chips label {
+.equipment-chips .equipment-chip {
+  width: auto;
+  height: auto;
   position: relative;
   display: flex;
   align-items: center;
@@ -224,23 +226,10 @@
   cursor: pointer;
   color: var(--muted);
 }
-.equipment-chips label.selected {
+.equipment-chips .equipment-chip[data-state="checked"] {
   background: var(--sage);
   border-color: #b4c9b5;
   color: var(--forest);
-}
-.equipment-chips input {
-  position: absolute;
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  inset: 0;
-  cursor: pointer;
-  margin: 0;
-}
-.equipment-chips label:has(input:focus-visible) {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 3px;
 }
 .visit-list {
   position: relative;
@@ -300,23 +289,7 @@
   display: flex;
   gap: 1px;
 }
-.icon-button {
-  border: 0;
-  background: transparent;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 36px;
-  border-radius: 8px;
-  color: var(--muted);
-  padding: 0;
-  flex-shrink: 0;
-}
-.icon-button:hover:not(:disabled) {
-  background: var(--sage);
-  color: var(--forest);
-}
+
 .place-address {
   font-size: 11px;
   margin: 10px 0 14px;
@@ -842,13 +815,6 @@
   color: var(--ink);
   box-shadow: 0 20px 100px #142d3640;
 }
-.evidence-dialog::backdrop {
-  background: #18352bc0;
-  backdrop-filter: blur(3px);
-}
-body:has(dialog[open]) {
-  overflow: hidden;
-}
 .dialog-header {
   display: flex;
   justify-content: space-between;
@@ -1079,7 +1045,9 @@ body:has(dialog[open]) {
   .filter-chips button {
     min-height: 40px;
   }
-  .equipment-chips label {
+  .equipment-chips .equipment-chip {
+    width: auto;
+    height: auto;
     min-height: 40px;
   }
   .verdict-actions .text-button {

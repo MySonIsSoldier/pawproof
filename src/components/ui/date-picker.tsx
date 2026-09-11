@@ -5,6 +5,7 @@ import { TZDate } from "react-day-picker";
 import { Calendar } from "./calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Icon } from "../icon";
+import { Button } from "./button";
 
 export function DatePicker({
   value,
@@ -23,7 +24,8 @@ export function DatePicker({
   return (
     <Popover open={open && !disabled} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
+        <Button
+          variant="plain"
           type="button"
           className="ui-control ui-picker-trigger"
           aria-label={label}
@@ -31,7 +33,7 @@ export function DatePicker({
         >
           <Icon name="calendar" size={16} />
           <span>{value.replaceAll("-", ". ")}</span>
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent aria-label={`${label} 선택`} className="ui-date-popover">
         <Calendar

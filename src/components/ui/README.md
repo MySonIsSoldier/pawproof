@@ -9,5 +9,8 @@ shadcn/ui `new-york-v4`의 Select, Popover, Input, Calendar 소스(2026-09-11 �
 - `calendar.tsx`, `date-picker.tsx`: 한국어·서울 시간 달력과 YYYY-MM-DD 입출력.
 - `time-picker.tsx`: 24시간, 1분 단위, 확인 후 값 적용. 취소 시 기존 값 유지.
 - `input.tsx`: HTML 입력 의미와 ref/aria/disabled를 유지하는 공통 입력.
+- `button.tsx`, `checkbox.tsx`, `dialog.tsx`: shadcn 기반 버튼 변형·asChild와 Radix 체크/모달. 원본 button/checkbox/dialog도 동일 registry 경로에서 확인했다.
+
+토큰 소유권·상태 관리·개발용 갤러리는 [UI 디자인 시스템](../../../docs/engineering/UI_DESIGN_SYSTEM.md)에 정리한다.
 
 Tailwind 클래스나 CLI 자동 덮어쓰기를 사용하지 않는다. shadcn 원본 업데이트 시 이 프로젝트의 CSS와 키보드 회귀 검사를 함께 대조한다. 업무 판정·API 요청·전역 상태는 이 폴더에 넣지 않는다.

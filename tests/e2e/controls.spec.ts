@@ -67,7 +67,14 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
   const zone = page.getByRole("combobox", { name: "초록숲 산책길 이용 구역" });
   await zone.focus();
   await page.keyboard.press("Enter");
+  await expect(
+    page.getByRole("option", { name: "실외", exact: true }),
+  ).toBeFocused();
   await page.keyboard.press("Home");
+  // Radix schedules list navigation focus; verify it before confirming the item.
+  await expect(
+    page.getByRole("option", { name: "실내", exact: true }),
+  ).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(zone).toHaveText("실내");
   await expect(zone).toBeFocused();
@@ -135,4 +142,24 @@ test("custom controls stay disabled while a verification is pending", async ({
   await expect(
     page.getByRole("button", { name: "여행 날짜", exact: true }),
   ).toBeEnabled();
+});
+
+test("design system renders only in development", async ({ page }) => {
+  const response = await page.goto("dev/design-system");
+  if (process.env.E2E_MODE === "production") {
+    expect(response?.status()).toBe(404);
+    return;
+  }
+  await expect(
+    page.getByRole("heading", { name: "숲빛 입력 컴포넌트" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "검사 중", exact: true }),
+  ).toBeDisabled();
+  const checkbox = page.getByRole("checkbox", { name: "목줄 준비" });
+  await checkbox.uncheck();
+  await expect(checkbox).not.toBeChecked();
+  await page.getByRole("combobox", { name: "이용 구역" }).click();
+  await expect(page.getByRole("option", { name: "선택 불가" })).toBeDisabled();
+  await page.keyboard.press("Escape");
 });

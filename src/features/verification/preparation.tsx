@@ -1,6 +1,7 @@
 import type { TripInput, TripResult } from "../../domain/policies/types";
 import { formatTime } from "../../domain/itinerary/time";
 import { buildPreparation } from "../../domain/itinerary/preparation";
+import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 export function Preparation({
   trip,
@@ -39,13 +40,14 @@ export function Preparation({
           <p className="eyebrow">READY, SET, TOGETHER</p>
           <h2>출발 전, 챙겨주세요.</h2>
         </div>
-        <button
-          className="text-button no-print"
+        <Button
+          variant="link"
+          className="no-print"
           type="button"
           onClick={() => window.print()}
         >
           <Icon name="print" size={16} /> 준비표 인쇄
-        </button>
+        </Button>
       </div>
       {result.visits.some((v) => v.status === "blocked") && (
         <p className="inline-error">
@@ -101,13 +103,14 @@ export function Preparation({
               <details key={v.place.id}>
                 <summary>{v.place.name}</summary>
                 <p className="question-text">{text}</p>
-                <button
+                <Button
+                  variant="link"
                   type="button"
-                  className="text-button no-print"
+                  className="no-print"
                   onClick={() => void copy(text)}
                 >
                   문의 문구 복사 <Icon name="arrow" size={14} />
-                </button>
+                </Button>
               </details>
             );
           })}

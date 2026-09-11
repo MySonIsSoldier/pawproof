@@ -5,6 +5,8 @@
 
 ## 채택한 기본 스택
 
+2026-09-11 추가: UI는 shadcn/Radix와 React DayPicker, 여행 편집 상태는 Zustand, 요청 생명주기는 TanStack Query를 채택했다. 호스팅·DB 채택과 별개로 현재 화면에 적용했으며 자세한 책임 경계는 [UI_DESIGN_SYSTEM.md](UI_DESIGN_SYSTEM.md)에 기록한다.
+
 **Next.js App Router + TypeScript + pnpm + Vercel Hobby + Cloud Firestore Standard/Spark**를 기본 스택으로 채택했다. 공개 GitHub Organization 저장소라는 사용자 확인을 반영한 선택이다. Cloudflare는 현재 DNS를 유지하고, Workers + D1은 Vercel 이용 조건이나 실제 배포에 문제가 있을 때 검토할 대안으로 둔다.
 
 공모전 제출까지 시간이 짧으므로 Next.js를 별도 어댑터 없이 배포하고, 서버 운영과 DB 관리를 줄이는 편이 유리하다. 지도·LLM·관광 API 연동과 판정 품질에 개발 시간을 집중한다. 이는 프로젝트 상황에 따른 판단이며, 무료 호스팅이 모든 트래픽과 외부 API 비용을 보장한다는 뜻은 아니다.

@@ -184,3 +184,9 @@ Playwright를 데스크톱·모바일·직접/프록시/운영 모드로 실행�
 사용자 요청에 따라 native 날짜·시간·선택 팝업을 shadcn 기반 Radix Select/Popover와 한국어 Calendar로 교체한다. 브랜드 색상과 초록 포커스 링을 공통 토큰으로 관리하며, 1분 단위 시각·기존 저장 체류시간을 보존한다. 입력 컴포넌트는 src/components/ui로 분리하고 공식 소스의 MIT 고지를 유지했다. 데스크톱·모바일 입력 흐름 4개, 타입·린트·빌드 검증 후 커밋한다.
 
 추가 요청으로 전체 UI 컴포넌트 규칙과 상태 책임을 점검한다. 후속 리팩터링에서는 Zustand의 화면별 편집 상태와 TanStack Query의 요청 생명주기를 분리하고, SSR 초기값 일치·명시적 저장·유료 자동 재호출 방지 기준을 유지한다.
+
+## 20. 2026-09-11 상태·요청·공통 UI 리팩터링
+
+Planner의 요청·저장·화면 상태를 Zustand store, TanStack Query hooks, 저장 어댑터, 표시 패널로 분리했다. 서버/클라이언트 초기 날짜는 동일 props로 전달하고 도메인의 현재 시각은 인자로 주입한다. 교체 후 추가 편집을 하면 되돌리기를 무효화해 새 편집을 지우지 않으며, 이전 revision의 응답/후보는 채택하지 않는다.
+
+shadcn 기반 Button/Checkbox/Dialog와 개발용 디자인 시스템 갤러리를 추가하고 근거 모달을 Radix로 이전했다. 공통 UI·domain·application 경계를 ESLint로 검사한다. 자동 재시도·포커스 재조회·디스크 캐시는 사용하지 않고 명시적 입력 저장만 유지한다. 상세 계약은 UI_DESIGN_SYSTEM.md, 실제 검증 범위는 IMPLEMENTATION_STATUS.md를 따른다.

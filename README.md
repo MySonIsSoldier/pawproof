@@ -71,3 +71,5 @@ E2E_MODE=production pnpm test:e2e
 - [구현·검증 기록](docs/delivery/IMPLEMENTATION_STATUS.md): 실행한 검사와 외부 환경에서 남은 확인 사항입니다.
 
 디자인 기준은 [DESIGN.md](DESIGN.md)입니다. ref/의 사용자 레퍼런스를 바탕으로 숲색·세이지·Pretendard 자체 호스팅을 적용했습니다. `/plan?mode=demo`는 가상 체험, `/plan`은 실제 장소 모드입니다.
+
+입력·선택·근거 모달은 shadcn/Radix 공통 컴포넌트를 사용합니다. `/dev/design-system`은 개발 전용 컴포넌트 갤러리입니다. Zustand 편집 상태·TanStack Query 요청·명시적 저장의 책임은 [UI·상태 설계](docs/engineering/UI_DESIGN_SYSTEM.md)에 정리했습니다.

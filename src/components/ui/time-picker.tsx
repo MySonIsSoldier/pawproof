@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "./select";
 import { Icon } from "../icon";
+import { Button } from "./button";
 
 const hours = Array.from({ length: 24 }, (_, n) => String(n).padStart(2, "0"));
 const minutes = Array.from({ length: 60 }, (_, n) =>
@@ -39,7 +40,8 @@ export function TimePicker({
       }}
     >
       <PopoverTrigger asChild>
-        <button
+        <Button
+          variant="plain"
           type="button"
           className="ui-control ui-picker-trigger"
           aria-label={label}
@@ -48,7 +50,7 @@ export function TimePicker({
           <Icon name="clock" size={16} />
           <span>{value}</span>
           <span className="ui-time-unit">도착</span>
-        </button>
+        </Button>
       </PopoverTrigger>
       <PopoverContent aria-label={`${label} 선택`} className="ui-time-popover">
         <h3>첫 만남은 몇 시인가요?</h3>
@@ -88,7 +90,8 @@ export function TimePicker({
             </SelectContent>
           </Select>
         </div>
-        <button
+        <Button
+          variant="plain"
           type="button"
           className="ui-time-apply"
           disabled={disabled}
@@ -98,7 +101,7 @@ export function TimePicker({
           }}
         >
           이 시간으로 적용 <Icon name="check" size={16} />
-        </button>
+        </Button>
       </PopoverContent>
     </Popover>
   );

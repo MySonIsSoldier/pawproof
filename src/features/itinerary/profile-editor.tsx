@@ -1,9 +1,11 @@
 import type { TripInput } from "../../domain/policies/types";
 import { equipmentOptions } from "../../domain/policies/types";
+import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { Input } from "../../components/ui/input";
 import { DatePicker } from "../../components/ui/date-picker";
 import { TimePicker } from "../../components/ui/time-picker";
+import { Checkbox } from "../../components/ui/checkbox";
 export function ProfileEditor({
   trip,
   update,
@@ -32,9 +34,9 @@ export function ProfileEditor({
             <div className="pet-form-heading">
               <strong>반려견 {index + 1}</strong>
               {trip.pets.length > 1 && (
-                <button
+                <Button
+                  variant="icon"
                   type="button"
-                  className="icon-button"
                   aria-label={`반려견 ${index + 1} 삭제`}
                   onClick={() =>
                     update({
@@ -44,7 +46,7 @@ export function ProfileEditor({
                   }
                 >
                   <Icon name="close" size={16} />
-                </button>
+                </Button>
               )}
             </div>
             <div className="pet-fields">
@@ -107,7 +109,8 @@ export function ProfileEditor({
           </div>
         ))}
       </div>
-      <button
+      <Button
+        variant="plain"
         type="button"
         className="add-pet"
         disabled={trip.pets.length >= 5}
@@ -119,7 +122,7 @@ export function ProfileEditor({
         }
       >
         <Icon name="plus" size={16} /> 함께 가는 반려견 추가
-      </button>
+      </Button>
       <div className="field-divider" />
       <div className="date-fields">
         <div className="ui-field">
@@ -150,28 +153,28 @@ export function ProfileEditor({
       </div>
       <div className="equipment-chips">
         {equipmentOptions.map((item) => (
-          <label
+          <Checkbox
             key={item}
-            className={trip.equipment.includes(item) ? "selected" : ""}
+            className="equipment-chip"
+            aria-label={item}
+            disabled={busy}
+            checked={trip.equipment.includes(item)}
+            onCheckedChange={(checked) =>
+              update({
+                ...trip,
+                equipment:
+                  checked === true
+                    ? [...trip.equipment, item]
+                    : trip.equipment.filter((value) => value !== item),
+              })
+            }
           >
-            <input
-              type="checkbox"
-              checked={trip.equipment.includes(item)}
-              onChange={() =>
-                update({
-                  ...trip,
-                  equipment: trip.equipment.includes(item)
-                    ? trip.equipment.filter((value) => value !== item)
-                    : [...trip.equipment, item],
-                })
-              }
-            />
             <Icon
               name={trip.equipment.includes(item) ? "check" : "plus"}
               size={14}
             />
             {item}
-          </label>
+          </Checkbox>
         ))}
       </div>
     </fieldset>

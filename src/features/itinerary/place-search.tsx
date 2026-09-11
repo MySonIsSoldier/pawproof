@@ -1,8 +1,7 @@
 "use client";
-import { useState } from "react";
-import type { Category, Place } from "../../domain/policies/types";
-import { searchResultSchema } from "../../application/contracts/result";
-import { callApi } from "./api";
+import type { Place } from "../../domain/policies/types";
+import { usePlaceSearch } from "./hooks/use-place-search";
+import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { Input } from "../../components/ui/input";
 export function PlaceSearch({
@@ -16,35 +15,17 @@ export function PlaceSearch({
   busy: boolean;
   add: (place: Place) => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<Category | "">("");
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [searched, setSearched] = useState(false);
-  async function search() {
-    if (loading || busy) return;
-    if (mode === "live" && !query.trim()) {
-      setMessage("지역이나 장소 이름을 입력해 주세요.");
-      return;
-    }
-    setLoading(true);
-    setMessage("");
-    try {
-      const params = new URLSearchParams({ mode, q: query });
-      if (category) params.set("category", category);
-      const data = await callApi(`/api/places?${params}`, searchResultSchema);
-      setPlaces(data.places);
-      setSearched(true);
-    } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "검색을 완료하지 못했어요.",
-      );
-      setPlaces([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const {
+    query,
+    setQuery,
+    category,
+    setCategory,
+    places,
+    loading,
+    message,
+    searched,
+    search,
+  } = usePlaceSearch(mode, busy);
   return (
     <section className="place-search">
       <div className="search-heading">
@@ -74,13 +55,14 @@ export function PlaceSearch({
             onChange={(e) => setQuery(e.target.value)}
             disabled={busy || loading}
           />
-          <button type="submit" disabled={busy || loading}>
+          <Button variant="plain" type="submit" disabled={busy || loading}>
             {loading ? "검색 중…" : "검색"}
-          </button>
+          </Button>
         </div>
         <div className="filter-chips" aria-label="장소 유형">
           {(["", "관광지", "식당", "카페"] as const).map((item) => (
-            <button
+            <Button
+              variant="plain"
               type="button"
               key={item}
               className={category === item ? "active" : ""}
@@ -88,12 +70,10 @@ export function PlaceSearch({
               aria-pressed={category === item}
               onClick={() => {
                 setCategory(item);
-                setPlaces([]);
-                setSearched(false);
               }}
             >
               {item || "전체"}
-            </button>
+            </Button>
           ))}
         </div>
       </form>
@@ -116,9 +96,9 @@ export function PlaceSearch({
                 {place.category} · {place.address}
               </span>
             </div>
-            <button
+            <Button
+              variant="icon"
               type="button"
-              className="icon-button"
               aria-label={`${place.name} 담기`}
               disabled={
                 busy || selected.includes(place.id) || selected.length >= 5
@@ -126,7 +106,7 @@ export function PlaceSearch({
               onClick={() => add(place)}
             >
               <Icon name={selected.includes(place.id) ? "check" : "plus"} />
-            </button>
+            </Button>
           </div>
         ))}
       </div>

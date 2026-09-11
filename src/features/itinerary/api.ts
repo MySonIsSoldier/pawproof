@@ -4,12 +4,15 @@ export async function callApi<T>(
   path: string,
   schema: z.ZodType<T>,
   body?: unknown,
+  signal?: AbortSignal,
 ): Promise<T> {
   const response = await fetch(apiPath(path), {
     method: body === undefined ? "GET" : "POST",
     headers: body === undefined ? {} : { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
-    signal: AbortSignal.timeout(290_000),
+    signal: signal
+      ? AbortSignal.any([signal, AbortSignal.timeout(290_000)])
+      : AbortSignal.timeout(290_000),
   });
   const value: unknown = await response.json();
   if (!response.ok) {
