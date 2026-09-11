@@ -118,3 +118,7 @@ React 렌더링 최적화보다 먼저 불필요한 네트워크 왕복과 클�
 작업 피드백은 `features → ActionNotification → withNotifications → Sonner`로 연결한다. HOC가 화면별 알림 제공자·표시·해제를 담당하고, `usePlannerNotifications`가 Zustand 이벤트를 연결한다. UI 출력 의존성은 이 경계에서 끝나며 도메인/사용 사례에 들어가지 않는다. 관련 금지 import를 ESLint로 검사한다.
 
 PWA의 브라우저 수명은 root PwaProvider가 관리한다. 서비스 워커는 정적 offline 안내와 아이콘만 저장하고 API·RSC·여행 화면·사용자 데이터를 캐시하지 않는다. 설치/업데이트 안내는 공통 Dialog를 사용한다. 환경·scope·빌드별 release와 데이터 경계는 [PWA 계약](PWA.md)을 따른다.
+
+## 인천 보완 출처 (2026-09-11 구현)
+
+PolicySupplementSource는 검수된 장소의 보완 문서·날짜 공지·매칭 경고를 반환한다. 서버 조립 모듈은 incheonSupplements를 enrichedExtractor에 주입한다. 사용 사례가 출처별 추출을 실행하고 순수 mergePolicies가 종류·구역별 충돌을 확인한다. 도메인에 파일·Next.js·LLM 호출 의존성을 넣지 않는다. PolicySources가 근거 화면의 출처별 날짜·원문·연락처·공지 링크를 표시한다. 단일 원문 출처 필드는 호환성을 유지하고 sources/notices를 추가했다. 결과 규칙은 결합 후 최대 160개, 모델 원본 스키마는 기존 40개 상한을 유지한다.

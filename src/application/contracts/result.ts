@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { extractionSchema } from "./policy.ts";
+import { extractionSchema, ruleSchema } from "./policy.ts";
 import { visitSchema } from "./trip.ts";
 export const placeSchema = z.object({
   id: z.string(),
@@ -28,6 +28,37 @@ export const resultSchema = z.object({
         departure: minutes,
         travelMinutes: minutes,
         policy: extractionSchema.extend({
+          rules: z
+            .array(ruleSchema.extend({ conflict: z.boolean().optional() }))
+            .max(160),
+          unresolved: z.array(z.string().max(300)).max(60),
+          sources: z
+            .array(
+              z.object({
+                label: z.string(),
+                url: z.string().nullable(),
+                publishedAt: z.string().nullable(),
+                accessedAt: z.string(),
+                phone: z.string().nullable(),
+                raw: z.string(),
+              }),
+            )
+            .max(3)
+            .optional(),
+          notices: z
+            .array(
+              z.object({
+                startDate: z.iso.date(),
+                endDate: z.iso.date(),
+                message: z.string(),
+                quote: z.string(),
+                sourceUrl: z.url(),
+                sourceLabel: z.string(),
+                checkedAt: z.string(),
+              }),
+            )
+            .max(10)
+            .optional(),
           raw: z.string(),
           sourceLabel: z.string(),
           sourceUrl: z.string().nullable(),

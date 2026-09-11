@@ -4,6 +4,8 @@ import { demoProviders } from "../infrastructure/demo/catalog.ts";
 import { ktoSource } from "../infrastructure/kto/source.ts";
 import { openRouterExtractor } from "../infrastructure/llm/extractor.ts";
 import { kakaoTravel } from "../infrastructure/kakao/travel.ts";
+import { enrichedExtractor } from "../application/use-cases/enrich-policy.ts";
+import { incheonSupplements } from "../infrastructure/incheon/supplements.ts";
 import {
   getKtoConfig,
   getOpenRouterConfig,
@@ -26,7 +28,10 @@ export function createProviders(
               throw new Error("Search only");
             },
           }
-        : openRouterExtractor(getOpenRouterConfig()),
+        : enrichedExtractor(
+            openRouterExtractor(getOpenRouterConfig()),
+            incheonSupplements(),
+          ),
       travel: config.kakaoKey
         ? kakaoTravel(config.kakaoKey)
         : { basis: "unavailable", minutes: async () => null },

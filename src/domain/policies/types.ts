@@ -10,6 +10,7 @@ export type Rule = {
   value: number | null;
   items: string[];
   quote: string;
+  conflict?: boolean;
 };
 export type Pet = { name: string; breed: string; weight: number };
 export type Place = {
@@ -29,6 +30,25 @@ export type Policy = {
   sourceUrl: string | null;
   fetchedAt: string;
   modifiedAt: string | null;
+  sources?: PolicySource[];
+  notices?: PolicyNotice[];
+};
+export type PolicySource = {
+  label: string;
+  url: string | null;
+  publishedAt: string | null;
+  accessedAt: string;
+  phone: string | null;
+  raw: string;
+};
+export type PolicyNotice = {
+  startDate: string;
+  endDate: string;
+  message: string;
+  quote: string;
+  sourceUrl: string;
+  sourceLabel: string;
+  checkedAt: string;
 };
 export type Finding = {
   status: Status;

@@ -1,4 +1,10 @@
-import type { Category, Place, Policy } from "../../domain/policies/types.ts";
+import type {
+  Category,
+  Place,
+  Policy,
+  PolicySource,
+  PolicyNotice,
+} from "../../domain/policies/types.ts";
 export type PlaceDocument = {
   place: Place;
   raw: string;
@@ -6,6 +12,7 @@ export type PlaceDocument = {
   fetchedAt: string;
   sourceUrl: string | null;
   sourceLabel: string;
+  phone?: string | null;
 };
 export interface PlaceSource {
   search(query: string, category?: Category): Promise<Place[]>;
@@ -14,6 +21,14 @@ export interface PlaceSource {
 }
 export interface RuleExtractor {
   extract(document: PlaceDocument): Promise<Policy>;
+}
+export type SupplementalDocument = PlaceDocument & { evidence: PolicySource };
+export interface PolicySupplementSource {
+  find(place: Place): {
+    documents: SupplementalDocument[];
+    notices: PolicyNotice[];
+    warnings: string[];
+  };
 }
 export interface RouteTimeProvider {
   basis: "demo" | "kakao" | "unavailable";

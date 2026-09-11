@@ -79,3 +79,5 @@ node scripts/playwright/generated/hwp-extension-hydration-diagnosis-0cec3a7842.j
 `tests/e2e/notifications.spec.ts`는 반복 저장·키보드 닫기·기기 저장 경계·인쇄 숨김·초기 렌더/타이핑 시 무알림·입력 및 HTML 프록시 오류·재시도 성공·클립보드 거부·클라이언트 화면 이동 후 알림 정리를 검사한다. 기존 `pnpm verify`의 직접 개발/로컬 code-server 프록시/운영 및 데스크톱/모바일 조합에 자동 포함한다. `controls.spec.ts`는 개발 갤러리의 성공/안내/오류 알림도 검증한다.
 
 PWA 검사는 [PWA 계약](PWA.md)을 따른다. pnpm verify의 Playwright 서버는 PWA_ENABLED=true로 워커까지 검사한다. pwa.spec.ts가 설치 메타데이터·offline·실제 업데이트·탭/캐시 격리를 검증하며 실제 OS 설치와 설치 이벤트 시뮬레이션은 구분한다.
+
+인천 시 자료 변경 검사는 `python scripts/audit-incheon-source.py`, 유료 표본 검사는 `node scripts/audit-incheon.ts --live`로 분리한다. [실측](../delivery/INCHEON_VALIDATION_2026-09-11.md)을 참조한다. 일반 E2E의 evidence.spec.ts는 합성 출처로 날짜·연락처·링크·모바일 근거 표시를 검사한다. 실제 인천 검사 스크립트는 유료 호출을 한 번만 수행하며 자동 반복하지 않는다.

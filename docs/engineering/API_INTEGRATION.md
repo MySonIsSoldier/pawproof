@@ -47,3 +47,7 @@ API 연결·지원 필드, 음식점/카페 분류, 규정 의미 정확도, 관
 - [OpenRouter models](https://openrouter.ai/api/v1/models)
 - [카카오 자동차 길찾기](https://developers.kakaomobility.com/guide/navi-api/directions)
 - [Zod schema API](https://zod.dev/api)
+
+## 인천 보완 연결
+
+실제 모드의 추출기는 enrichedExtractor로 조립한다. KTO 원문과 검수한 인천시 행을 각각 추출한 뒤 출처·구역별 규정을 비교한다. 연결된 유효 원문당 모델 호출 1회가 추가되며 서버 원문 캐시는 없다. 개별 규칙의 근거·의미 검증 실패는 확인 필요 사유와 함께 부분 보존하고, 전체 스키마 실패는 추출 실패다. 날짜 휴장·연락처·출처별 원문은 결과 DTO에 포함하지만 사용자 입력 저장에는 포함하지 않는다. [인천 데이터 기준](../data/INCHEON_COVERAGE.md)을 따른다.

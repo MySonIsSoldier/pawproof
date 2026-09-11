@@ -19,6 +19,9 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [제품 기획](product/PRODUCT_PLAN.md) | 사용자, 가치 제안, 핵심 경험, 화면 흐름, 차별성, 사업 확장 |
 | [판정·일정 복구 기준](product/RULES_AND_RECOVERY.md) | 네 가지 상태, 규정 해석, 불확실성, 대체 장소, 코스 재검증 |
 | [데이터 전략](data/DATA_STRATEGY.md) | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙 |
+| [인천 데이터 보강](data/INCHEON_COVERAGE.md) | 확보 출처·지역 검색·장소 병합·충돌·갱신 기준 |
+| [인천 업체 확인 목록](data/INCHEON_CONFIRMATION_QUEUE.md) | 30곳의 누락 항목·자료 내 연락처·남은 확인 질문 |
+| [인천 보강 실측](delivery/INCHEON_VALIDATION_2026-09-11.md) | 실제 브라우저·표본 지표·보강 한계·검사 결과 |
 | [기술 스택 선택](engineering/STACK_DECISION.md) | Vercel·Workers·OCI, Firebase·Supabase·D1 비교와 우선안 |
 | [애플리케이션 아키텍처](engineering/ARCHITECTURE.md) | 단일 앱의 계층·인터페이스·데이터 흐름·저장 경계 |
 | [개발 환경과 경로 처리](engineering/DEVELOPMENT_ENVIRONMENT.md) | code-server 프록시, 환경변수, URL 유틸, 빌드·검증 계약 |
@@ -61,7 +64,7 @@ docs/
 - **LLM 규정 추출 → 결정론적 규칙 판정 → 근거 확인 → 해결안 선택 → 전체 일정 재검증**을 하나의 사용 흐름으로 완성한다.
 - 판정은 **이용 가능·준비 필요·확인 필요·이용 불가**로 통일한다.
 - 최종 결과에는 **코스, 준비사항, 남은 확인사항**이 함께 있어야 한다.
-- 인천을 우선 검토하되, 실제 조건과 대체 후보의 밀도를 확인한 뒤 집중 지원 권역을 확정한다.
+- 인천을 첫 집중 검수 지역으로 운영한다. 현재 검색 43곳·시 자료 연결 9곳이며, 규정 완전성이나 유효 대체 확보 완료를 뜻하지 않는다. [인천 보강](data/INCHEON_COVERAGE.md)을 따른다.
 - 제출 형태는 **모바일 우선 웹(PWA)**이다. 핵심 기능은 비로그인으로 체험할 수 있도록 한다.
 
 ## 채택한 개발 방향

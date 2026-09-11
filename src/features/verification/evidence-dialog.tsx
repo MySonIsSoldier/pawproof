@@ -4,6 +4,7 @@ import type { VisitResult } from "../../domain/policies/types";
 import { StatusBadge } from "./status-badge";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
+import { PolicySources } from "./policy-sources";
 import {
   Dialog,
   DialogContent,
@@ -45,11 +46,7 @@ export function EvidenceDialog({
             <DialogTitle>{result.place.name} · 근거와 조건</DialogTitle>
           </div>
           <DialogClose asChild>
-            <Button
-              variant="icon"
-              type="button"
-              aria-label="근거 닫기"
-            >
+            <Button variant="icon" type="button" aria-label="근거 닫기">
               <Icon name="close" />
             </Button>
           </DialogClose>
@@ -65,7 +62,16 @@ export function EvidenceDialog({
               <StatusBadge status={finding.status} />
               <p>{finding.message}</p>
               {finding.quote ? (
-                <blockquote>{finding.quote}</blockquote>
+                <>
+                  <blockquote>{finding.quote}</blockquote>
+                  {result.policy.sources
+                    ?.filter((source) => source.raw.includes(finding.quote!))
+                    .map((source) => (
+                      <p className="field-caption" key={source.label}>
+                        {source.label}
+                      </p>
+                    ))}
+                </>
               ) : (
                 <span className="field-caption">
                   이 항목을 확정할 원문 근거가 없어요.
@@ -78,6 +84,7 @@ export function EvidenceDialog({
           <summary>조회한 원문 전체</summary>
           <pre>{result.policy.raw || "원문을 불러오지 못했어요."}</pre>
         </details>
+        <PolicySources policy={result.policy} />
         <div className="source-meta">
           <strong>{result.policy.sourceLabel}</strong>
           <p>

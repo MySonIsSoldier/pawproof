@@ -150,3 +150,9 @@
 - 구 API 중단 공지 원문.
 
 이전 대화에서 언급한 제주 보도, 해외 유사 이름 앱 등 원본이 확보되지 않은 내용은 현재 핵심 주장의 검증 근거로 사용하지 않는다.
+
+## 2026-09-11 인천 보강에서 직접 확보
+
+- [인천광역시 반려동물 동반 관광지 목록](https://www.data.go.kr/data/15121775/fileData.do): 2026-01-19 CSV 원본 162행·16열 다운로드, 이용허락범위 제한 없음 확인. 선택 행과 해시·현재 결측률은 data/INCHEON_COVERAGE.md를 따른다.
+- [송도 도그파크 휴장 공지](https://reserve.insiseol.or.kr/bbs/bbsMsgDetail.do?bcd=notice&msg_seq=573): 2026-09-07 게시. 첨부 이미지에서 2026-09-12 행사 휴장 확인.
+- KTO 전용 API의 areaBasedList2(lDongRegnCd=28), lclsSystmCode2(FD, FD05)를 실제 호출하여 현재 지역·카페 분류와 필드 계약을 확인했다. 키는 기록하지 않는다.

@@ -46,7 +46,12 @@ function checkRule(rule: Rule, context: Context): Finding {
     needs,
   });
   if (rule.operator === "unknown")
-    return result("confirm", `${labels[rule.kind]}을 확인해 주세요.`);
+    return result(
+      "confirm",
+      rule.conflict
+        ? `출처마다 ${labels[rule.kind]} 조건이 달라 업체 확인이 필요해요.`
+        : `${labels[rule.kind]}을 확인해 주세요.`,
+    );
   if (rule.kind === "entry")
     return result(
       rule.operator === "deny" ? "blocked" : "available",
@@ -151,7 +156,27 @@ export function evaluatePolicy(policy: Policy, context: Context): Finding[] {
   const applicable = policy.rules.filter(
     (r) => r.scope === "all" || r.scope === context.zone,
   );
-  const findings = applicable.map((rule) => checkRule(rule, context));
+  const entryConflict =
+    applicable.some((r) => r.kind === "entry" && r.operator === "allow") &&
+    applicable.some((r) => r.kind === "entry" && r.operator === "deny");
+  const findings = applicable.map((rule) =>
+    checkRule(
+      entryConflict && rule.kind === "entry"
+        ? { ...rule, operator: "unknown", conflict: true }
+        : rule,
+      context,
+    ),
+  );
+  for (const notice of policy.notices || []) {
+    if (notice.startDate <= context.date && context.date <= notice.endDate)
+      findings.push({
+        status: "blocked",
+        kind: "source",
+        message: notice.message,
+        quote: notice.quote,
+        needs: [],
+      });
+  }
   for (const kind of Object.keys(labels) as RuleKind[]) {
     if (!applicable.some((r) => r.kind === kind))
       findings.push({

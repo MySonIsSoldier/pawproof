@@ -31,7 +31,7 @@ pnpm start
 
 `build`·`start`는 개발 환경 파일을 읽지 않고 프로덕션 환경을 사용합니다. `start`는 빌드 시점과 현재 경로 프로필이 다르면 중단합니다. `.env.local`에 프록시 설정을 넣지 말고 `.env.development.local`에 둡니다.
 
-외부 서비스 키는 `.env.example`의 이름을 참고하여 `.env.local` 또는 배포 플랫폼의 서버 환경변수에 설정합니다. 키 없이도 현재 앱의 개발·빌드·테스트가 가능합니다. KTO·OpenRouter·Kakao의 실제 연결 결과와 한계는 [실사용 검증 기록](docs/delivery/LIVE_VALIDATION_2026-09-11.md)에 있습니다. Firebase 연결은 후속 작업입니다.
+외부 서비스 키는 `.env.example`의 이름을 참고하여 `.env.local` 또는 배포 플랫폼의 서버 환경변수에 설정합니다. 키 없이도 현재 앱의 개발·빌드·테스트가 가능합니다. KTO·OpenRouter·Kakao의 실제 연결 결과와 한계는 [실사용 검증 기록](docs/delivery/LIVE_VALIDATION_2026-09-11.md)에 있습니다. 인천의 지역 검색·보완 자료·임시 휴장은 [인천 데이터 보강](docs/data/INCHEON_COVERAGE.md)에 정리했습니다. Firebase 연결은 후속 작업입니다.
 
 터미널 종료 후에도 개발 미리보기를 유지하거나 접속 장애를 복구하는 절차는 [개발 서버 유지와 접속 장애 점검](docs/engineering/DEVELOPMENT_ENVIRONMENT.md#개발-서버-유지와-접속-장애-점검)을 따른다. 의존성 재설치와 개발 모드 E2E 실행 전에는 실행 중인 개발 서버를 중지한다.
 

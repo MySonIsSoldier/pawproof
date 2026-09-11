@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Policy } from "../../domain/policies/types.ts";
-const ruleSchema = z
+export const ruleSchema = z
   .object({
     kind: z.enum([
       "entry",
@@ -93,4 +93,36 @@ export function validateExtraction(value: unknown, raw: string): Extraction {
       throw new Error("제한 견종 목록이 비어 있습니다.");
   }
   return parsed;
+}
+
+/** Preserve independently valid evidence while keeping any rejected rule unresolved. */
+export function validateExtractionWithWarnings(
+  value: unknown,
+  raw: string,
+): Extraction {
+  const parsed = extractionSchema.parse(value);
+  const rules: Extraction["rules"] = [];
+  let rejected = 0;
+  for (const rule of parsed.rules) {
+    try {
+      rules.push(
+        ...validateExtraction({ rules: [rule], unresolved: [] }, raw).rules,
+      );
+    } catch {
+      rejected++;
+    }
+  }
+  if (rejected && !rules.length)
+    throw new Error("확인 가능한 규정 근거가 없습니다.");
+  return {
+    rules,
+    unresolved: [
+      ...parsed.unresolved,
+      ...(rejected
+        ? [
+            `추출한 규정 ${rejected}개의 근거·형식 검증에 실패했어요. 해당 출처의 원문을 확인해 주세요.`,
+          ]
+        : []),
+    ],
+  };
 }

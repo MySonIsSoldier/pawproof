@@ -112,7 +112,7 @@ export async function verifyTrip(
   return {
     mode: input.mode,
     verifiedAt: now.toISOString(),
-    rulesVersion: "2026-09-11.1",
+    rulesVersion: "2026-09-11.2",
     visits,
     totalTravel,
     travelBasis: providers.travel.basis,
