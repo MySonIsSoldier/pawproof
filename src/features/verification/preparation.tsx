@@ -27,6 +27,13 @@ export function Preparation({
   }
   return (
     <section className="preparation">
+      <p className="print-summary">
+        {trip.date} ·{" "}
+        {trip.pets
+          .map((pet) => `${pet.name} (${pet.breed}, ${pet.weight}kg)`)
+          .join(", ")}{" "}
+        · 첫 장소 {trip.startTime}
+      </p>
       <div className="section-heading">
         <div>
           <p className="eyebrow">READY, SET, TOGETHER</p>

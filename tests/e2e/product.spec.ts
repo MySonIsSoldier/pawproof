@@ -133,6 +133,11 @@ test("complete trip: four states, evidence, stale inputs, replacement, undo, pre
     .getByText("물빛 호수공원", { exact: true })
     .click();
   await expect(page.locator(".question-text")).toContainText("마릿수");
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator(".print-summary")).toContainText("12kg");
+  await expect(page.locator(".print-summary")).toBeVisible();
+  await expect(page.locator(".mobile-check-bar")).not.toBeVisible();
+  await page.emulateMedia({ media: "screen" });
   await page.screenshot({
     path: info.outputPath("trip-result.png"),
     fullPage: true,

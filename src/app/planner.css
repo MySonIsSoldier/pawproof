@@ -1227,3 +1227,25 @@ body:has(dialog[open]) {
     margin-left: auto;
   }
 }
+
+.source-meta,
+.source-meta p {
+  font-size: 12px;
+}
+.raw-source pre {
+  font-size: 13px;
+}
+.print-summary {
+  display: none;
+}
+@media print {
+  .print-summary {
+    display: block;
+    margin-bottom: 16px;
+    color: #193d30;
+    font-weight: 600;
+  }
+  .mobile-check-bar {
+    display: none !important;
+  }
+}

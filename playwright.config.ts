@@ -35,6 +35,8 @@ export default defineConfig({
   ],
   use: {
     ...devices["Desktop Chrome"],
+    locale: "ko-KR",
+    timezoneId: "Asia/Seoul",
     baseURL: `${process.env.E2E_ORIGIN || upstream}${basePath}/`,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
