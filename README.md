@@ -1,6 +1,6 @@
 # PawProof
 
-반려견 동반 여행 코스 사전검증 웹앱입니다. 현재 Next.js 개발 기반을 구현하는 단계이며 여행 검증 기능은 아직 제공하지 않습니다.
+반려견 동반 여행 코스 사전검증 웹앱입니다. 프로필·코스 편집, 네 상태 판정, 원문 근거, 대체·재검증과 출발 준비표를 제공합니다. 가상 체험은 키 없이 사용할 수 있으며 실제 API 연결·데이터 품질은 별도 검증이 필요합니다.
 
 ## 개발
 
@@ -35,6 +35,20 @@ pnpm start
 
 터미널 종료 후에도 개발 미리보기를 유지하거나 접속 장애를 복구하는 절차는 [개발 서버 유지와 접속 장애 점검](docs/engineering/DEVELOPMENT_ENVIRONMENT.md#개발-서버-유지와-접속-장애-점검)을 따른다. 의존성 재설치와 개발 모드 E2E 실행 전에는 실행 중인 개발 서버를 중지한다.
 
+## 전체 검증과 미리보기
+
+```bash
+pnpm verify
+pnpm preview:start
+pnpm preview:stop
+```
+
+`verify`는 단위 검사 → 린트 → 타입 → 데스크톱·모바일 직접 개발 → code-server 프록시 → 운영 빌드·브라우저 검사를 순서대로 실행합니다. Linux/code-server의 관리 중인 미리보기는 잠시 중지하고 종료 시 다시 시작합니다. 다른 터미널의 개발 서버는 먼저 직접 종료해 주세요. 로컬 code-server 바이너리가 있으면 127.0.0.1:8444의 임시 인증 없는 프록시를 테스트에만 사용하고 종료합니다. 실제 IDE 인증 설정은 변경하지 않습니다.
+
+리포트: `playwright-report/{direct,proxy,production}/index.html`. 스크린샷·실패 trace: `test-results/`. `preview:start`는 code-server 개발 실행기를 별도 세션·파일 로그로 유지합니다. 컨테이너 재시작 후 자동 기동하는 배포 서비스는 아닙니다.
+
+실제 API를 연결하려면 [설정 안내](docs/engineering/API_INTEGRATION.md)에 따라 루트 `.env.local`을 작성합니다. KTO Decoding 키, OpenRouter 키·모델, Kakao Mobility REST 키를 넣고 `LIVE_SERVICES_ENABLED=true`로 변경합니다. Firestore는 현재 흐름에 필요하지 않습니다.
+
 ## 브라우저 검증
 
 ```bash
@@ -56,4 +70,4 @@ E2E_MODE=production pnpm test:e2e
 - [개발 환경](docs/engineering/DEVELOPMENT_ENVIRONMENT.md): code-server 경로와 배포 설정을 설명합니다.
 - [구현·검증 기록](docs/delivery/IMPLEMENTATION_STATUS.md): 실행한 검사와 외부 환경에서 남은 확인 사항입니다.
 
-화면은 초기 구동 확인용입니다. 디자인 레퍼런스는 추후 제공 예정입니다.
+디자인 기준은 [DESIGN.md](DESIGN.md)입니다. ref/의 사용자 레퍼런스를 바탕으로 숲색·세이지·Pretendard 자체 호스팅을 적용했습니다. `/plan?mode=demo`는 가상 체험, `/plan`은 실제 장소 모드입니다.

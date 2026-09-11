@@ -7,7 +7,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 
 > 가고 싶은 곳을 담으면, 우리 강아지와 방문할 때 걸리는 조건을 찾아주고, 원래 여행을 최대한 유지하면서 해결 방법을 제시한다.
 
-디자인 기준: [DESIGN.md](../DESIGN.md). 이번 제품 구현 범위: [실행 계획](delivery/BUILD_PLAN.md).
+디자인 기준: [DESIGN.md](../DESIGN.md). 이번 제품 구현 범위: [실행 계획](delivery/BUILD_PLAN.md). API 설정은 [연결 계약](engineering/API_INTEGRATION.md), 반복 검증은 [검사 안내](engineering/TESTING.md)를 따른다.
 
 ## 문서 안내
 

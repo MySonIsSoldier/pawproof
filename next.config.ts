@@ -6,6 +6,8 @@ export default function nextConfig(phase: string): NextConfig {
   const config = resolveAppConfig(process.env, phase === PHASE_DEVELOPMENT_SERVER ? "development" : "production");
   return {
     poweredByHeader: false,
+    // This workspace switches root/proxy dev profiles; avoid restoring stale HMR compiler state.
+    experimental: { turbopackFileSystemCacheForDev: false },
     basePath: config.basePath,
     allowedDevOrigins: [...config.allowedDevOrigins],
     env: { NEXT_PUBLIC_APP_BASE_PATH: config.basePath },

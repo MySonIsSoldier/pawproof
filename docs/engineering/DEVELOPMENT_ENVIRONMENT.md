@@ -76,6 +76,8 @@ Next.js의 `basePath`와 `NEXT_PUBLIC_*` 값은 빌드에 반영된다. **같은
 
 `allowedDevOrigins`에는 실제 IDE 호스트를 넣는다. 개발 출처 허용을 전체 공개 CORS나 인증 해제로 대체하지 않는다. [allowedDevOrigins](https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins)
 
+개발 프로필을 연속 전환한 브라우저 검사에서 HMR 연결은 유지되지만 변경된 제목이 반영되지 않는 사례가 발생했다. Next 16.3.4의 개발 파일시스템 컴파일 캐시는 비활성화해 프로세스 사이 상태를 재사용하지 않는다. 운영 빌드 캐시는 기본값을 유지한다. 실제 근본 원인은 Next 내부까지 확정하지 않았으며, 이 설정을 적용한 반복 검증 결과를 구현 기록에 남긴다.
+
 설정 오류는 조용히 보정하기보다 시작·빌드 단계에서 설명과 함께 실패시킨다.
 
 - basePath는 빈 문자열 또는 `/`로 시작하는 경로다. 루트 `/`는 빈 값으로 정규화하고 마지막 `/`는 제거한다.
@@ -127,6 +129,8 @@ Next Image의 public 파일 경로에는 필요한 basePath를 명시한다. 원
 개발 전용 `/dev/check`에서 public 이미지와 클라이언트 API 호출을 점검할 수 있다. 프로덕션에서는 404를 반환하며, `/api/health`는 앱 자체 응답만 확인하고 외부 연결 성공을 주장하지 않는다.
 
 ## 개발 서버 유지와 접속 장애 점검
+
+현재 저장소에는 `pnpm preview:start`, `pnpm preview:stop`이 있다. Linux에서 PID의 명령·작업 경로를 확인한 뒤 해당 실행기만 관리하고, 표준 출력을 `.cache/dev-server.log`에 분리한다. `pnpm verify`는 관리 미리보기를 잠시 중지하고 검사 종료 시 복원한다. 수동 실행 방법은 아래와 같다.
 
 일반 작업은 code-server의 열린 터미널에서 `pnpm dev`로 실행한다. Codex 도구의 출력 파이프에 연결한 서버를 작업 종료 후 계속 사용하면 파이프가 닫혀 `write EPIPE`가 발생할 수 있다. 이 환경에서 장시간 미리보기를 유지할 때는 별도 프로세스 세션과 파일 로그를 사용한다.
 
