@@ -23,7 +23,7 @@
 | 현재 코드 작업 | 사용자 1명, `main` 직접 작업, 기능 완료마다 검증 후 커밋 |
 | Cloudflare Workers 허용 | 사용자 제시 대안 |
 | 새 도메인 구매 여부 | 사용자가 결정 |
-| 디자인 레퍼런스 | 사용자가 제공 예정 |
+| 디자인 레퍼런스 | ref/ 4장 수령. DESIGN.md 기준으로 구현 |
 | LLM | 사용자 보유 OpenRouter 크레딧으로 서버 API 호출. 모델·사용량 예산은 연결 시 결정 |
 | 배포·DB 연결 준비 | 사용자가 담당 |
 
@@ -72,7 +72,7 @@ PawProof가 Cloudflare로 전환한다면 실제 Next.js 코드를 유지하는 
 |---|---|
 | 웹·서버 | Next.js App Router, 기본 Node.js 서버 런타임 |
 | 언어·패키지 | TypeScript strict, pnpm 및 lockfile |
-| UI | React, CSS Modules 또는 팀이 익숙한 스타일 방식. 디자인 참고자료 수령 후 확정 |
+| UI | React + 기능별 CSS, Pretendard 로컬 폰트. DESIGN.md 기준 |
 | 입력·응답 검증 | Zod 등 런타임 스키마 검증 도구 하나 |
 | DB 접근 | 서버 전용 Firestore 어댑터. 브라우저 DB 직접 접근은 초기 범위에서 제외 |
 | 상태 | 화면 단위 React 상태 우선. 전역 상태 라이브러리는 실제 필요가 생길 때 |

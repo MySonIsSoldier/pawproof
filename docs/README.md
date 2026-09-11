@@ -67,8 +67,8 @@ docs/
 - Cloudflare는 DNS를 유지하고, **Workers + OpenNext + D1**은 어댑터·무료 CPU 한도를 검증할 대안으로 둔다.
 - code-server에서는 **`/absproxy/3000` + `basePath`**, 배포에서는 빈 `basePath`를 사용하도록 설계한다. 두 프로필은 별도로 빌드한다.
 - 원문·파생 규정의 영구 저장은 데이터 정책 확인 후 결정한다. 자체 작성 데이터 저장과 구분한다.
-- 새 도메인 구매와 디자인 레퍼런스는 사용자 결정·제공 사항이다. 배포·DB 연결 준비도 사용자가 담당한다.
-- LLM은 사용자 보유 OpenRouter 크레딧으로 서버 API 호출한다. 실제 연결·모델·사용량 예산은 후속 작업이다.
+- 새 도메인 구매와 배포·DB 연결 준비는 사용자가 담당한다. 제공된 ref/ 레퍼런스 기반 디자인은 [DESIGN.md](../DESIGN.md)에 정리했다.
+- LLM은 OpenRouter 서버 API 어댑터를 구현했다. 초기 모델·키 설정·비용 한도 권고는 [API 연결](engineering/API_INTEGRATION.md)에 있고 실호출·정확도 평가는 남아 있다.
 
 기본 방향은 사용자 채택이 완료되었으며 실제 코드·유틸 작성이나 배포 완료와 구분한다. 공식 근거와 대안 선택 조건은 [스택 결정](engineering/STACK_DECISION.md)에 있다.
 
