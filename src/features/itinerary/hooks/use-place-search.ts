@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Category, TripInput } from "../../../domain/policies/types";
 import { searchResultSchema } from "../../../application/contracts/result";
 import { callApi } from "../api";
+import { useNotify } from "../../../components/notifications/with-notifications";
 
 export function usePlaceSearch(mode: TripInput["mode"], busy: boolean) {
+  const notify = useNotify();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category | "">("");
   const [message, setMessage] = useState("");
@@ -29,6 +31,21 @@ export function usePlaceSearch(mode: TripInput["mode"], busy: boolean) {
       );
     },
   });
+  const { data, error, dataUpdatedAt, errorUpdatedAt } = search;
+  useEffect(() => {
+    if (error)
+      notify({
+        kind: "error",
+        title: "장소를 찾지 못했어요. 검색창의 오류 안내를 확인해 주세요.",
+      });
+    else if (data)
+      notify({
+        kind: "info",
+        title: data.places.length
+          ? `검색 결과 ${data.places.length}곳을 찾았어요`
+          : "검색 조건에 맞는 장소가 없어요",
+      });
+  }, [data, error, dataUpdatedAt, errorUpdatedAt, notify]);
   return {
     query,
     setQuery,
@@ -46,6 +63,7 @@ export function usePlaceSearch(mode: TripInput["mode"], busy: boolean) {
       if (busy || search.isFetching) return;
       if (mode === "live" && !query.trim()) {
         setMessage("지역이나 장소 이름을 입력해 주세요.");
+        notify({ kind: "info", title: "검색할 지역이나 장소 이름이 필요해요" });
         return;
       }
       setMessage("");

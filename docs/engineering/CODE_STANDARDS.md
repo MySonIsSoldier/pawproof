@@ -107,3 +107,7 @@ docs: record hosting and development decisions
 판정 기준을 바꾸면 [판정 문서](../product/RULES_AND_RECOVERY.md)와 사례를, 환경 설정을 바꾸면 [개발 환경 문서](DEVELOPMENT_ENVIRONMENT.md)를 함께 갱신한다. 결정과 미결 사항은 [히스토리](../history/DECISION_HISTORY.md)에 남긴다.
 
 루트의 [AGENTS.md](../../AGENTS.md)는 에이전트 작업 규칙과 문서 탐색의 간략한 입구다. 상세 기준은 `docs/`에서 관리한다. 현재 `docs/plan.md`나 활성 변경 제안(CP) 체계는 없으며, 기능 작업에 이를 필수 절차로 추가하지 않는다.
+
+## 공통 알림 경계
+
+HOC는 `withNotifications(Screen)`처럼 화면 전체에 필요한 공통 수명·제공자를 조합할 때 사용한다. 렌더 함수 안에서 HOC를 생성하지 않고 props 타입을 유지한다. 기능 코드는 타입이 있는 결과 이벤트를 발행하며, Sonner 호출은 공통 경계에 둔다. 검사·저장 성공은 실제 완료 후에만 알리고 취소·미적용된 이전 응답에는 완료 알림을 붙이지 않는다. 상세 오류와 판정 결과를 토스트만으로 제공하지 않는다.

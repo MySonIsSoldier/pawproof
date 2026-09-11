@@ -114,3 +114,5 @@ Firestore가 준비되지 않아도 영구 저장이 필요 없는 핵심 흐름
 초기 문서·레이아웃은 Server Component를 기본으로 하고 지도, 코스 편집, 프로필 폼처럼 상호작용이 필요한 부분만 Client Component로 둔다. 지도 SDK는 지도를 사용할 때 로드한다. 클라이언트에 관광 API 키·DB 관리 SDK·LLM SDK를 포함하지 않는다.
 
 React 렌더링 최적화보다 먼저 불필요한 네트워크 왕복과 클라이언트 번들을 줄인다. 사용자가 수정할 때마다 전체 코스를 즉시 재검증하지 않고 ‘검증하기’ 동작과 입력 변경 상태를 구분한다. 사용자가 제공한 ref/를 기반으로 [DESIGN.md](../../DESIGN.md)를 작성한 뒤 화면을 구현했다. Client Component는 프로필·코스 편집과 요청 상태를 관리하고, 실제/가상 모드 모두 서버 사용 사례를 호출한다. 방문 순서는 SVG 노선도로 제공하며 지도 SDK를 로드하지 않는다.
+
+작업 피드백은 `features → ActionNotification → withNotifications → Sonner`로 연결한다. HOC가 화면별 알림 제공자·표시·해제를 담당하고, `usePlannerNotifications`가 Zustand 이벤트를 연결한다. UI 출력 의존성은 이 경계에서 끝나며 도메인/사용 사례에 들어가지 않는다. 관련 금지 import를 ESLint로 검사한다.

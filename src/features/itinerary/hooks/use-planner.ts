@@ -12,10 +12,12 @@ import { useTripStore, useTripStoreApi } from "../state/planner-provider";
 import { findTripPlace, isTripStale } from "../state/trip-store";
 import { initialTrip } from "../state/initial-trip";
 import { useTripOperations } from "./use-trip-operations";
+import { usePlannerNotifications } from "./use-planner-notifications";
 import { useTripPersistence } from "./use-trip-persistence";
 
 /** Compose UI operations; business policy evaluation remains on the server. */
 export function usePlanner() {
+  usePlannerNotifications();
   const store = useTripStoreApi();
   const state = useTripStore(
     useShallow((s) => ({
@@ -44,7 +46,9 @@ export function usePlanner() {
     detail,
     setDetail,
     update,
-    setNotice: store.getState().notify,
+    copied: (message: string) =>
+      store.getState().succeed(message, "문의 문구를 복사했어요"),
+    fail: store.getState().fail,
     placeFor: (id: string) => findTripPlace(state.places, id),
     switchMode: (mode: TripInput["mode"]) => {
       if (operations.busy || mode === state.trip.mode) return;
@@ -78,6 +82,21 @@ export function usePlanner() {
           },
         ],
       });
+      store
+        .getState()
+        .succeed(
+          `${place.name}을(를) 코스에 담았어요.`,
+          "코스에 방문지를 담았어요",
+        );
+    },
+    remove: (index: number) => {
+      const trip = store.getState().trip;
+      const visit = trip.visits[index];
+      if (operations.busy || !visit || visit.locked) return;
+      update({ ...trip, visits: trip.visits.filter((_, i) => i !== index) });
+      store
+        .getState()
+        .succeed("방문지를 코스에서 뺐어요.", "코스에서 방문지를 뺐어요");
     },
     move: (index: number, offset: number) => {
       const trip = store.getState().trip;
@@ -85,12 +104,20 @@ export function usePlanner() {
       if (operations.busy || !trip.visits[index] || !trip.visits[target])
         return;
       if (trip.visits[index].locked || trip.visits[target].locked) {
-        store.getState().notify("꼭 유지할 방문지의 순서는 바꿀 수 없어요.");
+        store
+          .getState()
+          .notify(
+            "꼭 유지할 방문지의 순서는 바꿀 수 없어요.",
+            "유지할 방문지의 순서는 고정돼 있어요",
+          );
         return;
       }
       const visits = [...trip.visits];
       [visits[index], visits[target]] = [visits[target], visits[index]];
       update({ ...trip, visits });
+      store
+        .getState()
+        .succeed("방문 순서를 변경했어요.", "방문 순서를 바꿨어요");
     },
     applyAlternative: (alternative: Alternative, index: number) => {
       if (!operations.busy && operations.alternatives)

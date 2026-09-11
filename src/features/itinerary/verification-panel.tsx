@@ -82,9 +82,7 @@ export function VerificationPanel({
           ? "가상 체험에도 실제와 같은 판정 규칙을 적용해요."
           : "규정 조회와 분석에 시간이 걸릴 수 있어요. 결과는 원문과 함께 확인해 주세요."}
       </p>
-      <div aria-live="polite" className="notice">
-        {notice}
-      </div>
+      <div className="notice">{notice}</div>
       {error && (
         <p role="alert" className="inline-error">
           {error}

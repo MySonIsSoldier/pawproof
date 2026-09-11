@@ -19,7 +19,10 @@ export function useTripOperations() {
   useEffect(() => () => active.current?.abort(), []);
   const callbacks = {
     onError: (error: Error, request: Request) => {
-      if (store.getState().revision === request.revision)
+      if (
+        !request.signal.aborted &&
+        store.getState().revision === request.revision
+      )
         store.getState().fail(error.message);
     },
     onSettled: () => {
@@ -31,7 +34,8 @@ export function useTripOperations() {
       callApi("/api/verify", resultSchema, request.trip, request.signal),
     ...callbacks,
     onSuccess: (result, request) => {
-      store.getState().acceptVerification(request.revision, result);
+      if (!request.signal.aborted)
+        store.getState().acceptVerification(request.revision, result);
     },
   });
   const recovery = useMutation({
@@ -44,13 +48,20 @@ export function useTripOperations() {
       ),
     ...callbacks,
     onSuccess: (result, request) => {
-      if (store.getState().revision !== request.revision) return;
+      if (
+        request.signal.aborted ||
+        store.getState().revision !== request.revision
+      )
+        return;
       store
         .getState()
         .notify(
           result.alternatives.length
             ? "조건과 일정을 확인한 대체 후보를 찾았어요."
             : "조건과 고정 일정을 모두 지킬 수 있는 대체 후보가 없어요.",
+          result.alternatives.length
+            ? "대체 후보를 찾았어요"
+            : "조건에 맞는 대체 후보가 없어요",
         );
     },
   });

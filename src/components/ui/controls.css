@@ -486,3 +486,48 @@
     display: none !important;
   }
 }
+
+/* Sonner owns announcements, timers and dismissal; these are brand overrides. */
+.ui-toaster[data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--paper);
+  --normal-text: var(--ink);
+  --normal-border: var(--line);
+  --border-radius: var(--radius-popover);
+  font-family: var(--font-body);
+  z-index: 70;
+}
+.ui-toaster [data-sonner-toast][data-styled="true"] {
+  min-height: 64px;
+  padding: 16px 54px 16px 18px;
+  gap: 12px;
+  font-size: 14px;
+  box-shadow: 0 8px 32px rgb(25 61 48 / 12%);
+}
+.ui-toaster [data-sonner-toast][data-type="success"] [data-icon] {
+  color: var(--forest);
+}
+.ui-toaster [data-sonner-toast][data-type="error"] [data-icon] {
+  color: #a13f35;
+}
+.ui-toaster [data-sonner-toast][data-styled="true"] [data-close-button] {
+  top: 50%;
+  left: auto;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.ui-toaster [data-sonner-toast] [data-close-button]:focus-visible,
+.ui-toaster [data-sonner-toast]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--focus-halo);
+}
+@media print {
+  .ui-toaster[data-sonner-toaster] {
+    display: none !important;
+  }
+}

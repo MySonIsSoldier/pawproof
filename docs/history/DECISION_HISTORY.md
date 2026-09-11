@@ -190,3 +190,7 @@ Playwright를 데스크톱·모바일·직접/프록시/운영 모드로 실행�
 Planner의 요청·저장·화면 상태를 Zustand store, TanStack Query hooks, 저장 어댑터, 표시 패널로 분리했다. 서버/클라이언트 초기 날짜는 동일 props로 전달하고 도메인의 현재 시각은 인자로 주입한다. 교체 후 추가 편집을 하면 되돌리기를 무효화해 새 편집을 지우지 않으며, 이전 revision의 응답/후보는 채택하지 않는다.
 
 shadcn 기반 Button/Checkbox/Dialog와 개발용 디자인 시스템 갤러리를 추가하고 근거 모달을 Radix로 이전했다. 공통 UI·domain·application 경계를 ESLint로 검사한다. 자동 재시도·포커스 재조회·디스크 캐시는 사용하지 않고 명시적 입력 저장만 유지한다. 상세 계약은 UI_DESIGN_SYSTEM.md, 실제 검증 범위는 IMPLEMENTATION_STATUS.md를 따른다.
+
+## 21. 2026-09-11 코드 품질 점검과 Sonner 작업 알림
+
+사용자 요청에 따라 Sonner 2.0.8을 공통 UI에 추가하고 `withNotifications` HOC를 Planner와 개발 갤러리에 재사용했다. 결과 이벤트와 표시를 분리하고 반복 작업도 다시 안내하되 최신 알림 하나만 유지한다. 상세 결과·오류는 화면에 남기며, 입력 타이핑에는 알림을 띄우지 않는다. 취소된 요청과 화면 이탈 후 비동기 완료의 알림을 막고 복사 실패를 오류로 구분했다. 프록시 HTML 응답의 JSON 파싱 오류는 한국어 재시도 안내로 변환한다. 단위·브라우저 검사 범위와 실제 결과는 IMPLEMENTATION_STATUS.md에 기록한다.

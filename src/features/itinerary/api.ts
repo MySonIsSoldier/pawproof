@@ -14,7 +14,15 @@ export async function callApi<T>(
       ? AbortSignal.any([signal, AbortSignal.timeout(290_000)])
       : AbortSignal.timeout(290_000),
   });
-  const value: unknown = await response.json();
+  const value: unknown = await response.json().catch((error: unknown) => {
+    // A reverse proxy can return HTML instead of our JSON error contract.
+    // Preserve cancellation; never expose raw parser/proxy content in the UI.
+    if (error instanceof SyntaxError)
+      throw new Error(
+        "서버 응답을 읽을 수 없어요. 잠시 후 다시 시도해 주세요.",
+      );
+    throw error;
+  });
   if (!response.ok) {
     const message =
       value &&

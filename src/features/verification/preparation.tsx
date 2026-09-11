@@ -7,10 +7,12 @@ export function Preparation({
   trip,
   result,
   notify,
+  onError,
 }: {
   trip: TripInput;
   result: TripResult;
   notify: (message: string) => void;
+  onError: (message: string) => void;
 }) {
   const tasks = buildPreparation(result);
   const questions = result.visits.filter((v) =>
@@ -21,7 +23,7 @@ export function Preparation({
       await navigator.clipboard.writeText(text);
       notify("문의 문구를 복사했어요.");
     } catch {
-      notify(
+      onError(
         "복사가 지원되지 않아요. 표시된 문의 문구를 선택해 복사해 주세요.",
       );
     }

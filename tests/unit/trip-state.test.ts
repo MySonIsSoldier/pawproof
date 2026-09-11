@@ -113,3 +113,25 @@ test("initial date uses an injected Korean day across UTC midnight boundaries", 
   assert.equal(koreaToday(new Date("2026-09-14T15:00:00Z")), "2026-09-15");
   assert.equal(initialTrip("demo", "2026-09-15").date, "2026-09-15");
 });
+
+test("feedback distinguishes repeated actions from edits and rejected stale responses", async () => {
+  const store = createTripStore(trip());
+  const events: string[] = [];
+  const unsubscribe = store.subscribe((state, previous) => {
+    if (state.feedback && state.feedback !== previous.feedback)
+      events.push(state.feedback.kind);
+  });
+  store.getState().succeed("saved", "saved");
+  store.getState().succeed("saved", "saved");
+  store.getState().update({ ...store.getState().trip, startTime: "12:00" });
+  store
+    .getState()
+    .acceptVerification(0, await verifyTrip(trip(), demoProviders()));
+  assert.deepEqual(events, ["success", "success"]);
+  store.getState().fail("storage denied");
+  store.getState().notify("empty");
+  assert.deepEqual(events, ["success", "success", "error", "info"]);
+  unsubscribe();
+  store.getState().succeed("saved", "saved");
+  assert.equal(events.length, 4);
+});

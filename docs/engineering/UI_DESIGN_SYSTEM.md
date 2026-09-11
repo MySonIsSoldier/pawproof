@@ -17,6 +17,7 @@ shadcn/ui의 Radix 구현 소스를 기반으로 컴포넌트를 직접 소유�
 | Popover | 화면 경계 충돌 처리, 포털, 닫기·포커스 복귀 |
 | Calendar / DatePicker | 한국어·서울 시간 달력. 문자열 YYYY-MM-DD 입출력, 월 이동·키보드 날짜 선택 |
 | TimePicker | 24시간·1분 단위. 편집 초안과 적용 값 분리, 취소 시 기존 값 유지 |
+| Toaster | shadcn 기반 Sonner. 숲색 토큰, 짧은 작업 결과, 키보드 닫기·화면 이탈 정리 |
 | Dialog | Radix 모달·배경·제목·설명. 근거 모달은 열었던 버튼으로 포커스 복귀 |
 
 색상·포커스·반경 토큰은 globals.css, 공통 버튼/입력/선택/모달 스타일은 components/ui/controls.css, 업무 화면 레이아웃은 planner.css가 소유한다. 컴포넌트에서 API·스토어·판정을 호출하지 않는다. 상태별 판정 배지는 업무 의미가 있으므로 verification 기능에 둔다.
@@ -48,3 +49,18 @@ shadcn/ui의 Radix 구현 소스를 기반으로 컴포넌트를 직접 소유�
 - [shadcn Radix Select](https://ui.shadcn.com/docs/components/radix/select), [Date Picker](https://ui.shadcn.com/docs/components/radix/date-picker)
 - [Zustand Next.js 가이드](https://zustand.docs.pmnd.rs/learn/guides/nextjs.html)
 - [TanStack Query 기본 동작](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults)
+
+## 작업 알림과 HOC
+
+`withNotifications(Screen)`은 화면을 알림 context와 shadcn 기반 Sonner 호스트로 감싸는 공통 고차 컴포넌트다. 모듈 최상위에서 한 번 적용하고 props(React 19 ref prop 포함)를 그대로 전달한다. Planner와 개발용 디자인 시스템에서 재사용한다. 컴포넌트의 정적 메서드 복제나 서버 컴포넌트 래핑은 지원 범위가 아니다.
+
+- 기능은 `ActionNotification { kind, title }`을 발행한다. Sonner 호출·표시 시간·화면별 ID·해제는 공통 경계가 담당한다. 도메인·사용 사례·기능에서 Sonner를 직접 import하지 않는다.
+- 스토어의 `feedback`은 새 객체로 발행하는 일회성 이벤트다. `usePlannerNotifications`는 이후 변경만 구독한다. 동일한 저장을 반복해도 알림이 갱신되며 입력 타이핑, 재렌더, 마운트 시 이전 안내를 다시 알리지 않는다.
+- 코스 검사·대체·되돌리기·저장·불러오기·삭제·장소 추가/제거/이동·검색·문의 문구 복사 결과를 안내한다. 성공은 실제 완료 후에만 발행한다. 준비표 인쇄는 브라우저 다이얼로그에 위임하며 인쇄 완료를 추정하지 않는다.
+- 알림은 최신 작업 하나만 표시한다. 성공/안내 4초, 오류 6초이며 닫기·스와이프·Alt+T 접근을 지원한다. 화면 이탈 시 해당 ID만 닫고, 늦게 끝난 작업은 새 토스트를 생성하지 않는다.
+- 토스트는 짧은 확인 메시지다. 판정 근거·상세 오류·준비사항은 기존 화면에 계속 남긴다. 오류 토스트는 해당 화면 안내를 가리키고 긴 오류 문구를 중복 표시하지 않는다.
+- 요청 중 표시는 기존 버튼 busy 상태를 사용한다. 중복 로딩 토스트를 만들지 않는다. 취소된 검사/대체는 성공·실패 피드백을 발행하지 않는다.
+- 검색은 제출된 query의 완료 상태에서 안내한다. 자동 재조회는 기존 QueryClient 정책대로 비활성화한다. 검색어/범주 변경으로 취소한 이전 검색의 알림을 다시 발행하지 않는다.
+- 알림은 저장·API 계약에 포함하지 않는다. 규정/여행 정보가 Sonner에 영구 저장되지 않으며 브라우저 입력 저장 형식도 그대로 유지한다.
+
+공식 원본은 [shadcn Sonner registry](https://ui.shadcn.com/r/styles/new-york-v4/sonner.json), 동작은 [Sonner](https://github.com/emilkowalski/sonner)를 따른다. 이 프로젝트는 라이트 테마·기존 아이콘·CSS 토큰을 사용하므로 next-themes와 lucide를 추가하지 않는다.

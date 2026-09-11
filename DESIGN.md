@@ -66,3 +66,7 @@ Playwright로 데스크톱·모바일, 키보드·dialog·새로고침·프록�
 - 시각 참고: 사용자 제공 ref/ref1.webp~ref4.webp (로컬 열람).
 - 글꼴: https://github.com/orioncactus/pretendard (OFL).
 - 제품 사진은 원본·제공처를 public/media/CREDITS.md에 기록한다.
+
+## 작업 알림
+
+Sonner 알림도 Pretendard·페이퍼 배경·숲색 성공 아이콘·둥근 16px 경계를 사용한다. 실패는 붉은 아이콘과 명확한 문구로 구분하며 입력 포커스는 계속 초록색이다. 데스크톱 우측 상단, 모바일 좌우 16px와 상단 안전 영역 안에 표시해 하단 검사 버튼을 가리지 않는다. 최신 작업 하나만 표시하고 상세 결과는 화면에 남긴다. 모달보다 낮은 레이어, 40px 닫기 버튼, Alt+T 키보드 접근, reduced-motion, 인쇄 숨김을 적용한다.

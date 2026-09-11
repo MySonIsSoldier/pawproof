@@ -159,6 +159,18 @@ test("design system renders only in development", async ({ page }) => {
   const checkbox = page.getByRole("checkbox", { name: "목줄 준비" });
   await checkbox.uncheck();
   await expect(checkbox).not.toBeChecked();
+  for (const [label, kind] of [
+    ["성공 알림", "success"],
+    ["안내 알림", "info"],
+    ["오류 알림", "error"],
+  ]) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await expect(
+      page.locator(
+        '[data-sonner-toast][data-front="true"]:not([data-removed="true"])',
+      ),
+    ).toHaveAttribute("data-type", kind);
+  }
   await page.getByRole("combobox", { name: "이용 구역" }).click();
   await expect(page.getByRole("option", { name: "선택 불가" })).toBeDisabled();
   await page.keyboard.press("Escape");

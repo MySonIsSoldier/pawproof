@@ -15,8 +15,9 @@ export function useTripPersistence() {
       }
       try {
         saveTrip(localStorage, state.trip);
-        state.notify(
+        state.succeed(
           "프로필과 코스 입력만 이 기기에 저장했어요. 규정·검사 결과는 저장하지 않아요.",
+          "여행 노트를 이 기기에 저장했어요",
         );
       } catch {
         state.fail(
@@ -34,7 +35,13 @@ export function useTripPersistence() {
               trip,
               "저장한 입력을 불러왔어요. 최신 규정으로 다시 검사해 주세요.",
             );
-        else store.getState().notify("이 기기에 저장된 여행 노트가 없어요.");
+        else
+          store
+            .getState()
+            .notify(
+              "이 기기에 저장된 여행 노트가 없어요.",
+              "저장된 여행 노트가 없어요",
+            );
       } catch {
         store
           .getState()
@@ -46,7 +53,12 @@ export function useTripPersistence() {
     removeSaved: () => {
       try {
         removeTrip(localStorage);
-        store.getState().notify("이 기기에 저장한 입력을 삭제했어요.");
+        store
+          .getState()
+          .succeed(
+            "이 기기에 저장한 입력을 삭제했어요.",
+            "저장한 여행 노트를 삭제했어요",
+          );
       } catch {
         store.getState().fail("브라우저 저장소에 접근할 수 없어요.");
       }

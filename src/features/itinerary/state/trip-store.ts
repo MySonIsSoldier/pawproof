@@ -7,6 +7,8 @@ import type {
 import type { Alternative } from "../../../application/use-cases/recover-trip.ts";
 import { demoPlaces } from "../../../fixtures/demo-trip.ts";
 
+import type { ActionNotification } from "../../../components/notifications/types.ts";
+
 type Verification = { fingerprint: string; result: TripResult };
 type TripState = {
   trip: TripInput;
@@ -14,6 +16,7 @@ type TripState = {
   places: Record<string, Place>;
   verification: Verification | null;
   previous: { trip: TripInput; verification: Verification | null } | null;
+  feedback: ActionNotification | null;
   notice: string;
   error: string;
 };
@@ -28,7 +31,8 @@ type TripActions = {
     alternative: Alternative,
   ) => void;
   undo: () => void;
-  notify: (notice: string) => void;
+  notify: (notice: string, title?: string) => void;
+  succeed: (notice: string, title: string) => void;
   fail: (error: string) => void;
   clearFeedback: () => void;
 };
@@ -44,6 +48,7 @@ export function createTripStore(trip: TripInput) {
     places: trip.mode === "demo" ? placeIndex(demoPlaces) : {},
     verification: null,
     previous: null,
+    feedback: null,
     notice: "",
     error: "",
     update: (next) =>
@@ -62,6 +67,7 @@ export function createTripStore(trip: TripInput) {
         verification: null,
         previous: null,
         notice,
+        feedback: { kind: "info", title: "여행 노트를 열었어요" },
         error: "",
       })),
     remember: (places) =>
@@ -75,6 +81,7 @@ export function createTripStore(trip: TripInput) {
           ...state.places,
           ...placeIndex(result.visits.map((v) => v.place)),
         },
+        feedback: { kind: "success", title: "코스 검사를 마쳤어요" },
         notice: "코스 검사가 끝났어요. 방문지별 조건과 근거를 살펴보세요.",
         error: "",
       });
@@ -108,6 +115,7 @@ export function createTripStore(trip: TripInput) {
           ...state.places,
           ...placeIndex(alternative.result.visits.map((v) => v.place)),
         },
+        feedback: { kind: "success", title: "대체 장소를 코스에 반영했어요" },
         notice: `${alternative.place.name}(으)로 바꾸고 이후 일정까지 다시 검사했어요.`,
         error: "",
       });
@@ -119,12 +127,24 @@ export function createTripStore(trip: TripInput) {
         ...state.previous,
         revision: state.revision + 1,
         previous: null,
+        feedback: { kind: "success", title: "교체를 되돌렸어요" },
         notice: "교체 전 코스로 되돌렸어요.",
         error: "",
       });
     },
-    notify: (notice) => set({ notice, error: "" }),
-    fail: (error) => set({ error, notice: "" }),
+    notify: (notice, title = "확인할 안내가 있어요") =>
+      set({ notice, error: "", feedback: { kind: "info", title } }),
+    succeed: (notice, title) =>
+      set({ notice, error: "", feedback: { kind: "success", title } }),
+    fail: (error) =>
+      set({
+        error,
+        notice: "",
+        feedback: {
+          kind: "error",
+          title: "작업을 완료하지 못했어요. 화면의 오류 안내를 확인해 주세요.",
+        },
+      }),
     clearFeedback: () => set({ notice: "", error: "" }),
   }));
 }

@@ -25,6 +25,8 @@ export default defineConfig([
                 "firebase/**",
                 "**/infrastructure/**",
                 "**/features/**",
+                "**/components/**",
+                "sonner",
                 "**/application/**",
               ],
               message:
@@ -52,6 +54,8 @@ export default defineConfig([
                 "@tanstack/**",
                 "**/infrastructure/**",
                 "**/features/**",
+                "**/components/**",
+                "sonner",
               ],
               message:
                 "Application use cases depend on ports, not concrete adapters or UI.",
@@ -62,7 +66,10 @@ export default defineConfig([
     },
   },
   {
-    files: ["src/components/ui/**/*.{ts,tsx}"],
+    files: [
+      "src/components/ui/**/*.{ts,tsx}",
+      "src/components/notifications/**/*.{ts,tsx}",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -80,6 +87,23 @@ export default defineConfig([
               ],
               message:
                 "Design-system components must not depend on business data or stores.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/features/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "sonner",
+              message:
+                "Use the shared notification boundary; features publish typed feedback.",
             },
           ],
         },

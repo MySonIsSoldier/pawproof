@@ -11,7 +11,9 @@ import { usePlanner } from "./hooks/use-planner";
 import { VerificationPanel } from "./verification-panel";
 import { AlternativesPanel } from "./alternatives-panel";
 
-export function Planner() {
+import { withNotifications } from "../../components/notifications/with-notifications";
+
+function PlannerScreen() {
   const model = usePlanner();
   const {
     trip,
@@ -30,7 +32,9 @@ export function Planner() {
     save,
     load,
     removeSaved,
-    setNotice,
+    copied,
+    fail,
+    remove,
   } = model;
   return (
     <main id="main" className="planner wrap">
@@ -117,12 +121,7 @@ export function Planner() {
                       })
                     }
                     move={(offset) => move(index, offset)}
-                    remove={() =>
-                      update({
-                        ...trip,
-                        visits: trip.visits.filter((_, i) => i !== index),
-                      })
-                    }
+                    remove={() => remove(index)}
                     evidence={() =>
                       setDetail(
                         result?.visits.find(
@@ -205,7 +204,12 @@ export function Planner() {
         </aside>
       </div>
       {result && !stale && (
-        <Preparation trip={trip} result={result} notify={setNotice} />
+        <Preparation
+          trip={trip}
+          result={result}
+          notify={copied}
+          onError={fail}
+        />
       )}
       <div className="mobile-check-bar no-print">
         <div>
@@ -238,3 +242,5 @@ export function Planner() {
     </main>
   );
 }
+
+export const Planner = withNotifications(PlannerScreen);

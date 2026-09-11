@@ -73,3 +73,5 @@ node scripts/playwright/generated/hwp-extension-hydration-diagnosis-0cec3a7842.j
 ```
 
 2026-09-11 검사에서 홈과 가상 코스 각각 정상 브라우저는 hydration 경고 0건, 같은 두 속성을 document-start에 주입한 브라우저는 경고 1건을 확인했다. 네 경우 모두 페이지 예외 0건, 클라이언트 이동/반려견 추가 동작 정상이다. 실제 RHWP 패키지를 설치한 검사가 아니라 사용자가 보고한 속성 변경을 재현한 것이다. 서버 응답에는 해당 속성이 없었다. 외부 IDE 인증 세션은 이 로컬 검사 범위에 포함되지 않는다.
+
+`tests/e2e/notifications.spec.ts`는 반복 저장·키보드 닫기·기기 저장 경계·인쇄 숨김·초기 렌더/타이핑 시 무알림·입력 및 HTML 프록시 오류·재시도 성공·클립보드 거부·클라이언트 화면 이동 후 알림 정리를 검사한다. 기존 `pnpm verify`의 직접 개발/로컬 code-server 프록시/운영 및 데스크톱/모바일 조합에 자동 포함한다. `controls.spec.ts`는 개발 갤러리의 성공/안내/오류 알림도 검증한다.

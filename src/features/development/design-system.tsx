@@ -14,8 +14,13 @@ import {
   SelectItem,
 } from "../../components/ui/select";
 import { Icon } from "../../components/icon";
+import {
+  withNotifications,
+  useNotify,
+} from "../../components/notifications/with-notifications";
 
-export function DesignSystem() {
+function DesignSystemScreen() {
+  const notify = useNotify();
   const [date, setDate] = useState("2026-09-21");
   const [time, setTime] = useState("10:07");
   const [zone, setZone] = useState("outdoor");
@@ -24,6 +29,41 @@ export function DesignSystem() {
       <p className="eyebrow">PAWPROOF · DESIGN SYSTEM</p>
       <h1>숲빛 입력 컴포넌트</h1>
       <p>같은 토큰, 같은 반응. 포커스·선택·비활성 상태를 여기서 확인해요.</p>
+      <section>
+        <h2>작업 알림</h2>
+        <p>
+          성공·안내·실패를 구분하고 마지막 작업 하나만 표시해요. Alt+T로 알림에
+          이동할 수 있어요.
+        </p>
+        <div className="ds-row">
+          <Button
+            onClick={() =>
+              notify({ kind: "success", title: "변경 내용을 저장했어요" })
+            }
+          >
+            성공 알림
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() =>
+              notify({ kind: "info", title: "방문 전에 확인할 내용이 있어요" })
+            }
+          >
+            안내 알림
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() =>
+              notify({
+                kind: "error",
+                title: "저장하지 못했어요. 다시 시도해 주세요.",
+              })
+            }
+          >
+            오류 알림
+          </Button>
+        </div>
+      </section>
       <section>
         <h2>버튼과 상태</h2>
         <div className="ds-row">
@@ -94,3 +134,5 @@ export function DesignSystem() {
     </main>
   );
 }
+
+export const DesignSystem = withNotifications(DesignSystemScreen);

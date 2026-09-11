@@ -14,3 +14,5 @@ shadcn/ui `new-york-v4`의 Select, Popover, Input, Calendar 소스(2026-09-11 �
 토큰 소유권·상태 관리·개발용 갤러리는 [UI 디자인 시스템](../../../docs/engineering/UI_DESIGN_SYSTEM.md)에 정리한다.
 
 Tailwind 클래스나 CLI 자동 덮어쓰기를 사용하지 않는다. shadcn 원본 업데이트 시 이 프로젝트의 CSS와 키보드 회귀 검사를 함께 대조한다. 업무 판정·API 요청·전역 상태는 이 폴더에 넣지 않는다.
+
+- `sonner.tsx`: [shadcn Sonner 원본](https://ui.shadcn.com/r/styles/new-york-v4/sonner.json)을 라이트 테마·기존 Icon·브랜드 CSS에 맞게 조정. 타이머·키보드 접근·닫기는 Sonner 2.0.8을 사용한다. 기능에서 직접 호출하지 않고 `components/notifications/with-notifications.tsx`의 HOC와 훅으로 연결한다.
