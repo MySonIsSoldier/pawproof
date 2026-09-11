@@ -1,4 +1,5 @@
 @import "./planner.css";
+@import "../components/ui/controls.css";
 :root {
   --forest: #2f6b50;
   --ink: #193d30;
@@ -7,6 +8,8 @@
   --muted: #5b6e63;
   --line: #dce5dc;
   --butter: #e9c96a;
+  --focus-ring: #2f6b50;
+  --focus-halo: rgb(47 107 80 / 16%);
   --font-body:
     var(--font-pretendard), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
@@ -101,8 +104,8 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 summary:focus-visible {
-  outline: 3px solid #bc932e;
-  outline-offset: 4px;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
 }
 button,
 a,

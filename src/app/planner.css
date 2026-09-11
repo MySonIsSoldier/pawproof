@@ -139,13 +139,12 @@
   gap: 10px;
 }
 .pet-fields label,
-.date-fields label {
+.date-fields .ui-field {
   font-size: 12px;
   font-weight: 550;
   color: var(--muted);
 }
-.pet-fields input,
-.date-fields input {
+.pet-fields input {
   display: block;
   width: 100%;
   border: 1px solid var(--line);
@@ -161,8 +160,7 @@
   font-size: 12px;
   color: #859086;
 }
-.pet-fields input:focus,
-.date-fields input:focus {
+.pet-fields input:focus {
   border-color: var(--forest);
   background: white;
 }
@@ -241,7 +239,7 @@
   margin: 0;
 }
 .equipment-chips label:has(input:focus-visible) {
-  outline: 3px solid #bc932e;
+  outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
 }
 .visit-list {
@@ -329,21 +327,12 @@
   align-items: end;
   gap: 10px;
 }
-.visit-fields > label:not(.lock-check) {
+.visit-fields > .ui-field {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 10px;
-  color: var(--muted);
-}
-.visit-fields select {
-  background: white;
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  min-height: 35px;
-  padding: 6px 22px 6px 9px;
   font-size: 12px;
+  color: var(--muted);
 }
 .lock-check {
   font-size: 11px;

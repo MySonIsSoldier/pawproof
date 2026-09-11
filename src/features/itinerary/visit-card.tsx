@@ -2,6 +2,13 @@ import type { Place, Visit, VisitResult } from "../../domain/policies/types";
 import { formatTime } from "../../domain/itinerary/time";
 import { StatusBadge } from "../verification/status-badge";
 import { Icon } from "../../components/icon";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 export function VisitCard({
   place,
   visit,
@@ -88,37 +95,47 @@ export function VisitCard({
       </div>
       <p className="place-address">{place.address}</p>
       <div className="visit-fields">
-        <label>
+        <div className="ui-field">
           <span>머무는 시간</span>
-          <select
-            aria-label={`${place.name} 체류시간`}
-            value={visit.duration}
+          <Select
+            value={String(visit.duration)}
             disabled={busy}
-            onChange={(e) =>
-              update({ ...visit, duration: Number(e.target.value) })
+            onValueChange={(value) =>
+              update({ ...visit, duration: Number(value) })
             }
           >
-            {[15, 30, 45, 60, 90, 120, 180, 240].map((n) => (
-              <option value={n} key={n}>
-                {n}분
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
+            <SelectTrigger aria-label={`${place.name} 체류시간`}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[...new Set([15, 30, 45, 60, 90, 120, 180, 240, visit.duration])]
+                .sort((a, b) => a - b)
+                .map((n) => (
+                  <SelectItem value={String(n)} key={n}>
+                    {n}분
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="ui-field">
           <span>이용 구역</span>
-          <select
-            aria-label={`${place.name} 이용 구역`}
+          <Select
             disabled={busy}
             value={visit.zone}
-            onChange={(e) =>
-              update({ ...visit, zone: e.target.value as Visit["zone"] })
+            onValueChange={(value) =>
+              update({ ...visit, zone: value as Visit["zone"] })
             }
           >
-            <option value="indoor">실내</option>
-            <option value="outdoor">실외</option>
-          </select>
-        </label>
+            <SelectTrigger aria-label={`${place.name} 이용 구역`}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="indoor">실내</SelectItem>
+              <SelectItem value="outdoor">실외</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <label className="lock-check">
           <input
             type="checkbox"

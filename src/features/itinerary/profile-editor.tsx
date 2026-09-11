@@ -1,6 +1,9 @@
 import type { TripInput } from "../../domain/policies/types";
 import { equipmentOptions } from "../../domain/policies/types";
 import { Icon } from "../../components/icon";
+import { Input } from "../../components/ui/input";
+import { DatePicker } from "../../components/ui/date-picker";
+import { TimePicker } from "../../components/ui/time-picker";
 export function ProfileEditor({
   trip,
   update,
@@ -47,7 +50,7 @@ export function ProfileEditor({
             <div className="pet-fields">
               <label>
                 이름
-                <input
+                <Input
                   aria-label={`반려견 ${index + 1} 이름`}
                   value={pet.name}
                   maxLength={20}
@@ -64,7 +67,7 @@ export function ProfileEditor({
               </label>
               <label>
                 견종
-                <input
+                <Input
                   aria-label={`반려견 ${index + 1} 견종`}
                   value={pet.breed}
                   maxLength={40}
@@ -81,7 +84,7 @@ export function ProfileEditor({
               </label>
               <label>
                 체중 <span className="muted">kg</span>
-                <input
+                <Input
                   aria-label={`반려견 ${index + 1} 체중`}
                   type="number"
                   min="0.1"
@@ -119,22 +122,24 @@ export function ProfileEditor({
       </button>
       <div className="field-divider" />
       <div className="date-fields">
-        <label>
-          여행 날짜
-          <input
-            type="date"
+        <div className="ui-field">
+          <span>여행 날짜</span>
+          <DatePicker
+            label="여행 날짜"
             value={trip.date}
-            onChange={(e) => update({ ...trip, date: e.target.value })}
+            disabled={busy}
+            onChange={(date) => update({ ...trip, date })}
           />
-        </label>
-        <label>
-          첫 장소 도착
-          <input
-            type="time"
+        </div>
+        <div className="ui-field">
+          <span>첫 장소 도착</span>
+          <TimePicker
+            label="첫 장소 도착"
             value={trip.startTime}
-            onChange={(e) => update({ ...trip, startTime: e.target.value })}
+            disabled={busy}
+            onChange={(startTime) => update({ ...trip, startTime })}
           />
-        </label>
+        </div>
       </div>
       <p className="field-caption">
         한국 시간 기준 · 집에서 첫 장소까지의 이동은 별도예요.

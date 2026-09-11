@@ -4,6 +4,7 @@ import type { Category, Place } from "../../domain/policies/types";
 import { searchResultSchema } from "../../application/contracts/result";
 import { callApi } from "./api";
 import { Icon } from "../../components/icon";
+import { Input } from "../../components/ui/input";
 export function PlaceSearch({
   mode,
   selected,
@@ -61,7 +62,7 @@ export function PlaceSearch({
         </label>
         <div className="search-input">
           <Icon name="search" />
-          <input
+          <Input
             id="place-query"
             value={query}
             maxLength={60}
