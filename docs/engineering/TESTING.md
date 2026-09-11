@@ -55,3 +55,17 @@ pnpm exec playwright show-report playwright-report/production
 ```
 
 pnpm test:e2e를 직접 실행할 때는 해당 환경의 브라우저 경로를 설정한다. pnpm verify는 이 OCI 환경의 임시 경로를 자동으로 찾아준다.
+
+## 브라우저 확장 프로그램의 hydration 경고 진단
+
+`<html>`에 `data-hwp-extension="rhwp"`, `data-hwp-extension-version="0.8.6"`만 추가됐다는 경고는 RHWP의 DOM 변경을 먼저 확인한다. 확장 프로그램을 끄거나 IDE 사이트 접근을 제한하고 새로고침한다. [Next.js 공식 설명](https://nextjs.org/docs/messages/react-hydration-error)에도 확장 프로그램의 HTML 변경이 원인으로 안내되어 있다. 이를 숨기기 위해 루트에 `suppressHydrationWarning`을 추가하지 않는다.
+
+실행 중인 개발 서버에서 다음 스크립트를 재사용할 수 있다. 운영 빌드는 경고 표현이 다르므로 이 진단의 대상이 아니다.
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright \
+LD_LIBRARY_PATH=/tmp/pawproof-browser-libs/usr/lib/aarch64-linux-gnu \
+node scripts/playwright/generated/hwp-extension-hydration-diagnosis-0cec3a7842.js http://localhost:3000/absproxy/3000/
+```
+
+2026-09-11 검사에서 홈과 가상 코스 각각 정상 브라우저는 hydration 경고 0건, 같은 두 속성을 document-start에 주입한 브라우저는 경고 1건을 확인했다. 네 경우 모두 페이지 예외 0건, 클라이언트 이동/반려견 추가 동작 정상이다. 실제 RHWP 패키지를 설치한 검사가 아니라 사용자가 보고한 속성 변경을 재현한 것이다. 서버 응답에는 해당 속성이 없었다. 외부 IDE 인증 세션은 이 로컬 검사 범위에 포함되지 않는다.
