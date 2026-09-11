@@ -1,6 +1,6 @@
 # 개발 환경과 경로 처리
 
-기준일: 2026-09-10\
+기준일: 2026-09-11\
 상태: Next.js 설정·환경 파싱·URL 유틸·pnpm 실행기를 구현했다. 아래 계약과 실제 파일을 함께 관리한다. 외부 Vercel 배포는 아직 수행하지 않았다.
 
 ## 구현 파일
@@ -125,6 +125,31 @@ Next Image의 public 파일 경로에는 필요한 basePath를 명시한다. 원
 도메인·포트·TLS·WebSocket 전달은 인프라의 책임이고, URL 접두사 생성은 앱 설정의 책임이다. 앱 유틸로 프록시의 WebSocket 설정 오류를 해결하려 하지 않는다.
 
 개발 전용 `/dev/check`에서 public 이미지와 클라이언트 API 호출을 점검할 수 있다. 프로덕션에서는 404를 반환하며, `/api/health`는 앱 자체 응답만 확인하고 외부 연결 성공을 주장하지 않는다.
+
+## 개발 서버 유지와 접속 장애 점검
+
+일반 작업은 code-server의 열린 터미널에서 `pnpm dev`로 실행한다. Codex 도구의 출력 파이프에 연결한 서버를 작업 종료 후 계속 사용하면 파이프가 닫혀 `write EPIPE`가 발생할 수 있다. 이 환경에서 장시간 미리보기를 유지할 때는 별도 프로세스 세션과 파일 로그를 사용한다.
+
+기존 개발 서버를 종료한 뒤 저장소 루트에서 실행한다. `.cache/`는 Git 제외 대상이다.
+
+```bash
+mkdir -p .cache
+setsid nohup node scripts/next.ts dev code-server > .cache/dev-server.log 2>&1 < /dev/null &
+printf '%s\n' "$!" > .cache/dev-server.pid
+curl --retry 10 --retry-connrefused --retry-delay 1 --max-time 15 \
+  http://localhost:3000/absproxy/3000/api/health
+```
+
+기본 포트 3000 예시다. `node scripts/next.ts dev code-server`는 `pnpm dev:code-server`와 같은 실행기를 직접 호출한다. 종료할 때는 PID 파일의 프로세스가 현재 저장소의 실행기인지 확인하고 해당 PID에 `SIGTERM`을 보낸다. 오래된 PID를 확인 없이 종료하지 않는다. 컨테이너 재시작이나 앱 오류 후 자동 복구를 제공하는 배포 방식은 아니다.
+
+의존성 설치·갱신과 개발 모드 E2E 실행 전에는 기존 개발 서버를 중지하고, 완료 후 다시 시작한다. 개발 중 `node_modules`가 재구성되면 Turbopack이 Next 패키지를 찾지 못할 수 있다.
+
+접속 문제는 다음 순서로 구분한다.
+
+1. 로컬 `/absproxy/3000/api/health`가 응답하지 않으면 `.cache/dev-server.log`와 `.next/dev/logs/next-development.log`를 확인한다. 포트가 열려 있어도 앱이 정상이라는 의미는 아니다.
+2. 로컬 응답은 정상인데 외부가 로그인 화면이면 Cloudflare Access와 code-server 인증 세션을 확인한다. 앱 설정으로 인증을 해제하지 않는다.
+3. 로그인한 브라우저에서 `https://ide.hothyun.com/absproxy/3000/`로 접속한다. IDE가 자동 제시하는 `/proxy/3000`과 구분한다.
+4. 화면은 열리는데 개발 자산·HMR이 차단되면 요청 호스트와 `DEV_ALLOWED_HOSTS`를 확인한다. 로컬 브라우저 점검은 기본 허용된 `localhost`를 사용한다. `127.0.0.1`은 별도 허용 없이 동일하게 취급되지 않는다.
 
 ## 필수 검증
 
