@@ -9,9 +9,11 @@ export async function verifyTrip(input: TripInput, providers: Providers, now = n
   const pending = [...input.visits];
   await Promise.all([0, 1].map(async () => {
     for (let visit = pending.shift(); visit; visit = pending.shift()) {
-      const document = await providers.places.get(visit.placeId);
+      let document: PlaceDocument;
+      try { document = await providers.places.get(visit.placeId); }
+      catch { document = { place: { id: visit.placeId, name: "장소 정보 조회 실패", category: "관광지", address: "다시 검사해 주세요", lat: 0, lng: 0, source: input.mode === "demo" ? "demo" : "kto" }, raw: "", modifiedAt: null, fetchedAt: now.toISOString(), sourceUrl: null, sourceLabel: "원문 조회 실패" }; }
       let policy: Policy;
-      try { policy = await providers.extractor.extract(document); }
+      try { if (!document.raw) throw new Error("Missing source"); policy = await providers.extractor.extract(document); }
       catch { policy = { ...document, rules: [], unresolved: ["규정을 해석하지 못했어요. 원문을 확인하거나 다시 검사해 주세요."] }; }
       documents.set(visit.placeId, { document, policy });
     }
@@ -22,7 +24,7 @@ export async function verifyTrip(input: TripInput, providers: Providers, now = n
   for (const visit of input.visits) {
     const { document, policy } = documents.get(visit.placeId)!;
     const previous = visits.at(-1);
-    const travelMinutes = previous ? await providers.travel.minutes(previous.place, document.place).catch(() => null) : 0;
+    const travelMinutes = previous ? (!previous.place.lat || !document.place.lat ? null : await providers.travel.minutes(previous.place, document.place).catch(() => null)) : 0;
     if (travelMinutes === null) { cursor = null; totalTravel = null; }
     else { if (cursor !== null) cursor += travelMinutes; if (totalTravel !== null) totalTravel += travelMinutes; }
     const findings = evaluatePolicy(policy, { ...input, zone: visit.zone, arrival: cursor, duration: visit.duration });

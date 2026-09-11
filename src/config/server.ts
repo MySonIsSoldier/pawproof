@@ -17,3 +17,7 @@ export function getOpenRouterConfig() {
 export function getKtoConfig() {
   return { serviceKey: requiredValue("KTO_SERVICE_KEY") };
 }
+
+export function getLiveConfig() {
+  return { enabled: process.env.LIVE_SERVICES_ENABLED === "true", kakaoKey: process.env.KAKAO_MOBILITY_REST_KEY?.trim() || "" };
+}
