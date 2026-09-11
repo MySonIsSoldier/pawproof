@@ -84,10 +84,33 @@ export function ktoSource(
       )
       .map(placeFrom);
   return {
-    search: async (query, category) =>
-      supported(
-        await request("searchKeyword2", { keyword: query, arrange: "A" }),
-      ).filter((p) => !category || p.category === category),
+    search: async (query, category) => {
+      // Excluded shops/accommodation must not consume the first page of results.
+      const types =
+        category === "카페" || category === "식당"
+          ? ["39"]
+          : category === "관광지"
+            ? ["12", "14", "28"]
+            : ["12", "14", "28", "39"];
+      const found: Place[] = [];
+      for (let index = 0; index < types.length; index += 2) {
+        const batches = await Promise.all(
+          types
+            .slice(index, index + 2)
+            .map((contentTypeId) =>
+              request("searchKeyword2", {
+                keyword: query,
+                arrange: "A",
+                contentTypeId,
+              }),
+            ),
+        );
+        found.push(...batches.flatMap(supported));
+      }
+      return found
+        .filter((p) => !category || p.category === category)
+        .slice(0, 20);
+    },
     nearby: async (place) =>
       supported(
         await request("locationBasedList2", {

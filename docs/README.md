@@ -29,6 +29,8 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [무료 호스팅·비용·운영](operations/HOSTING_AND_COST.md) | 사용량 예산, DNS, 배포 관리, 대안 전환, 심사 기간 운영 |
 | [구현·검증·제출 계획](delivery/DELIVERY_PLAN.md) | 제출 버전 범위, 역할 분담, 개발 일정, 품질 평가, 시연 |
 | [현재 구현·검증 기록](delivery/IMPLEMENTATION_STATUS.md) | 실제 구현한 파일·실행한 검사·아직 검증하지 않은 연결 |
+| [실 API 검증 실행](engineering/LIVE_VALIDATION.md) | 비용·호출 상한이 있는 공급자/브라우저 검사, 비밀 없는 집계 기록 |
+| [2026-09-11 실사용 검증](delivery/LIVE_VALIDATION_2026-09-11.md) | 실제 장소 결과·수정한 오류·처리 시간·비용·미완료 범위 |
 | [의사결정 및 대화 히스토리](history/DECISION_HISTORY.md) | 아이디어 발전 과정, 확정한 선택, 수정한 가정, 미결 사항 |
 | [근거 및 참고자료](research/SOURCES.md) | 사용자 제공 자료, 이전 검토에서 확인한 외부 자료, 미확인 자료 |
 
@@ -71,7 +73,7 @@ docs/
 - code-server에서는 **`/absproxy/3000` + `basePath`**, 배포에서는 빈 `basePath`를 사용하도록 설계한다. 두 프로필은 별도로 빌드한다.
 - 원문·파생 규정의 영구 저장은 데이터 정책 확인 후 결정한다. 자체 작성 데이터 저장과 구분한다.
 - 새 도메인 구매와 배포·DB 연결 준비는 사용자가 담당한다. 제공된 ref/ 레퍼런스 기반 디자인은 [DESIGN.md](../DESIGN.md)에 정리했다.
-- LLM은 OpenRouter 서버 API 어댑터를 구현했다. 초기 모델·키 설정·비용 한도 권고는 [API 연결](engineering/API_INTEGRATION.md)에 있고 실호출·정확도 평가는 남아 있다.
+- LLM은 OpenRouter 서버 API 어댑터를 구현했다. 초기 모델·키 설정·비용 한도 권고는 [API 연결](engineering/API_INTEGRATION.md)에 있고 실호출·브라우저 표본 검증을 수행했으며 전국 정확도 평가는 남아 있다.
 
 기본 방향은 사용자 채택이 완료되었으며 실제 코드·유틸 작성이나 배포 완료와 구분한다. 공식 근거와 대안 선택 조건은 [스택 결정](engineering/STACK_DECISION.md)에 있다.
 

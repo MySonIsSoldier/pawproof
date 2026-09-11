@@ -12,6 +12,8 @@ pnpm verify
 
 모든 E2E 서버에는 LIVE_SERVICES_ENABLED=false를 주입하므로 유료 API나 실제 KTO를 호출하지 않는다. 모델·KTO·Kakao 단위 검사는 함수 인자로 전달한 합성 HTTP 응답을 사용한다. 실제 서비스 연결 검사와 구분한다.
 
+실제 공급자 호출과 브라우저 흐름은 [실 API 검증 실행](LIVE_VALIDATION.md)의 별도 스크립트로 수행한다. 자동 반복/CI에 연결하지 않으며, 원문·키 대신 상태·시간·제공된 비용만 집계한다. [2026-09-11 결과](../delivery/LIVE_VALIDATION_2026-09-11.md)를 회귀 테스트 결과와 구분한다.
+
 ## 설치 환경
 
 ```bash

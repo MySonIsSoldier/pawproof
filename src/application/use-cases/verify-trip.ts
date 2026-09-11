@@ -7,6 +7,7 @@ import type {
 } from "../../domain/policies/types.ts";
 import { evaluatePolicy, summarize } from "../../domain/policies/evaluate.ts";
 import { toMinutes } from "../../domain/itinerary/time.ts";
+import { createPolicy } from "../contracts/policy.ts";
 
 export async function verifyTrip(
   input: TripInput,
@@ -48,13 +49,12 @@ export async function verifyTrip(
           if (!document.raw) throw new Error("Missing source");
           policy = await providers.extractor.extract(document);
         } catch {
-          policy = {
-            ...document,
+          policy = createPolicy(document, {
             rules: [],
             unresolved: [
               "규정을 해석하지 못했어요. 원문을 확인하거나 다시 검사해 주세요.",
             ],
-          };
+          });
         }
         documents.set(visit.placeId, { document, policy });
       }

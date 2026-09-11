@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Policy } from "../../domain/policies/types.ts";
 const ruleSchema = z
   .object({
     kind: z.enum([
@@ -24,6 +25,21 @@ export const extractionSchema = z
   })
   .strict();
 export type Extraction = z.infer<typeof extractionSchema>;
+/** A source document can carry a place; the policy DTO contains only provenance. */
+export function createPolicy(
+  source: Omit<Policy, "rules" | "unresolved">,
+  extraction: Extraction,
+): Policy {
+  return {
+    raw: source.raw,
+    sourceLabel: source.sourceLabel,
+    sourceUrl: source.sourceUrl,
+    fetchedAt: source.fetchedAt,
+    modifiedAt: source.modifiedAt,
+    rules: extraction.rules,
+    unresolved: extraction.unresolved,
+  };
+}
 /** Shape and quoted evidence are checked independently of provider JSON mode. */
 export function validateExtraction(value: unknown, raw: string): Extraction {
   const parsed = extractionSchema.parse(value);

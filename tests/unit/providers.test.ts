@@ -17,6 +17,8 @@ import {
   createDemoTrip,
 } from "../../src/infrastructure/demo/catalog.ts";
 import { verifyTrip } from "../../src/application/use-cases/verify-trip.ts";
+import { validateExtraction } from "../../src/application/contracts/policy.ts";
+import { resultSchema } from "../../src/application/contracts/result.ts";
 const envelope = (item: unknown) => ({
   response: { header: { resultCode: "0000" }, body: { items: { item } } },
 });
@@ -64,6 +66,13 @@ test("LLM request has schema, budget and no user profile; validates evidence", a
   const fetcher: typeof fetch = async (_input, init) => {
     const body = JSON.parse(String(init?.body));
     assert.equal(body.response_format.type, "json_schema");
+    const schema = body.response_format.json_schema.schema;
+    assert.equal(schema.additionalProperties, false);
+    assert.ok(schema.required.includes("rules"));
+    assert.doesNotMatch(
+      JSON.stringify(schema),
+      /"(?:maxItems|minItems|maxLength|minLength|minimum|maximum)":/,
+    );
     assert.equal(body.provider.require_parameters, true);
     assert.equal(body.max_tokens, 3500);
     assert.ok(!body.messages[1].content.includes('"pets"'));
@@ -83,6 +92,7 @@ test("LLM request has schema, budget and no user profile; validates evidence", a
     fetcher,
   ).extract({ ...policy, place: demoPlaces[1] });
   assert.equal(result.rules.length, 7);
+  assert.ok(!("place" in result));
   const fabricated: typeof fetch = async () =>
     Response.json({
       choices: [
@@ -101,6 +111,27 @@ test("LLM request has schema, budget and no user profile; validates evidence", a
       ...policy,
       place: demoPlaces[1],
     }),
+  );
+});
+test("provider schema simplification never relaxes server output bounds", () => {
+  const policy = demoPolicy("demo-table");
+  assert.throws(() =>
+    validateExtraction(
+      { rules: Array(41).fill(policy.rules[0]), unresolved: [] },
+      policy.raw,
+    ),
+  );
+  assert.throws(() =>
+    validateExtraction(
+      { rules: [{ ...policy.rules[0], value: 1441 }], unresolved: [] },
+      policy.raw,
+    ),
+  );
+  assert.throws(() =>
+    validateExtraction(
+      { rules: [], unresolved: ["x".repeat(301)] },
+      policy.raw,
+    ),
   );
 });
 test("upstream error cannot expose a key or return arbitrary HTML", async () => {
@@ -139,4 +170,5 @@ test("one source failure preserves successful neighboring place results", async 
   const result = await verifyTrip(createDemoTrip(), providers);
   assert.equal(result.visits[0].status, "available");
   assert.equal(result.visits[1].status, "confirm");
+  assert.doesNotThrow(() => resultSchema.parse(result));
 });
