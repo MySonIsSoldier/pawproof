@@ -3,47 +3,143 @@ import type { PlaceSource } from "../../application/ports/providers.ts";
 import type { Category, Place } from "../../domain/policies/types.ts";
 import { fetchJson, ProviderError } from "../http/fetch-json.ts";
 const row = z.record(z.string(), z.union([z.string(), z.number(), z.null()]));
-const envelope = z.object({ response: z.object({ header: z.object({ resultCode: z.string() }), body: z.object({ items: z.union([z.literal(""), z.object({ item: z.union([z.array(row), row]).optional() })]).optional() }).optional() }) });
+const envelope = z.object({
+  response: z.object({
+    header: z.object({ resultCode: z.string() }),
+    body: z
+      .object({
+        items: z
+          .union([
+            z.literal(""),
+            z.object({ item: z.union([z.array(row), row]).optional() }),
+          ])
+          .optional(),
+      })
+      .optional(),
+  }),
+});
 type Row = z.infer<typeof row>;
-const text = (value: unknown) => typeof value === "string" || typeof value === "number" ? String(value) : "";
-const plain = (value: unknown) => text(value).replace(/<br\s*\/?\s*>/gi, "\n").replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&");
-const categoryOf = (item: Row): Category => text(item.contenttypeid) === "39" ? (text(item.cat3) === "A05020900" ? "카페" : "식당") : "관광지";
+const text = (value: unknown) =>
+  typeof value === "string" || typeof value === "number" ? String(value) : "";
+const plain = (value: unknown) =>
+  text(value)
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
+const categoryOf = (item: Row): Category =>
+  text(item.contenttypeid) === "39"
+    ? text(item.cat3) === "A05020900"
+      ? "카페"
+      : "식당"
+    : "관광지";
 export function parseKtoItems(value: unknown): Row[] {
   const parsed = envelope.parse(value).response;
-  if (parsed.header.resultCode !== "0000") throw new ProviderError("unavailable");
+  if (parsed.header.resultCode !== "0000")
+    throw new ProviderError("unavailable");
   const items = parsed.body?.items;
   if (!items || !items.item) return [];
   return Array.isArray(items.item) ? items.item : [items.item];
 }
 function placeFrom(item: Row): Place {
   const id = text(item.contentid);
-  if (!/^\d{1,12}$/.test(id) || !text(item.title)) throw new ProviderError("invalid");
-  const lat = Number(item.mapy), lng = Number(item.mapx);
-  return { id, name: plain(item.title), category: categoryOf(item), address: [plain(item.addr1), plain(item.addr2)].filter(Boolean).join(" "), lat: Number.isFinite(lat) ? lat : 0, lng: Number.isFinite(lng) ? lng : 0, source: "kto" };
+  if (!/^\d{1,12}$/.test(id) || !text(item.title))
+    throw new ProviderError("invalid");
+  const lat = Number(item.mapy),
+    lng = Number(item.mapx);
+  return {
+    id,
+    name: plain(item.title),
+    category: categoryOf(item),
+    address: [plain(item.addr1), plain(item.addr2)].filter(Boolean).join(" "),
+    lat: Number.isFinite(lat) ? lat : 0,
+    lng: Number.isFinite(lng) ? lng : 0,
+    source: "kto",
+  };
 }
-export function ktoSource(serviceKey: string, fetcher: typeof fetch = fetch): PlaceSource {
+export function ktoSource(
+  serviceKey: string,
+  fetcher: typeof fetch = fetch,
+): PlaceSource {
   const request = async (operation: string, params: Record<string, string>) => {
-    const url = new URL(`https://apis.data.go.kr/B551011/KorPetTourService2/${operation}`);
+    const url = new URL(
+      `https://apis.data.go.kr/B551011/KorPetTourService2/${operation}`,
+    );
     // URLSearchParams performs the one required encoding; users configure the decoding key.
-    url.search = new URLSearchParams({ serviceKey, MobileOS: "ETC", MobileApp: "PawProof", _type: "json", numOfRows: "20", pageNo: "1", ...params }).toString();
+    url.search = new URLSearchParams({
+      serviceKey,
+      MobileOS: "ETC",
+      MobileApp: "PawProof",
+      _type: "json",
+      numOfRows: "20",
+      pageNo: "1",
+      ...params,
+    }).toString();
     return parseKtoItems(await fetchJson(url, {}, fetcher));
   };
-  const supported = (items: Row[]) => items.filter((item) => ["12", "14", "28", "39"].includes(text(item.contenttypeid))).map(placeFrom);
+  const supported = (items: Row[]) =>
+    items
+      .filter((item) =>
+        ["12", "14", "28", "39"].includes(text(item.contenttypeid)),
+      )
+      .map(placeFrom);
   return {
-    search: async (query, category) => supported(await request("searchKeyword2", { keyword: query, arrange: "A" })).filter((p) => !category || p.category === category),
-    nearby: async (place) => supported(await request("locationBasedList2", { mapX: String(place.lng), mapY: String(place.lat), radius: "10000", arrange: "E", contentTypeId: place.category === "관광지" ? "12" : "39" })).filter((p) => p.category === place.category),
+    search: async (query, category) =>
+      supported(
+        await request("searchKeyword2", { keyword: query, arrange: "A" }),
+      ).filter((p) => !category || p.category === category),
+    nearby: async (place) =>
+      supported(
+        await request("locationBasedList2", {
+          mapX: String(place.lng),
+          mapY: String(place.lat),
+          radius: "10000",
+          arrange: "E",
+          contentTypeId: place.category === "관광지" ? "12" : "39",
+        }),
+      ).filter((p) => p.category === place.category),
     get: async (id) => {
       if (!/^\d{1,12}$/.test(id)) throw new ProviderError("invalid");
-      const [common, pets] = await Promise.all([request("detailCommon2", { contentId: id }), request("detailPetTour2", { contentId: id })]);
+      const [common, pets] = await Promise.all([
+        request("detailCommon2", { contentId: id }),
+        request("detailPetTour2", { contentId: id }),
+      ]);
       if (!common[0]) throw new ProviderError("invalid");
       const place = placeFrom(common[0]);
       if (place.id !== id) throw new ProviderError("invalid");
-      const intro = await request("detailIntro2", { contentId: id, contentTypeId: text(common[0].contenttypeid) });
-      const fields = ["acmpyTypeCd", "acmpyPsblCpam", "acmpyNeedMtr", "relaAcdntRiskMtr", "etcAcmpyInfo", "acmpyZone", "relaPosesFclty", "relaFrnshPrdlst"];
-      const regulations = fields.map((key) => pets[0]?.[key] ? `${key}: ${plain(pets[0][key])}` : "").filter(Boolean);
-      const hours = Object.entries(intro[0] || {}).filter(([key]) => /opentime|usetime|restdate|resttime|chkpet|reservation|infocenter/i.test(key)).map(([key, value]) => `${key}: ${plain(value)}`);
+      const intro = await request("detailIntro2", {
+        contentId: id,
+        contentTypeId: text(common[0].contenttypeid),
+      });
+      const fields = [
+        "acmpyTypeCd",
+        "acmpyPsblCpam",
+        "acmpyNeedMtr",
+        "relaAcdntRiskMtr",
+        "etcAcmpyInfo",
+        "acmpyZone",
+        "relaPosesFclty",
+        "relaFrnshPrdlst",
+      ];
+      const regulations = fields
+        .map((key) => (pets[0]?.[key] ? `${key}: ${plain(pets[0][key])}` : ""))
+        .filter(Boolean);
+      const hours = Object.entries(intro[0] || {})
+        .filter(([key]) =>
+          /opentime|usetime|restdate|resttime|chkpet|reservation|infocenter/i.test(
+            key,
+          ),
+        )
+        .map(([key, value]) => `${key}: ${plain(value)}`);
       const raw = [...new Set([...regulations, ...hours])].join("\n");
-      return { place, raw, fetchedAt: new Date().toISOString(), modifiedAt: text(common[0].modifiedtime) || null, sourceUrl: "https://api.visitkorea.or.kr/", sourceLabel: "출처: ⓒ한국관광공사" };
+      return {
+        place,
+        raw,
+        fetchedAt: new Date().toISOString(),
+        modifiedAt: text(common[0].modifiedtime) || null,
+        sourceUrl: "https://api.visitkorea.or.kr/",
+        sourceLabel: "출처: ⓒ한국관광공사",
+      };
     },
   };
 }

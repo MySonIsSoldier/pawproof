@@ -8,7 +8,11 @@ export function formatTime(minutes: number | null): string {
   return `${nextDay}${String(Math.floor(minutes / 60) % 24).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
 }
 /** A date-only Korean travel day has the same weekday without server-local conversion. */
-export function weekday(date: string): number { return new Date(`${date}T12:00:00+09:00`).getUTCDay(); }
+export function weekday(date: string): number {
+  return new Date(`${date}T12:00:00+09:00`).getUTCDay();
+}
 export function koreaToday(now = new Date()): string {
-  return new Date(now.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  return new Date(now.getTime() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
 }
