@@ -116,3 +116,5 @@ Firestore가 준비되지 않아도 영구 저장이 필요 없는 핵심 흐름
 React 렌더링 최적화보다 먼저 불필요한 네트워크 왕복과 클라이언트 번들을 줄인다. 사용자가 수정할 때마다 전체 코스를 즉시 재검증하지 않고 ‘검증하기’ 동작과 입력 변경 상태를 구분한다. 사용자가 제공한 ref/를 기반으로 [DESIGN.md](../../DESIGN.md)를 작성한 뒤 화면을 구현했다. Client Component는 프로필·코스 편집과 요청 상태를 관리하고, 실제/가상 모드 모두 서버 사용 사례를 호출한다. 방문 순서는 SVG 노선도로 제공하며 지도 SDK를 로드하지 않는다.
 
 작업 피드백은 `features → ActionNotification → withNotifications → Sonner`로 연결한다. HOC가 화면별 알림 제공자·표시·해제를 담당하고, `usePlannerNotifications`가 Zustand 이벤트를 연결한다. UI 출력 의존성은 이 경계에서 끝나며 도메인/사용 사례에 들어가지 않는다. 관련 금지 import를 ESLint로 검사한다.
+
+PWA의 브라우저 수명은 root PwaProvider가 관리한다. 서비스 워커는 정적 offline 안내와 아이콘만 저장하고 API·RSC·여행 화면·사용자 데이터를 캐시하지 않는다. 설치/업데이트 안내는 공통 Dialog를 사용한다. 환경·scope·빌드별 release와 데이터 경계는 [PWA 계약](PWA.md)을 따른다.

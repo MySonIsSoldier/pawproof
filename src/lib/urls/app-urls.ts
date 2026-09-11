@@ -13,6 +13,8 @@ export function createAppUrls(basePath: string) {
   }
 
   return {
+    /** Browser-native URLs (manifest, worker, hard navigation). Next Link uses logical paths. */
+    appPath: internalPath,
     apiPath(path: string): string {
       const pathname = pathnameOf(path);
       if (pathname !== "/api" && !pathname.startsWith("/api/")) {

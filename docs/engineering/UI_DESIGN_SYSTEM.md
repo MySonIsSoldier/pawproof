@@ -64,3 +64,7 @@ shadcn/ui의 Radix 구현 소스를 기반으로 컴포넌트를 직접 소유�
 - 알림은 저장·API 계약에 포함하지 않는다. 규정/여행 정보가 Sonner에 영구 저장되지 않으며 브라우저 입력 저장 형식도 그대로 유지한다.
 
 공식 원본은 [shadcn Sonner registry](https://ui.shadcn.com/r/styles/new-york-v4/sonner.json), 동작은 [Sonner](https://github.com/emilkowalski/sonner)를 따른다. 이 프로젝트는 라이트 테마·기존 아이콘·CSS 토큰을 사용하므로 next-themes와 lucide를 추가하지 않는다.
+
+## PWA 공통 UI
+
+헤더 설치 버튼과 설치/업데이트 모달은 공통 Button·Dialog/Trigger를 사용한다. 설치 상태·워커 수명은 별도 훅이 담당하며 상세 계약은 [PWA](PWA.md)에 있다. 오프라인/업데이트는 지속 상태 띠로 표시하고, 작업 완료 토스트와 구분한다. 자동 업데이트로 편집 중 입력을 지우지 않는다.

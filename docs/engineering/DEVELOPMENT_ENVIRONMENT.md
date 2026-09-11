@@ -168,3 +168,7 @@ curl --retry 10 --retry-connrefused --retry-delay 1 --max-time 15 \
 7. 빈 값·후행 슬래시·잘못된 origin·중복 접두사·외부 URL 입력을 유틸이 의도대로 처리하는지.
 
 Cloudflare로 전환하면 일반 `next dev`와 별도로 OpenNext의 `workerd` 프리뷰·실제 배포를 검증한다. 프리뷰 포트가 8787이면 `/absproxy/8787`용 빌드가 필요하고, 루트 배포 빌드 검증에는 루트로 접근 가능한 별도 호스트나 포트 전달을 사용한다. 프록시 빌드를 운영에 재사용하지 않는다. [OpenNext 실행 환경](https://developers.cloudflare.com/workers/framework-guides/web-apps/opennext/)
+
+## PWA 개발 검사
+
+워커는 개발 중 기본 비활성화하고, 필요할 때 PWA_ENABLED=true로 재시작한다. code-server의 정확한 앱 scope만 사용하며 다른 워커/캐시를 변경하지 않는다. 네이티브 URL은 appPath, Next Link는 논리 경로를 사용한다. 운영 빌드는 실행기가 새 PWA release를 생성한다. [PWA 환경·수명 계약](PWA.md)을 따른다.

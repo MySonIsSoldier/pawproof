@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import nextEnv from "@next/env";
@@ -15,6 +16,8 @@ async function main(): Promise<number> {
   const development = command === "dev";
   Object.assign(process.env, { NODE_ENV: development ? "development" : "production" });
   nextEnv.loadEnvConfig(process.cwd(), development);
+  // Each built worker has a different revision, even when only app code changed.
+  if (command === "build") process.env.PWA_RELEASE_ID = randomUUID();
   if (profile) {
     process.env.APP_ENV = profile;
     process.env.APP_BASE_PATH = profile === "local" ? "" : process.env.APP_BASE_PATH || `/absproxy/${process.env.PORT || "3000"}`;

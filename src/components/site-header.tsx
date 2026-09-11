@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "./icon";
+import { InstallButton } from "../features/pwa/install-button";
 export function SiteHeader({ compact = false }: { compact?: boolean }) {
   return (
     <header className="site-header wrap">
@@ -10,6 +11,7 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
         pawproof<span className="brand-dot">.</span>
       </Link>
       <nav aria-label="주 메뉴">
+        <InstallButton />
         <Link href="/about">PawProof 소개</Link>
         {!compact && <Link href="/#how-it-works">이용 방법</Link>}
         <Link href={compact ? "/" : "/plan"} className="button small">

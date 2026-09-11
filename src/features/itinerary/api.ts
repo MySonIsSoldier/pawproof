@@ -6,6 +6,10 @@ export async function callApi<T>(
   body?: unknown,
   signal?: AbortSignal,
 ): Promise<T> {
+  if (typeof navigator !== "undefined" && navigator.onLine === false)
+    throw new Error(
+      "오프라인에서는 검색과 코스 검사를 할 수 없어요. 연결 후 다시 시도해 주세요.",
+    );
   const response = await fetch(apiPath(path), {
     method: body === undefined ? "GET" : "POST",
     headers: body === undefined ? {} : { "Content-Type": "application/json" },

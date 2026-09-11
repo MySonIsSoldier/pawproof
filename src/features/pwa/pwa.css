@@ -1,0 +1,96 @@
+.pwa-status {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: max(10px, env(safe-area-inset-top)) 20px 10px;
+  background: var(--sage);
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.pwa-status strong {
+  flex-shrink: 0;
+}
+.pwa-dialog {
+  max-width: 480px;
+  padding: 28px;
+}
+.pwa-dialog h2 {
+  font-size: 24px;
+  letter-spacing: -0.8px;
+}
+.pwa-emblem {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 24px;
+  background: var(--sage);
+  color: var(--forest);
+  margin-block: 24px;
+}
+.pwa-install-steps {
+  margin-block: 24px;
+  padding: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-popover);
+}
+.pwa-install-steps p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.pwa-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+@media (max-width: 720px) {
+  .site-header nav {
+    gap: 6px;
+  }
+  .pwa-install-button {
+    padding-inline: 7px;
+    font-size: 12px;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+  .pwa-install-button svg {
+    display: none;
+  }
+  .pwa-status {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 4px 12px;
+  }
+  .pwa-dialog {
+    padding: 22px;
+  }
+}
+@media (max-width: 360px) {
+  .site-header .brand {
+    font-size: 21px;
+  }
+  .site-header .brand-mark {
+    width: 28px;
+  }
+  .site-header .button {
+    padding-inline: 9px;
+  }
+}
+@media print {
+  .pwa-status {
+    display: none !important;
+  }
+}

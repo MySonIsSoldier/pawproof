@@ -1,4 +1,5 @@
 @import "./planner.css";
+@import "../features/pwa/pwa.css";
 @import "../components/ui/controls.css";
 :root {
   --forest: #2f6b50;

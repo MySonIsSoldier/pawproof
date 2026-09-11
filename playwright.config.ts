@@ -62,6 +62,7 @@ export default defineConfig({
       PORT: String(port),
       NEXT_TELEMETRY_DISABLED: "1",
       LIVE_SERVICES_ENABLED: "false",
+      PWA_ENABLED: "true",
     },
   },
 });

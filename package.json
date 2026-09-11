@@ -19,7 +19,8 @@
     "test:e2e": "playwright test",
     "verify": "node scripts/verify.mjs",
     "preview:start": "node scripts/preview.mjs start",
-    "preview:stop": "node scripts/preview.mjs stop"
+    "preview:stop": "node scripts/preview.mjs stop",
+    "assets:pwa": "node scripts/generate-pwa-icons.mjs"
   },
   "dependencies": {
     "@next/env": "16.3.4",

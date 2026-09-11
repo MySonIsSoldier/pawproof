@@ -23,6 +23,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [애플리케이션 아키텍처](engineering/ARCHITECTURE.md) | 단일 앱의 계층·인터페이스·데이터 흐름·저장 경계 |
 | [개발 환경과 경로 처리](engineering/DEVELOPMENT_ENVIRONMENT.md) | code-server 프록시, 환경변수, URL 유틸, 빌드·검증 계약 |
 | [코드 작성과 검증 원칙](engineering/CODE_STANDARDS.md) | 단일 책임, 타입·실패 처리, 테스트, 협업 |
+| [PWA 설치·오프라인·업데이트](engineering/PWA.md) | 설치 UX, 워커·캐시 경계, 개발 프록시, 검증 범위 |
 | [코드 품질 점검](engineering/CODE_QUALITY_REVIEW.md) | 작업 알림·실패 경계의 발견 사항, 수정, 검증 범위 |
 | [UI 디자인 시스템·상태 책임](engineering/UI_DESIGN_SYSTEM.md) | shadcn/Radix 컴포넌트, 토큰, Zustand·TanStack Query, 공통 훅 |
 | [무료 호스팅·비용·운영](operations/HOSTING_AND_COST.md) | 사용량 예산, DNS, 배포 관리, 대안 전환, 심사 기간 운영 |
@@ -59,7 +60,7 @@ docs/
 - 판정은 **이용 가능·준비 필요·확인 필요·이용 불가**로 통일한다.
 - 최종 결과에는 **코스, 준비사항, 남은 확인사항**이 함께 있어야 한다.
 - 인천을 우선 검토하되, 실제 조건과 대체 후보의 밀도를 확인한 뒤 집중 지원 권역을 확정한다.
-- 제출 형태는 **모바일 우선 웹**이다. 핵심 기능은 비로그인으로 체험할 수 있도록 한다.
+- 제출 형태는 **모바일 우선 웹(PWA)**이다. 핵심 기능은 비로그인으로 체험할 수 있도록 한다.
 
 ## 채택한 개발 방향
 
