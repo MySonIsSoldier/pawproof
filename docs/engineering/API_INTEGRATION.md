@@ -22,7 +22,7 @@ Firestore는 이번 비로그인 핵심 흐름의 선행 조건이 아니다. �
 
 ## 외부 경로
 
-- KTO: `https://apis.data.go.kr/B551011/KorPetTourService2`의 searchKeyword2, locationBasedList2, detailCommon2, detailPetTour2, detailIntro2. 실호출 성공을 확인했다. 필드 누락은 허용으로 해석하지 않는다. 검색은 지원 contentTypeId별로 조회한 후 최대 20곳을 표시한다. 전체 검색 최대 4회, 관광지 3회, 식당/카페 1회 요청이며 동시 요청은 2개다. ID·주소·좌표·업종은 어댑터에서 변환한다.
+- KTO: `https://apis.data.go.kr/B551011/KorPetTourService2`의 searchKeyword2, locationBasedList2, detailCommon2, detailPetTour2, detailIntro2. 실호출 성공을 확인했다. 필드 누락은 허용으로 해석하지 않는다. 이름 검색은 지원 contentTypeId별로 조회한 후 최대 20곳을 표시한다. 인천/인천광역시는 areaBasedList2의 lDongRegnCd=28 지역 검색으로 최대 100곳을 반환한다. 신규 lclsSystm2가 있으면 우선하여 카페를 분류한다. 전체 검색 최대 4회, 관광지 3회, 식당/카페 1회 요청이며 동시 요청은 2개다. ID·주소·좌표·업종은 어댑터에서 변환한다.
 - OpenRouter: https://openrouter.ai/api/v1/chat/completions. strict JSON schema, require_parameters, 데이터 수집 거부, 출력 3500토큰 상한, 35초 제한, 자동 재시도 없음. Gemini의 생성 복잡도 제한에 맞춰 전달 스키마의 길이·수치 경계를 단순화하되 서버의 원래 Zod 제약과 근거 검증을 유지한다. 규정 원문 14000자 초과는 잘라서 확정하지 않고 추출 실패 처리.
 - Kakao: https://apis-navi.kakaomobility.com/v1/directions. summary=true, 초를 분으로 올림, 실패 또는 좌표 누락은 미확인.
 

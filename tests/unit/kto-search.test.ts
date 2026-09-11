@@ -4,6 +4,26 @@ import { ktoSource } from "../../src/infrastructure/kto/source.ts";
 const envelope = (item: unknown) => ({
   response: { header: { resultCode: "0000" }, body: { items: { item } } },
 });
+test("Incheon uses legal district codes and current cafe classification", async () => {
+  const source = ktoSource("fake", async (input) => {
+    const url = new URL(String(input));
+    assert.ok(url.pathname.endsWith("areaBasedList2"));
+    assert.equal(url.searchParams.get("lDongRegnCd"), "28");
+    assert.equal(url.searchParams.get("areaCode"), null);
+    return Response.json(
+      envelope([
+        {
+          contentid: "456",
+          contenttypeid: "39",
+          title: "합성 카페",
+          cat3: "",
+          lclsSystm2: "FD05",
+        },
+      ]),
+    );
+  });
+  assert.equal((await source.search("인천", "카페"))[0].category, "카페");
+});
 test("KTO searches supported content types before truncating results", async () => {
   const types: string[] = [];
   const source = ktoSource("fake", async (input) => {

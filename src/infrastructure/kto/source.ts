@@ -29,7 +29,11 @@ const plain = (value: unknown) =>
     .replace(/&amp;/g, "&");
 const categoryOf = (item: Row): Category =>
   text(item.contenttypeid) === "39"
-    ? text(item.cat3) === "A05020900"
+    ? (
+        text(item.lclsSystm2)
+          ? text(item.lclsSystm2) === "FD05"
+          : text(item.cat3) === "A05020900"
+      )
       ? "카페"
       : "식당"
     : "관광지";
@@ -85,6 +89,7 @@ export function ktoSource(
       .map(placeFrom);
   return {
     search: async (query, category) => {
+      const incheon = /^(인천|인천광역시)$/.test(query.trim());
       // Excluded shops/accommodation must not consume the first page of results.
       const types =
         category === "카페" || category === "식당"
@@ -95,21 +100,21 @@ export function ktoSource(
       const found: Place[] = [];
       for (let index = 0; index < types.length; index += 2) {
         const batches = await Promise.all(
-          types
-            .slice(index, index + 2)
-            .map((contentTypeId) =>
-              request("searchKeyword2", {
-                keyword: query,
-                arrange: "A",
-                contentTypeId,
-              }),
-            ),
+          types.slice(index, index + 2).map((contentTypeId) =>
+            request(incheon ? "areaBasedList2" : "searchKeyword2", {
+              ...(incheon
+                ? { lDongRegnCd: "28", numOfRows: "100" }
+                : { keyword: query }),
+              arrange: "A",
+              contentTypeId,
+            }),
+          ),
         );
         found.push(...batches.flatMap(supported));
       }
       return found
         .filter((p) => !category || p.category === category)
-        .slice(0, 20);
+        .slice(0, incheon ? 100 : 20);
     },
     nearby: async (place) =>
       supported(
@@ -162,6 +167,12 @@ export function ktoSource(
         modifiedAt: text(common[0].modifiedtime) || null,
         sourceUrl: "https://api.visitkorea.or.kr/",
         sourceLabel: "출처: ⓒ한국관광공사",
+        phone:
+          Object.entries(intro[0] || {})
+            .find(
+              ([key, value]) => /infocenter/i.test(key) && plain(value).trim(),
+            )?.[1]
+            ?.toString() || null,
       };
     },
   };

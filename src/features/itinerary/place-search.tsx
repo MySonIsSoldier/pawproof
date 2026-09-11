@@ -77,6 +77,11 @@ export function PlaceSearch({
           ))}
         </div>
       </form>
+      {mode === "live" && (
+        <p className="field-caption">
+          ‘인천’은 인천 지역에서, 다른 검색어는 장소 이름으로 찾아요.
+        </p>
+      )}
       {message && (
         <p role="alert" className="inline-error">
           {message}
