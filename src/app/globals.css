@@ -236,12 +236,12 @@ select {
 }
 .photo-backdrop {
   position: absolute;
-  width: 86%;
+  width: 80%;
   height: 94%;
   border-radius: 46% 46% 26px 26px;
   background: #dce7d7;
   top: 20px;
-  left: 14%;
+  left: 12%;
   transform: rotate(7deg);
 }
 .hero-photo {
@@ -251,6 +251,29 @@ select {
   overflow: hidden;
   background: var(--sage);
   transform: rotate(-3deg);
+}
+.photo-backdrop,
+.hero-photo {
+  transition:
+    transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 600ms ease;
+  box-shadow: 0 12px 32px rgb(25 61 48 / 10%);
+}
+.photo-backdrop {
+  overflow: hidden;
+}
+.photo-backdrop img {
+  object-fit: cover;
+  object-position: 25% 50%;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hero-art:hover .hero-photo {
+    transform: translateX(-12%) rotate(-8deg);
+    box-shadow: 0 20px 42px rgb(25 61 48 / 17%);
+  }
+  .hero-art:hover .photo-backdrop {
+    transform: translateX(4%) rotate(9deg);
+  }
 }
 .hero-photo img {
   object-fit: cover;
@@ -357,12 +380,18 @@ select {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  line-height: 1.4;
-  letter-spacing: 1.5px;
+  padding: 10px 5px;
+  line-height: 1.2;
+  letter-spacing: 0.65px;
   font-size: 8px;
   font-weight: 600;
   transform: rotate(16deg);
-  gap: 0;
+  gap: 5px;
+  z-index: 4;
+  pointer-events: none;
+}
+.photo-stamp > span {
+  white-space: nowrap;
 }
 .promise-strip {
   background: var(--sage);
@@ -700,8 +729,11 @@ select {
     font-size: 10px;
   }
   .photo-stamp {
-    width: 70px;
-    height: 70px;
+    width: 76px;
+    height: 76px;
+    font-size: 7px;
+    letter-spacing: 0.35px;
+    gap: 4px;
   }
   .promise-strip > .wrap {
     gap: 30px;
@@ -730,15 +762,16 @@ select {
     font-size: 25px;
   }
   .site-header nav {
-    gap: 14px;
+    gap: 6px;
   }
   .site-header nav > a:not(.button) {
     display: none;
   }
   .site-header .button {
     min-height: 40px;
-    padding: 9px 14px;
+    padding: 9px 10px;
     font-size: 12px;
+    white-space: nowrap;
   }
   .hero {
     grid-template-columns: 1fr;
@@ -888,6 +921,17 @@ select {
   }
   .about-page h1 {
     font-size: 38px;
+  }
+}
+@media (max-width: 360px) {
+  .site-header.wrap {
+    width: calc(100% - 24px);
+    gap: 6px;
+  }
+  .site-header .button {
+    font-size: 11px;
+    gap: 8px;
+    padding-inline: 9px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

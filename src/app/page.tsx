@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import dog from "../../public/media/travel-dog.jpg";
+import companion from "../../public/media/travel-companion.jpg";
 import {
   Accordion,
   AccordionItem,
@@ -46,7 +47,15 @@ export default function Home() {
             </p>
           </div>
           <div className="hero-art">
-            <div className="photo-backdrop" />
+            <div className="photo-backdrop">
+              <Image
+                src={companion}
+                alt="바닷가에서 바람을 맞는 갈색과 흰색 반려견"
+                fill
+                sizes="(max-width: 720px) 80vw, 440px"
+                placeholder="blur"
+              />
+            </div>
             <div className="hero-photo">
               <Image
                 src={dog}
@@ -92,11 +101,9 @@ export default function Home() {
               <Icon name="paw" size={38} />
             </span>
             <span className="photo-stamp">
-              WITH YOU
-              <br />
-              <Icon name="paw" size={22} />
-              <br />
-              ALL THE WAY
+              <span>WITH YOU</span>
+              <Icon name="paw" size={20} />
+              <span>ALL THE WAY</span>
             </span>
           </div>
         </section>

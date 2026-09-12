@@ -81,3 +81,17 @@ node scripts/playwright/generated/hwp-extension-hydration-diagnosis-0cec3a7842.j
 PWA 검사는 [PWA 계약](PWA.md)을 따른다. pnpm verify의 Playwright 서버는 PWA_ENABLED=true로 워커까지 검사한다. pwa.spec.ts가 설치 메타데이터·offline·실제 업데이트·탭/캐시 격리를 검증하며 실제 OS 설치와 설치 이벤트 시뮬레이션은 구분한다.
 
 인천 시 자료 변경 검사는 `python scripts/audit-incheon-source.py`, 유료 표본 검사는 `node scripts/audit-incheon.ts --live`로 분리한다. [실측](../delivery/INCHEON_VALIDATION_2026-09-11.md)을 참조한다. 일반 E2E의 evidence.spec.ts는 합성 출처로 날짜·연락처·링크·모바일 근거 표시를 검사한다. 실제 인천 검사 스크립트는 유료 호출을 한 번만 수행하며 자동 반복하지 않는다.
+
+## 표면·아코디언·홈 카드 검증 (2026-09-12)
+
+`surface-motion.spec.ts`는 설치 모달의 배경색·경계·작은 화면 스크롤·진입/종료·포커스 복귀, FAQ 방향키/다중 펼침, reduced-motion을 검사한다. `hero-cards.spec.ts`는 두 이미지 로딩, 마우스에서만 벌어짐·원복, 터치·reduced-motion에서 정적 유지, 작은 화면과 데스크톱의 영문 도장·페이지 폭을 검사한다. 기존 전체 검증에 포함된다.
+
+시각 확인용 스크립트 **CREATED**: `scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-re-62ab37eb7f.js`. 이후 같은 검사는 이 파일을 재사용한다.
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright \
+LD_LIBRARY_PATH=/tmp/pawproof-browser-libs/usr/lib/aarch64-linux-gnu \
+node scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-re-62ab37eb7f.js
+```
+
+실행 중인 기본 미리보기를 사용하며 마지막 인자로 다른 로컬 URL을 전달할 수 있다. 320·360·390·768·1024·1440px에서 홈·설치 모달 및 데스크톱 호버 화면을 `.cache/ui-polish/`에 저장한다. 유료 API는 호출하지 않는다. 자동화된 Chromium 터치 에뮬레이션은 실제 iOS/Android 기기 확인과 구분한다.
