@@ -1,0 +1,70 @@
+import "server-only";
+import { z } from "zod";
+import { AccountError } from "../application/ports/trip-repository";
+import { adminAuth, adminDb } from "../infrastructure/firebase/admin";
+import { FirestoreTrips } from "../infrastructure/persistence/firestore-trips";
+import { json } from "./http";
+export async function requireAccount(request: Request) {
+  const bearer = request.headers
+    .get("authorization")
+    ?.match(/^Bearer ([^\s]+)$/)?.[1];
+  if (!bearer || bearer.length > 8192)
+    throw new AccountError("UNAUTHORIZED", "로그인한 뒤 다시 시도해 주세요.");
+  let auth;
+  try {
+    auth = adminAuth();
+  } catch {
+    throw new AccountError(
+      "UNAVAILABLE",
+      "계정 저장 연결을 준비하고 있어요. 이 기기에 저장은 계속 이용할 수 있어요.",
+    );
+  }
+  let token;
+  try {
+    token = await auth.verifyIdToken(bearer, true);
+  } catch {
+    throw new AccountError(
+      "UNAUTHORIZED",
+      "로그인이 만료되었어요. 다시 로그인해 주세요.",
+    );
+  }
+  if (!token.email_verified)
+    throw new AccountError(
+      "VERIFY_EMAIL",
+      "이메일 인증을 마친 뒤 계정 저장을 이용해 주세요.",
+    );
+  return token.uid;
+}
+export const accountTrips = () => new FirestoreTrips(adminDb());
+export function accountErrorResponse(error: unknown) {
+  if (error instanceof AccountError) {
+    const statuses = {
+      UNAUTHORIZED: 401,
+      VERIFY_EMAIL: 403,
+      UNAVAILABLE: 503,
+      CONFLICT: 409,
+      LIMIT: 409,
+      NOT_FOUND: 404,
+    };
+    return json(
+      { error: error.message, code: error.code },
+      statuses[error.code],
+    );
+  }
+  if (error instanceof z.ZodError)
+    return json(
+      {
+        error: "노트 제목과 반려견 정보, 방문지 3~5곳을 확인해 주세요.",
+        code: "INVALID_INPUT",
+      },
+      400,
+    );
+  return json(
+    {
+      error:
+        "여행 노트를 처리하지 못했어요. 입력은 그대로 두고 잠시 후 다시 시도해 주세요.",
+      code: "UNAVAILABLE",
+    },
+    503,
+  );
+}
