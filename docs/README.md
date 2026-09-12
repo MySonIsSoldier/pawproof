@@ -20,6 +20,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [판정·일정 복구 기준](product/RULES_AND_RECOVERY.md) | 네 가지 상태, 규정 해석, 불확실성, 대체 장소, 코스 재검증 |
 | [데이터 전략](data/DATA_STRATEGY.md) | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙 |
 | [인천 데이터 보강](data/INCHEON_COVERAGE.md) | 확보 출처·지역 검색·장소 병합·충돌·갱신 기준 |
+| [사용자 앱 조사 안내](data/INCHEON_APP_RESEARCH_GUIDE.md) | 첫 4개 가게·앱별 조사 순서·캡처 항목·자료 전달 양식 |
 | [인천 업체 확인 목록](data/INCHEON_CONFIRMATION_QUEUE.md) | 30곳의 누락 항목·자료 내 연락처·남은 확인 질문 |
 | [인천 보강 실측](delivery/INCHEON_VALIDATION_2026-09-11.md) | 실제 브라우저·표본 지표·보강 한계·검사 결과 |
 | [기술 스택 선택](engineering/STACK_DECISION.md) | Vercel·Workers·OCI, Firebase·Supabase·D1 비교와 우선안 |
