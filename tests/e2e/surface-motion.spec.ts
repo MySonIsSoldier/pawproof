@@ -14,7 +14,7 @@ test("installation dialog has an opaque surface, bounded scroll and animated dis
   const trigger = page.getByRole("button", { name: "PawProof 앱 설치 안내" });
   await trigger.click();
   const dialog = page.getByRole("dialog");
-  await expect(dialog).toHaveCSS("background-color", "rgb(250, 251, 247)");
+  await expect(dialog).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await expect(dialog).toHaveCSS("color", "rgb(25, 61, 48)");
   await expect(dialog).toHaveCSS("border-radius", "20px");
   await expect
@@ -25,13 +25,31 @@ test("installation dialog has an opaque surface, bounded scroll and animated dis
             .surfaceAnimations,
       ),
     )
-    .toContain("dialog-in");
+    .toEqual(expect.arrayContaining([expect.stringContaining("dialog-in")]));
   await page.setViewportSize({ width: 320, height: 480 });
   await dialog.evaluate(async (element) => {
     await Promise.all(
       element.getAnimations().map((animation) => animation.finished),
     );
   });
+  // The surface must actually sit above the scrim, not merely declare a background.
+  expect(
+    await dialog.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const top = document.elementFromPoint(
+        box.left + 10,
+        box.top + box.height / 2,
+      );
+      const overlay = document.querySelector(".ui-dialog-overlay")!;
+      return {
+        aboveOverlay: top === element || element.contains(top),
+        opaque: getComputedStyle(element).opacity,
+        distinct:
+          getComputedStyle(element).backgroundColor !==
+          getComputedStyle(overlay).backgroundColor,
+      };
+    }),
+  ).toEqual({ aboveOverlay: true, opaque: "1", distinct: true });
   const bounds = await dialog.boundingBox();
   expect(bounds!.x).toBeGreaterThanOrEqual(15);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(305);
@@ -53,7 +71,7 @@ test("installation dialog has an opaque surface, bounded scroll and animated dis
         (window as unknown as { surfaceAnimations: string[] })
           .surfaceAnimations,
     ),
-  ).toContain("dialog-out");
+  ).toEqual(expect.arrayContaining([expect.stringContaining("dialog-out")]));
   await trigger.click();
   await expect(dialog).toBeVisible();
   await dialog.getByRole("button", { name: "설치 안내 닫기" }).click();

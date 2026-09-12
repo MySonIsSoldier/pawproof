@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentProps } from "react";
+import styles from "./dialog.module.css";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 export const Dialog = DialogPrimitive.Root;
@@ -15,10 +16,12 @@ export function DialogContent({
 }: ComponentProps<typeof DialogPrimitive.Content>) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="ui-dialog-overlay" />
+      <DialogPrimitive.Overlay
+        className={`ui-dialog-overlay ${styles.overlay}`}
+      />
       <DialogPrimitive.Content
         data-slot="dialog-content"
-        className={`ui-dialog-content ${className}`}
+        className={`ui-dialog-content ${styles.content} ${className}`}
         {...props}
       />
     </DialogPrimitive.Portal>
