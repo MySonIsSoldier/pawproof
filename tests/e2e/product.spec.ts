@@ -130,10 +130,19 @@ test("complete trip: four states, evidence, stale inputs, replacement, undo, pre
   ).toBeVisible();
   await page
     .locator(".prep-block")
-    .getByText("물빛 호수공원", { exact: true })
+    .getByRole("button", { name: "물빛 호수공원", exact: true })
     .click();
-  await expect(page.locator(".question-text")).toContainText("마릿수");
+  await expect(
+    page.locator(".ui-accordion-content .question-text"),
+  ).toContainText("마릿수");
+  await page
+    .getByRole("button", { name: "물빛 호수공원", exact: true })
+    .click();
   await page.emulateMedia({ media: "print" });
+  await expect(page.locator(".print-question .question-text")).toBeVisible();
+  await expect(page.locator(".print-question .question-text")).toContainText(
+    "마릿수",
+  );
   await expect(page.locator(".print-summary")).toContainText("12kg");
   await expect(page.locator(".print-summary")).toBeVisible();
   await expect(page.locator(".mobile-check-bar")).not.toBeVisible();

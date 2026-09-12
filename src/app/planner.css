@@ -749,14 +749,14 @@
   border-radius: 15px;
   padding: 24px;
 }
-.prep-block h3 {
+.prep-block > h3 {
   display: flex;
   gap: 10px;
   align-items: center;
   font-size: 16px;
   margin-bottom: 18px;
 }
-.prep-block h3 > span {
+.prep-block > h3 > span {
   margin-left: auto;
   font-size: 14px;
   color: var(--muted);
@@ -779,13 +779,6 @@
   font-size: 10px;
   color: var(--muted);
 }
-.prep-block details {
-  border-top: 1px solid var(--line);
-  padding-block: 13px;
-}
-.prep-block summary {
-  font-size: 13px;
-}
 .question-text {
   white-space: pre-line;
   font-size: 12px;
@@ -805,15 +798,9 @@
   padding: 42px 0 32px;
 }
 .evidence-dialog {
-  max-width: 650px;
-  width: calc(100% - 40px);
-  max-height: 85dvh;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 30px;
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: 0 20px 100px #142d3640;
+  --dialog-width: 650px;
+  --dialog-max-height: 85dvh;
+  --dialog-padding: 30px;
 }
 .dialog-header {
   display: flex;
@@ -856,8 +843,7 @@
   white-space: pre-line;
 }
 .raw-source {
-  padding: 18px 0;
-  border-block: 1px solid var(--line);
+  border-top: 1px solid var(--line);
   margin-top: 10px;
 }
 .raw-source pre {
@@ -1031,7 +1017,7 @@
     padding: 22px;
   }
   .evidence-dialog {
-    padding: 22px 19px;
+    --dialog-padding: 22px 19px;
   }
   .dialog-header h2 {
     font-size: 20px;
@@ -1195,7 +1181,17 @@
 .print-summary {
   display: none;
 }
+.print-question {
+  display: none;
+}
+.prep-block .ui-accordion-trigger {
+  font-size: 13px;
+}
 @media print {
+  .print-question {
+    display: block;
+    margin-block: 16px;
+  }
   .print-summary {
     display: block;
     margin-bottom: 16px;

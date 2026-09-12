@@ -3,6 +3,7 @@ import { formatTime } from "../../domain/itinerary/time";
 import { buildPreparation } from "../../domain/itinerary/preparation";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
+import { Disclosure } from "../../components/ui/accordion";
 export function Preparation({
   trip,
   result,
@@ -102,18 +103,23 @@ export function Preparation({
             ];
             const text = `${trip.date} ${formatTime(v.arrival)}에 ${trip.pets.map((p) => `${p.breed} ${p.weight}kg`).join(", ")} 총 ${trip.pets.length}마리와 ${v.visit.zone === "indoor" ? "실내" : "실외"} 방문을 계획하고 있어요. 다음 내용을 확인 부탁드립니다.\n${topics.join("\n")}`;
             return (
-              <details key={v.place.id}>
-                <summary>{v.place.name}</summary>
-                <p className="question-text">{text}</p>
-                <Button
-                  variant="link"
-                  type="button"
-                  className="no-print"
-                  onClick={() => void copy(text)}
-                >
-                  문의 문구 복사 <Icon name="arrow" size={14} />
-                </Button>
-              </details>
+              <div key={v.place.id}>
+                <Disclosure title={v.place.name} className="no-print">
+                  <p className="question-text">{text}</p>
+                  <Button
+                    variant="link"
+                    type="button"
+                    className="no-print"
+                    onClick={() => void copy(text)}
+                  >
+                    문의 문구 복사 <Icon name="arrow" size={14} />
+                  </Button>
+                </Disclosure>
+                <div className="print-question">
+                  <strong>{v.place.name}</strong>
+                  <p className="question-text">{text}</p>
+                </div>
+              </div>
             );
           })}
           {!questions.length && (

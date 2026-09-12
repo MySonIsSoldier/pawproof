@@ -502,21 +502,11 @@ select {
   font-size: 31px;
   margin-top: 16px;
 }
-.faq details {
-  padding: 22px 0;
-  border-bottom: 1px solid var(--line);
+.faq-accordion {
+  min-width: 0;
 }
-summary {
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 15px;
-  min-height: 28px;
-  line-height: 1.7;
-}
-details > p {
-  font-size: 14px;
-  padding-top: 16px;
-  line-height: 1.85;
+.faq .ui-accordion-trigger {
+  padding-block: 22px;
 }
 .closing {
   border-radius: 26px;
@@ -875,7 +865,7 @@ details > p {
   .faq h2 {
     font-size: 28px;
   }
-  .faq details {
+  .faq .ui-accordion-trigger {
     padding-block: 18px;
   }
   .closing {

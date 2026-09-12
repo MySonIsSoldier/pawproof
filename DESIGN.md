@@ -34,6 +34,7 @@ Pretendard Variable을 로컬 WOFF2로 제공하고 OFL 라이선스를 동봉�
 
 ## 인터랙션
 
+- 2026-09-12 보완: 모든 Dialog는 불투명 페이퍼 표면·테두리·그림자와 모바일 여백을 공유한다. shadcn의 페이드·95% 확대 패턴을 CSS로 옮기고 Radix `data-state`와 닫힘 수명에 연결한다. 아코디언은 Radix가 측정한 높이로 펼치고 접는다.
 - 첫 화면의 400~650ms 진입, 요소별 짧은 시차. 코스 선·스티커는 절제된 움직임.
 - 버튼 hover/focus, 조건 칩 선택, 결과 펼치기, 코스 순서 변경과 후보 교체는 즉각적인 피드백.
 - 입력 변경 시 기존 결과에 `입력이 변경되었어요. 다시 검사해 주세요`를 표시하고 최신 결과로 오해하지 않게 한다.
@@ -51,7 +52,7 @@ shadcn/ui의 Radix Select·Popover·Input 및 React DayPicker Calendar 소스를
 
 ## 접근성과 신뢰
 
-44px 이상 주요 터치 영역, 보이는 focus ring, 명시적 label, aria-live 상태 안내, 키보드 순서 변경, native details와 Radix Dialog. 상태를 색만으로 전달하지 않는다. 고정 요소가 모바일 내용을 가리지 않도록 여백 확보.
+44px 이상 주요 터치 영역, 보이는 focus ring, 명시적 label, aria-live 상태 안내, 키보드 순서 변경, Radix Accordion과 Dialog. 상태를 색만으로 전달하지 않는다. 고정 요소가 모바일 내용을 가리지 않도록 여백 확보.
 
 공통 컴포넌트·상태 책임은 [UI_DESIGN_SYSTEM.md](docs/engineering/UI_DESIGN_SYSTEM.md)에 기록한다. 개발 환경의 `/dev/design-system`에서 실제 버튼·입력·선택 상태를 확인한다.
 

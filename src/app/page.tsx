@@ -1,6 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import dog from "../../public/media/travel-dog.jpg";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "../components/ui/accordion";
 import { Icon } from "../components/icon";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
@@ -222,32 +228,45 @@ export default function Home() {
             <p className="eyebrow">BEFORE WE GO</p>
             <h2>출발 전, 궁금한 점</h2>
           </div>
-          <div>
-            <details>
-              <summary>이용 가능이면 입장이 보장되나요?</summary>
-              <p>
-                조회한 규정과 입력한 조건을 대조한 결과예요. 예약·좌석 확보나
-                현장 입장을 보장하지는 않아요. 남은 확인사항과 업체의 최신
-                안내도 함께 확인해 주세요.
-              </p>
-            </details>
-            <details>
-              <summary>가상 체험 코스는 실제 여행에 써도 되나요?</summary>
-              <p>
-                가상 체험의 장소·규정·이동시간은 기능을 설명하기 위해 직접 만든
-                예시예요. 실제 여행 정보가 아니며, 실제 코스는 장소 검색
-                모드에서 별도로 구성해 주세요.
-              </p>
-            </details>
-            <details>
-              <summary>입력한 반려견 정보는 저장되나요?</summary>
-              <p>
-                기본적으로 현재 브라우저 화면에서만 사용해요. ‘이 기기에 저장’을
-                선택하면 입력한 프로필과 코스만 브라우저에 저장되며 언제든
-                삭제할 수 있어요. 조회한 규정과 판정 원문은 저장하지 않아요.
-              </p>
-            </details>
-          </div>
+          <Accordion type="multiple" className="faq-accordion">
+            <AccordionItem value="guarantee">
+              <AccordionTrigger>
+                이용 가능이면 입장이 보장되나요?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p>
+                  조회한 규정과 입력한 조건을 대조한 결과예요. 예약·좌석 확보나
+                  현장 입장을 보장하지는 않아요. 남은 확인사항과 업체의 최신
+                  안내도 함께 확인해 주세요.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="demo">
+              <AccordionTrigger>
+                가상 체험 코스는 실제 여행에 써도 되나요?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p>
+                  가상 체험의 장소·규정·이동시간은 기능을 설명하기 위해 직접
+                  만든 예시예요. 실제 여행 정보가 아니며, 실제 코스는 장소 검색
+                  모드에서 별도로 구성해 주세요.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="privacy">
+              <AccordionTrigger>
+                입력한 반려견 정보는 저장되나요?
+              </AccordionTrigger>
+              <AccordionContent>
+                <p>
+                  기본적으로 현재 브라우저 화면에서만 사용해요. ‘이 기기에
+                  저장’을 선택하면 입력한 프로필과 코스만 브라우저에 저장되며
+                  언제든 삭제할 수 있어요. 조회한 규정과 판정 원문은 저장하지
+                  않아요.
+                </p>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </section>
         <section className="closing wrap">
           <Icon name="paw" size={38} />

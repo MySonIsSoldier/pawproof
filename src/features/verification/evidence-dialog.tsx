@@ -1,5 +1,6 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { Disclosure } from "../../components/ui/accordion";
 import type { VisitResult } from "../../domain/policies/types";
 import { StatusBadge } from "./status-badge";
 import { Button } from "../../components/ui/button";
@@ -20,13 +21,9 @@ export function EvidenceDialog({
   onClose: () => void;
 }) {
   const returnFocus = useRef<HTMLElement | null>(null);
+  const [open, setOpen] = useState(true);
   return (
-    <Dialog
-      open
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         className="evidence-dialog"
         onOpenAutoFocus={() => {
@@ -38,6 +35,8 @@ export function EvidenceDialog({
         onCloseAutoFocus={(event) => {
           event.preventDefault();
           returnFocus.current?.focus();
+          // Radix keeps the content mounted until its exit animation finishes.
+          if (!open) onClose();
         }}
       >
         <div className="dialog-header">
@@ -80,10 +79,9 @@ export function EvidenceDialog({
             </section>
           ))}
         </div>
-        <details className="raw-source">
-          <summary>조회한 원문 전체</summary>
+        <Disclosure className="raw-source" title="조회한 원문 전체">
           <pre>{result.policy.raw || "원문을 불러오지 못했어요."}</pre>
-        </details>
+        </Disclosure>
         <PolicySources policy={result.policy} />
         <div className="source-meta">
           <strong>{result.policy.sourceLabel}</strong>

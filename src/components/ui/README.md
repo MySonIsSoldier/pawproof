@@ -16,3 +16,6 @@ shadcn/ui `new-york-v4`의 Select, Popover, Input, Calendar 소스(2026-09-11 �
 Tailwind 클래스나 CLI 자동 덮어쓰기를 사용하지 않는다. shadcn 원본 업데이트 시 이 프로젝트의 CSS와 키보드 회귀 검사를 함께 대조한다. 업무 판정·API 요청·전역 상태는 이 폴더에 넣지 않는다.
 
 - `sonner.tsx`: [shadcn Sonner 원본](https://ui.shadcn.com/r/styles/new-york-v4/sonner.json)을 라이트 테마·기존 Icon·브랜드 CSS에 맞게 조정. 타이머·키보드 접근·닫기는 Sonner 2.0.8을 사용한다. 기능에서 직접 호출하지 않고 `components/notifications/with-notifications.tsx`의 HOC와 훅으로 연결한다.
+
+- `accordion.tsx` (2026-09-12): [shadcn Accordion 원본](https://ui.shadcn.com/r/styles/new-york-v4/accordion.json)의 Header/Trigger/Content 조합을 Radix Accordion 1.2.20·자체 Icon·CSS 토큰으로 조정. `Disclosure`는 한 항목을 독립적으로 여닫는 조합이다.
+- Dialog는 [shadcn Dialog 원본](https://ui.shadcn.com/r/styles/new-york-v4/dialog.json)의 불투명 표면·페이드·95% 확대 패턴을 공통 CSS로 적용한다. [Radix 애니메이션](https://www.radix-ui.com/primitives/docs/guides/animation)에 따라 닫힘 애니메이션 동안 콘텐츠 수명을 유지한다. Accordion은 `--radix-accordion-content-height`를 사용한다. 별도 모션 라이브러리나 Tailwind는 추가하지 않는다.

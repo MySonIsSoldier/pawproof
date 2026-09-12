@@ -1,4 +1,5 @@
 import type { Policy } from "../../domain/policies/types";
+import { Disclosure } from "../../components/ui/accordion";
 
 function sourceLink(url: string | null) {
   if (!url) return null;
@@ -48,10 +49,9 @@ export function PolicySources({ policy }: { policy: Policy }) {
               원본 제공처 ↗
             </a>
           )}
-          <details className="raw-source">
-            <summary>이 출처의 원문</summary>
+          <Disclosure className="raw-source" title="이 출처의 원문">
             <pre>{source.raw || "제공되지 않음"}</pre>
-          </details>
+          </Disclosure>
         </div>
       ))}
       {policy.notices?.map((notice) => (

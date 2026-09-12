@@ -119,7 +119,7 @@ test("clipboard rejection is an error and leaving the planner clears notificatio
   await page
     .getByRole("button", { name: "이 코스 검사하기", exact: true })
     .click();
-  await page.locator(".preparation summary").first().click();
+  await page.locator(".preparation .ui-accordion-trigger").first().click();
   await page.getByRole("button", { name: "문의 문구 복사" }).first().click();
   await expect(page.locator(activeToast)).toHaveAttribute("data-type", "error");
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
