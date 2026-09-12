@@ -87,8 +87,11 @@ try {
       path: `${output}/home-${width}.png`,
       fullPage: true,
     });
-    if (width >= 1024) {
-      await page.locator(".hero-art").hover();
+    {
+      const toggle = page.getByRole("button", { name: "강아지 사진 펼침" });
+      if (width < 720) await toggle.tap();
+      else await page.locator(".hero-art").hover();
+      await expect(toggle).toHaveAttribute("aria-pressed", "true");
       await page.locator(".hero-art").evaluate(async (element) => {
         await Promise.all(
           element
@@ -108,7 +111,7 @@ try {
     }
     await page.getByRole("button", { name: "PawProof 앱 설치 안내" }).click();
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toHaveCSS("background-color", "rgb(250, 251, 247)");
+    await expect(dialog).toHaveCSS("background-color", "rgb(255, 255, 255)");
     await dialog.evaluate(async (element) => {
       await Promise.all(
         element.getAnimations().map((animation) => animation.finished),

@@ -9,6 +9,7 @@ import {
   AccordionContent,
 } from "../components/ui/accordion";
 import { Icon } from "../components/icon";
+import { HeroPhotos } from "../components/hero-photos";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 export default function Home() {
@@ -46,8 +47,8 @@ export default function Home() {
               조건에 맞게
             </p>
           </div>
-          <div className="hero-art">
-            <div className="photo-backdrop">
+          <HeroPhotos>
+            <div className="hero-card photo-backdrop">
               <Image
                 src={companion}
                 alt="바닷가에서 바람을 맞는 갈색과 흰색 반려견"
@@ -56,7 +57,7 @@ export default function Home() {
                 placeholder="blur"
               />
             </div>
-            <div className="hero-photo">
+            <div className="hero-card hero-photo">
               <Image
                 src={dog}
                 alt="노란 꽃을 물고 야외에 앉아 있는 골든리트리버"
@@ -105,7 +106,7 @@ export default function Home() {
               <Icon name="paw" size={20} />
               <span>ALL THE WAY</span>
             </span>
-          </div>
+          </HeroPhotos>
         </section>
         <div className="promise-strip">
           <div className="wrap">

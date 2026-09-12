@@ -84,7 +84,7 @@ PWA 검사는 [PWA 계약](PWA.md)을 따른다. pnpm verify의 Playwright 서�
 
 ## 표면·아코디언·홈 카드 검증 (2026-09-12)
 
-`surface-motion.spec.ts`는 설치 모달의 배경색·경계·작은 화면 스크롤·진입/종료·포커스 복귀, FAQ 방향키/다중 펼침, reduced-motion을 검사한다. `hero-cards.spec.ts`는 두 이미지 로딩, 마우스에서만 벌어짐·원복, 터치·reduced-motion에서 정적 유지, 작은 화면과 데스크톱의 영문 도장·페이지 폭을 검사한다. 기존 전체 검증에 포함된다.
+`surface-motion.spec.ts`는 설치 모달의 흰색 불투명 표면·마스크 위 배치·경계·작은 화면 스크롤·진입/종료·포커스 복귀, FAQ 방향키/다중 펼침, reduced-motion을 검사한다. `hero-cards.spec.ts`는 두 이미지 로딩, 동일한 카드 크기·반경, 마우스 벌어짐·원복, 터치 토글, standalone·혼합 입력, 키보드와 reduced-motion 기능 유지, 작은 화면과 데스크톱의 영문 도장·페이지 폭을 검사한다. 기존 전체 검증에 포함된다.
 
 시각 확인용 스크립트 **CREATED**: `scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-re-62ab37eb7f.js`. 이후 같은 검사는 이 파일을 재사용한다.
 
@@ -94,4 +94,4 @@ LD_LIBRARY_PATH=/tmp/pawproof-browser-libs/usr/lib/aarch64-linux-gnu \
 node scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-re-62ab37eb7f.js
 ```
 
-실행 중인 기본 미리보기를 사용하며 마지막 인자로 다른 로컬 URL을 전달할 수 있다. 320·360·390·768·1024·1440px에서 홈·설치 모달 및 데스크톱 호버 화면을 `.cache/ui-polish/`에 저장한다. 유료 API는 호출하지 않는다. 자동화된 Chromium 터치 에뮬레이션은 실제 iOS/Android 기기 확인과 구분한다.
+실행 중인 기본 미리보기를 사용하며 마지막 인자로 다른 로컬 URL을 전달할 수 있다. 320·360·390·768·1024·1440px에서 홈·설치 모달 및 펼침(데스크톱 호버·모바일 탭) 화면을 `.cache/ui-polish/`에 저장한다. 유료 API는 호출하지 않는다. 자동화된 Chromium 터치 에뮬레이션은 실제 iOS/Android 기기 확인과 구분한다.

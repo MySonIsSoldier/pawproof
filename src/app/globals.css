@@ -234,46 +234,64 @@ select {
   isolation: isolate;
   margin-left: 20px;
 }
-.photo-backdrop {
+/* Both photos share the same silhouette; only their placement changes. */
+.hero-card {
   position: absolute;
-  width: 80%;
-  height: 94%;
-  border-radius: 46% 46% 26px 26px;
-  background: #dce7d7;
-  top: 20px;
-  left: 12%;
-  transform: rotate(7deg);
-}
-.hero-photo {
-  position: absolute;
-  inset: 2% 6% 3% 6%;
+  inset: 4% 10% 6%;
   border-radius: 46% 46% 30px 30px;
   overflow: hidden;
   background: var(--sage);
-  transform: rotate(-3deg);
-}
-.photo-backdrop,
-.hero-photo {
   transition:
     transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 600ms ease;
   box-shadow: 0 12px 32px rgb(25 61 48 / 10%);
 }
 .photo-backdrop {
-  overflow: hidden;
+  transform: translate(5%, 2%) rotate(7deg);
+}
+.hero-photo {
+  transform: rotate(-3deg);
 }
 .photo-backdrop img {
   object-fit: cover;
   object-position: 25% 50%;
 }
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .hero-art:hover .hero-photo {
-    transform: translateX(-12%) rotate(-8deg);
-    box-shadow: 0 20px 42px rgb(25 61 48 / 17%);
-  }
-  .hero-art:hover .photo-backdrop {
-    transform: translateX(4%) rotate(9deg);
-  }
+.hero-art[data-expanded="true"] .hero-photo {
+  transform: translateX(-12%) rotate(-8deg);
+  box-shadow: 0 20px 42px rgb(25 61 48 / 17%);
+}
+.hero-art[data-expanded="true"] .photo-backdrop {
+  transform: translate(12%, 2%) rotate(8deg);
+}
+.hero-photo-toggle {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  padding: 0;
+  border: 0;
+  border-radius: 46% 46% 30px 30px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.hero-photo-toggle:focus-visible {
+  outline: 3px solid var(--forest);
+  outline-offset: 5px;
+}
+.hero-photo-toggle span {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  box-shadow: 0 3px 12px rgb(25 61 48 / 8%);
+  font-size: 12px;
+  white-space: nowrap;
 }
 .hero-photo img {
   object-fit: cover;

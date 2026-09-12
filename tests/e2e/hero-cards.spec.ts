@@ -10,7 +10,7 @@ async function finishMotion(element: import("@playwright/test").Locator) {
   });
 }
 
-test("two dog cards load, fan out only with a mouse and return to their original arrangement", async ({
+test("matching dog cards open with hover or touch and remain usable with reduced motion", async ({
   page,
   isMobile,
 }) => {
@@ -18,6 +18,7 @@ test("two dog cards load, fan out only with a mouse and return to their original
   const art = page.locator(".hero-art");
   const front = page.locator(".hero-photo");
   const back = page.locator(".photo-backdrop");
+  const toggle = page.getByRole("button", { name: "강아지 사진 펼침" });
   await expect
     .poll(() =>
       art
@@ -34,6 +35,11 @@ test("two dog cards load, fan out only with a mouse and return to their original
         ),
     )
     .toBe(true);
+  const shape = (node: Element) => {
+    const style = getComputedStyle(node);
+    return [style.width, style.height, style.borderRadius];
+  };
+  expect(await front.evaluate(shape)).toEqual(await back.evaluate(shape));
   await finishMotion(art);
   const initialFront = await front.evaluate(
     (node) => getComputedStyle(node).transform,
@@ -41,28 +47,36 @@ test("two dog cards load, fan out only with a mouse and return to their original
   const initialBack = await back.evaluate(
     (node) => getComputedStyle(node).transform,
   );
-  if (isMobile) {
-    await front.tap();
-    await expect(front).toHaveCSS("transform", initialFront);
-    await expect(back).toHaveCSS("transform", initialBack);
-  } else {
+  if (isMobile) await toggle.tap();
+  else await art.hover();
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(front).not.toHaveCSS("transform", initialFront);
+  await expect(back).not.toHaveCSS("transform", initialBack);
+  await finishMotion(art);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  if (isMobile) await toggle.tap();
+  else await page.mouse.move(1, 1);
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(front).toHaveCSS("transform", initialFront);
+  await expect(back).toHaveCSS("transform", initialBack);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await expect(front).not.toHaveCSS("transform", initialFront);
+  await expect(front).toHaveCSS("transition-duration", "0s");
+  await page.keyboard.press("Space");
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(front).toHaveCSS("transform", initialFront);
+  if (!isMobile) {
     await art.hover();
-    await finishMotion(art);
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
     await expect(front).not.toHaveCSS("transform", initialFront);
-    await expect(back).not.toHaveCSS("transform", initialBack);
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth,
-      ),
-    ).toBe(true);
-    await page.mouse.move(1, 1);
-    await finishMotion(art);
-    await expect(front).toHaveCSS("transform", initialFront);
-    await expect(back).toHaveCSS("transform", initialBack);
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await art.hover();
-    await expect(front).toHaveCSS("transform", initialFront);
-    await expect(back).toHaveCSS("transform", initialBack);
   }
 });
 
@@ -96,4 +110,29 @@ test("stamp text fits within its circle and landing stays within narrow and desk
       pageFits: true,
     });
   }
+});
+
+test.describe("standalone and hybrid input", () => {
+  test.use({ hasTouch: true });
+  test("installed app supports tap toggling and a connected mouse", async ({
+    page,
+  }) => {
+    await page.addInitScript(() =>
+      Object.defineProperty(navigator, "standalone", { value: true }),
+    );
+    await page.goto("./");
+    await expect(
+      page.getByRole("button", { name: "PawProof 앱 설치 안내" }),
+    ).toHaveCount(0);
+    const toggle = page.getByRole("button", { name: "강아지 사진 펼침" });
+    await toggle.tap();
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await toggle.tap();
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    await page.mouse.move(1, 1);
+    await toggle.hover();
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await page.mouse.move(1, 1);
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  });
 });
