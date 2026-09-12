@@ -15,7 +15,10 @@ import { Toaster } from "../ui/sonner";
 import type { ActionNotification } from "./types";
 
 type Notify = (notification: ActionNotification) => void;
-const NotificationContext = createContext<Notify | null>(null);
+const NotificationContext = createContext<{
+  notify: Notify;
+  dismiss: () => void;
+} | null>(null);
 
 function NotificationBoundary({ children }: { children: ReactNode }) {
   const id = useId();
@@ -41,8 +44,11 @@ function NotificationBoundary({ children }: { children: ReactNode }) {
     },
     [id],
   );
+  const dismiss = useCallback(() => {
+    if (current.current !== null) toast.dismiss(current.current);
+  }, []);
   return (
-    <NotificationContext.Provider value={notify}>
+    <NotificationContext.Provider value={{ notify, dismiss }}>
       {children}
       <Toaster id={id} />
     </NotificationContext.Provider>
@@ -67,5 +73,12 @@ export function withNotifications<Props extends object>(
 export function useNotify(): Notify {
   const notify = useContext(NotificationContext);
   if (!notify) throw new Error("withNotifications is required.");
-  return notify;
+  return notify.notify;
+}
+
+/** Clear a transient surface's notification without unmounting its exit animation. */
+export function useDismissNotifications() {
+  const context = useContext(NotificationContext);
+  if (!context) throw new Error("withNotifications is required.");
+  return context.dismiss;
 }

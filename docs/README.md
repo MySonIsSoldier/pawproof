@@ -27,6 +27,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [애플리케이션 아키텍처](engineering/ARCHITECTURE.md) | 단일 앱의 계층·인터페이스·데이터 흐름·저장 경계 |
 | [개발 환경과 경로 처리](engineering/DEVELOPMENT_ENVIRONMENT.md) | code-server 프록시, 환경변수, URL 유틸, 빌드·검증 계약 |
 | [코드 작성과 검증 원칙](engineering/CODE_STANDARDS.md) | 단일 책임, 타입·실패 처리, 테스트, 협업 |
+| [Firebase 인증·계정 저장](engineering/FIREBASE_AUTH_AND_STORAGE.md) | 공통 SDK·인증·사용자별 노트·환경변수·에뮬레이터 |
 | [PWA 설치·오프라인·업데이트](engineering/PWA.md) | 설치 UX, 워커·캐시 경계, 개발 프록시, 검증 범위 |
 | [코드 품질 점검](engineering/CODE_QUALITY_REVIEW.md) | 작업 알림·실패 경계의 발견 사항, 수정, 검증 범위 |
 | [UI 디자인 시스템·상태 책임](engineering/UI_DESIGN_SYSTEM.md) | shadcn/Radix 컴포넌트, 토큰, Zustand·TanStack Query, 공통 훅 |

@@ -95,3 +95,10 @@ node scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-
 ```
 
 실행 중인 기본 미리보기를 사용하며 마지막 인자로 다른 로컬 URL을 전달할 수 있다. 320·360·390·768·1024·1440px에서 홈·설치 모달 및 펼침(데스크톱 호버·모바일 탭) 화면을 `.cache/ui-polish/`에 저장한다. 유료 API는 호출하지 않는다. 자동화된 Chromium 터치 에뮬레이션은 실제 iOS/Android 기기 확인과 구분한다.
+
+
+## Firebase 인증·DB 통합 검사
+
+`pnpm test:firebase`는 인증/Firestore 에뮬레이터를 demo-pawproof 프로젝트로 시작하고 별도 `playwright.firebase.config.ts`로 데스크톱·모바일을 검사한다. `E2E_MODE=proxy pnpm test:firebase`는 같은 검사를 개발 basePath에서 수행한다. 구성과 Java/브라우저 준비, 실제 인증과의 차이는 [Firebase 기준](FIREBASE_AUTH_AND_STORAGE.md)에 있다. `pnpm verify`는 실제 Firebase 키를 사용하지 않도록 공개 설정과 에뮬레이터 연결을 비활성화하고 기존 회귀를 수행한다. 인증 관련 로그/스크린샷에는 로컬 테스트 사용자만 사용하며 실제 토큰·서비스 계정 키를 포함하지 않는다.
+
+특정 Firebase 브라우저 흐름만 반복할 때는 `pnpm test:firebase --grep "signup, email verification"`처럼 Playwright 인자를 전달할 수 있다.

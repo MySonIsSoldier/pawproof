@@ -80,3 +80,6 @@ Next가 정규화한 개발 홈 주소 `/absproxy/<port>`는 마지막 `/`가 �
 최종 공개 HTTPS URL에서 Android Chrome 설치·아이콘·재실행, iPhone Safari 홈 화면 추가·독립 창·안전 영역, 앱 전환 후 복귀를 실제 기기로 확인해야 한다. 외부 배포·OS 설치 실측은 현재 로컬 브라우저 검증과 구분한다. Web Push·백그라운드 동기화·오프라인 자동 API 재시도는 이번 범위가 아니다.
 
 참고: [Next.js PWA 가이드](https://nextjs.org/docs/app/guides/progressive-web-apps), [MDN 설치 요건](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable), [MDN 캐시 전략](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching), [skipWaiting](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting). 구현 시 설치된 Next 16.3.4 가이드도 대조했다.
+
+
+2026-09-12 계정 인증·저장 추가: Firebase Auth의 브라우저 세션과 별개로 워커는 `/api/account`와 Firebase 외부 인증 요청·계정 노트를 캐시하지 않는다. 온라인 Google 팝업 또는 이메일 로그인으로 인증하며 오프라인 계정 작업은 오류로 안내하고 기기 저장을 유지한다. 실제 설치 기기의 OAuth/메일 인증 복원은 프로젝트 연결 후 검증한다. [Firebase 기준](FIREBASE_AUTH_AND_STORAGE.md)

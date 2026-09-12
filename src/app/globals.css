@@ -1002,3 +1002,21 @@ select {
     margin-top: 20px !important;
   }
 }
+
+.account-button { white-space: nowrap; }
+@media (max-width: 720px) {
+ .site-header .account-button { padding-inline: 6px; font-size: 12px; min-width: 44px; }
+ .site-header .button svg { display: none; }
+ .site-header .pwa-install-button span { display: none; }
+ .site-header .pwa-install-button svg { display: block; }
+ .site-header .pwa-install-button { min-width: 32px; padding-inline: 6px; }
+}
+@media (max-width: 360px) {
+ .site-header nav { gap: 3px; }
+ .site-header .account-button { padding-inline: 4px; font-size: 11px; }
+}
+
+@media (max-width: 360px) {
+  .site-header .button { padding-inline: 8px; }
+  .site-header .brand { gap: 6px; }
+}

@@ -1,4 +1,5 @@
 "use client";
+import { CloudTrips } from "../account/cloud-trips";
 import { ProfileEditor } from "./profile-editor";
 import { PlaceSearch } from "./place-search";
 import { VisitCard } from "./visit-card";
@@ -195,6 +196,7 @@ function PlannerScreen() {
                 저장 삭제
               </Button>
             </div>
+            <CloudTrips busy={!!busy} restore={model.restoreTrip} />
             <p className="privacy-note no-print">
               회원가입 없이 사용해요.
               <br />

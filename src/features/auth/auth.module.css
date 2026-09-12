@@ -1,0 +1,67 @@
+.dialog {
+  --dialog-width: 480px;
+}
+.body,
+.form {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+.form {
+  margin-top: 0;
+}
+.form label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.tabs,
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tabs {
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--sage);
+}
+.tabs button {
+  flex: 1;
+  min-height: 44px;
+  padding: 8px 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.tabs button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--forest);
+  box-shadow: 0 2px 6px rgb(25 61 48 / 8%);
+}
+.notice {
+  padding: 14px;
+  background: var(--sage);
+  border-radius: 12px;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.error {
+  padding: 12px;
+  border: 1px solid #d5a89b;
+  border-radius: 10px;
+  color: #8a372e;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.email {
+  overflow-wrap: anywhere;
+  font-weight: 700;
+  color: var(--ink);
+}

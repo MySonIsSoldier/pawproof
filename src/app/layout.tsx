@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import localFont from "next/font/local";
 import { publicAssetPath } from "../config/public";
+import { AuthProvider } from "../features/auth/auth-provider";
+import { AuthDialog } from "../features/auth/auth-dialog";
 import { PwaProvider } from "../features/pwa/pwa-provider";
 const pretendard = localFont({
   src: "../assets/fonts/PretendardVariable.woff2",
@@ -41,7 +43,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a className="skip-link" href="#main">
           본문으로 바로가기
         </a>
-        <PwaProvider>{children}</PwaProvider>
+        <AuthProvider>
+          <PwaProvider>{children}</PwaProvider>
+          <AuthDialog />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -76,3 +76,8 @@ Dialog의 불투명 흰색 배경·잉크색·테두리·반경·그림자·화�
 Accordion/Item/Trigger/Content는 shadcn 기반 Radix 컴포넌트이며, FAQ는 여러 항목을 독립적으로 여닫는다. 원문과 문의 문구는 Disclosure 조합을 재사용한다. 높이 변수에 연결한 240ms 펼침·200ms 접힘과 화살표 회전을 제공한다. 문의 문구는 접힌 상태에서도 인쇄할 수 있도록 별도의 인쇄 텍스트를 제공한다. reduced-motion에서는 모든 전환을 제거하며 기능·키보드 조작은 유지한다.
 
 홈의 `HeroPhotos`는 펼침 상태만 관리하는 클라이언트 경계이며 사진·장식은 서버 컴포넌트에서 전달한다. 두 `.hero-card`는 크기·아치 반경을 공유한다. 마우스 진입/이탈, 탭 토글, Enter/Space, Escape를 지원하며 `aria-pressed`로 상태를 제공한다. 모션 감소 설정은 전환만 제거하며 입력 장치의 기본 hover 지원 여부로 기능을 제한하지 않는다.
+
+
+## Firebase 인증과 계정 노트
+
+AuthProvider는 인증 수명만 관리하고 AuthDialog는 기존 shadcn/Radix Dialog·Input·Button과 Sonner 경계를 재사용한다. CloudTrips는 화면 표현, useCloudTrips는 계정별 TanStack Query와 저장 요청, FirestoreTrips는 서버 DB 접근을 맡는다. 실제 여행 편집 상태는 기존 Zustand를 유지한다. 계정 변경 시 Query와 선택된 노트의 revision을 폐기하고 늦게 끝난 요청은 이전 계정 UI를 되살리지 않는다. 입력 교체는 기존 usePlanner의 복원 동작을 거쳐 판정·대체 결과를 초기화한다. 자세한 계약은 [Firebase 인증·저장](FIREBASE_AUTH_AND_STORAGE.md)을 따른다.

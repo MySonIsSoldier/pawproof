@@ -46,6 +46,17 @@ export function usePlanner() {
     detail,
     setDetail,
     update,
+    restoreTrip: (trip: TripInput) => {
+      if (operations.busy) return;
+      store
+        .getState()
+        .reset(
+          trip,
+          "계정의 입력을 불러왔어요. 최신 규정으로 다시 검사해 주세요.",
+        );
+      operations.clearAlternatives();
+      setDetail(null);
+    },
     copied: (message: string) =>
       store.getState().succeed(message, "문의 문구를 복사했어요"),
     fail: store.getState().fail,

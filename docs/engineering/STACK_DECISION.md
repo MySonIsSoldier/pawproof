@@ -52,7 +52,7 @@ Hobby는 개인·비상업 용도로 제한된다. 공개 저장소라는 사실
 
 Firestore 무료 할당량은 프로젝트당 DB 하나에 적용된다. TTL 삭제·백업·PITR 등은 위 무료량에 포함되지 않는다. 따라서 Spark에서 유료 TTL 기능을 전제로 설계하지 않는다. [Firestore 할당량](https://firebase.google.com/docs/firestore/quotas)
 
-**Firebase 전체를 사용하는 것이 아니라 Firestore만 DB로 사용한다.** Next.js 서버 기능은 Vercel에서 실행한다. Firebase Cloud Functions와 App Hosting은 Spark만으로 운영하는 선택지가 아니며, Cloud Storage도 2026년 2월 3일부터 사용 유지에 Blaze가 필요하다. 초기 제품에 파일 업로드가 필수적이지 않으므로 이를 추가할 이유가 없다. [Firebase 가격](https://firebase.google.com/pricing), [Storage 변경 안내](https://firebase.google.com/docs/storage/faqs-storage-changes-announced-sept-2024?hl=en)
+**Firebase Authentication과 Firestore를 사용한다.** 2026-09-12 사용자 요청으로 인증을 추가했으며, Cloud Functions·Storage 등은 도입하지 않는다. Next.js 서버 기능은 Vercel에서 실행한다. Firebase Cloud Functions와 App Hosting은 Spark만으로 운영하는 선택지가 아니며, Cloud Storage도 2026년 2월 3일부터 사용 유지에 Blaze가 필요하다. 초기 제품에 파일 업로드가 필수적이지 않으므로 이를 추가할 이유가 없다. [Firebase 가격](https://firebase.google.com/pricing), [Storage 변경 안내](https://firebase.google.com/docs/storage/faqs-storage-changes-announced-sept-2024?hl=en)
 
 현재 DB를 선택하는 이유는 사용자 작성 데이터와 자체 운영 정보의 소규모 저장이다. 관광정보를 대량 적재하기 위한 선택이 아니다. 첫 비로그인 검증 흐름은 영구 저장 없이도 성립하도록 만든다.
 

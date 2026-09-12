@@ -1,7 +1,7 @@
 # 애플리케이션 아키텍처
 
 기준일: 2026-09-10\
-상태: 환경·URL 유틸, 규정/일정 도메인, 검증·복구 사용 사례, KTO/OpenRouter/Kakao 어댑터와 인터랙티브 제품 UI를 구현했다. Firestore 저장은 후속 범위다. 실제 생성된 파일과 검증 결과는 [구현 기록](../delivery/IMPLEMENTATION_STATUS.md)에 구분한다.
+상태: 환경·URL 유틸, 규정/일정 도메인, 검증·복구 사용 사례, KTO/OpenRouter/Kakao 어댑터와 인터랙티브 제품 UI를 구현했다. Firebase Authentication과 서버 전용 Firestore 계정 노트 어댑터를 추가했다. 실제 프로젝트 연결은 별도 검증한다. 실제 생성된 파일과 검증 결과는 [구현 기록](../delivery/IMPLEMENTATION_STATUS.md)에 구분한다.
 
 ## 구조 원칙
 
@@ -100,7 +100,7 @@ tests/
 | 정보 | 초기 저장 방침 |
 |---|---|
 | 현재 검사 중 KTO 원문·추출 규정 | 요청 처리와 결과 표시에 필요한 범위. 서버 영구 저장·공유 캐시 기본 비활성 |
-| 반려견 프로필·사용자 코스 | 브라우저 상태 우선. 서버 저장은 저장 기능 구현 시 도입 |
+| 반려견 프로필·사용자 코스 | 브라우저 상태 우선. 인증된 사용자가 명시적으로 계정에 저장한 입력만 Firestore에 보관 |
 | 자체 작성 대표 코스의 장소 ID·순서 | 자체 기획 데이터로 저장 가능. 조회한 장소 설명·규정 복제와 구분 |
 | 비용·장애 집계 | 원문·자격증명·개인 입력 없이 최소 집계 |
 | 규정 확인 기록·평가용 원문 | 확보·보관 권한과 범위를 확인한 뒤 관리 |
@@ -122,3 +122,8 @@ PWA의 브라우저 수명은 root PwaProvider가 관리한다. 서비스 워커
 ## 인천 보완 출처 (2026-09-11 구현)
 
 PolicySupplementSource는 검수된 장소의 보완 문서·날짜 공지·매칭 경고를 반환한다. 서버 조립 모듈은 incheonSupplements를 enrichedExtractor에 주입한다. 사용 사례가 출처별 추출을 실행하고 순수 mergePolicies가 종류·구역별 충돌을 확인한다. 도메인에 파일·Next.js·LLM 호출 의존성을 넣지 않는다. PolicySources가 근거 화면의 출처별 날짜·원문·연락처·공지 링크를 표시한다. 단일 원문 출처 필드는 호환성을 유지하고 sources/notices를 추가했다. 결과 규칙은 결합 후 최대 160개, 모델 원본 스키마는 기존 40개 상한을 유지한다.
+
+
+## 계정 인증·저장 (2026-09-12)
+
+Firebase Web Auth는 AuthProvider 경계에서 지연 초기화한다. UI가 ID 토큰을 전송하면 account API가 Admin SDK로 검증·이메일 인증·UID를 확인한 뒤 TripRepository를 호출한다. FirestoreTrips가 사용자 경로와 저장 수/버전 트랜잭션을 구현하며 요청의 ownerId를 허용하지 않는다. Rules는 브라우저 직접 접근을 거부한다. 공통 인증/서버 초기화와 저장 계약은 [Firebase 기준](FIREBASE_AUTH_AND_STORAGE.md)에 있다. 계정별 Query 캐시는 로그아웃/계정 전환 시 폐기하고, 명시적으로 불러온 입력은 규정을 재조회해야 한다.

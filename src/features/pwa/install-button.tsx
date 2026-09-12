@@ -71,7 +71,8 @@ export function InstallButton() {
         )}
         <p className="field-caption">
           장소 검색과 규정 검사는 인터넷 연결이 필요해요. 앱을 설치해도 여행
-          입력이 다른 기기로 자동 이동하지는 않아요.
+          입력이 자동 이동하지는 않아요. 로그인 후 계정에 저장한 노트는 다른
+          기기에서 불러올 수 있어요.
         </p>
         {pwa.enabled && pwa.supported && !pwa.error && (
           <p className="field-caption">
