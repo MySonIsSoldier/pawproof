@@ -3,10 +3,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "../auth/auth-provider";
 import { useCloudTrips } from "./use-cloud-trips";
+import { NoteLibrary } from "./note-library";
+import { Icon } from "../../components/icon";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import {
   Dialog,
+  DialogTrigger,
   DialogContent,
   DialogTitle,
   DialogDescription,
@@ -15,6 +18,7 @@ import {
 import type { SavedTrip } from "../../application/contracts/saved-trip";
 import type { TripRecord } from "../../application/contracts/trip-record";
 import styles from "./cloud-trips.module.css";
+
 export function CloudTrips({
   busy,
   restore,
@@ -25,19 +29,28 @@ export function CloudTrips({
   const auth = useAuth();
   return (
     <section className={`${styles.panel} no-print`} aria-label="계정 여행 노트">
-      <h3>어디서든, 나의 여행 노트</h3>
-      <p>
-        로그인하면 작성 중인 코스가 자동 저장돼요. 장소와 저장 당시 검사 요약을
-        다시 열 수 있어요.
-      </p>
       {!auth.ready ? (
-        <p role="status">로그인 확인 중…</p>
-      ) : !auth.user ? (
-        <Button variant="outline" onClick={() => auth.setOpen(true)}>
-          로그인하고 자동 저장
-        </Button>
-      ) : !auth.user.verified ? (
-        <Link href="/profile">이메일 인증하고 자동 저장 시작</Link>
+        <p role="status">여행 노트를 준비하고 있어요…</p>
+      ) : !auth.user?.verified ? (
+        <div className={styles.guest}>
+          <span className={styles.mark}>
+            <Icon name="paw" size={24} />
+          </span>
+          <div className={styles.guestCopy}>
+            <h2>이 여행, 다음에도 이어가세요</h2>
+            <p>새로고침하면 작성 내용과 검사 결과가 사라져요.</p>
+            <p>로그인하면 나의 계정에 자동으로 보관돼요.</p>
+          </div>
+          {!auth.user ? (
+            <Button variant="primary" onClick={() => auth.setOpen(true)}>
+              로그인하고 이어가기 <Icon name="arrow" size={16} />
+            </Button>
+          ) : (
+            <Link className="button small" href="/profile">
+              이메일 인증하고 이어가기
+            </Link>
+          )}
+        </div>
       ) : (
         <Editor
           key={auth.user.uid}
@@ -66,125 +79,121 @@ function Editor({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const disabled = busy || pending || model.status === "loading";
-  async function perform(action: () => Promise<void>) {
+  async function perform(action: () => Promise<void>, closeLibrary = false) {
     setPending(true);
     setError("");
     try {
       await action();
       setConfirmation(null);
+      if (closeLibrary) model.setOpen(false);
     } catch (error) {
       setError(
         error instanceof Error
           ? error.message
-          : "노트 작업을 완료하지 못했어요.",
+          : "노트를 열지 못했어요. 다시 시도해 주세요.",
       );
     } finally {
       setPending(false);
     }
   }
+  const message =
+    model.status === "saving"
+      ? "자동 저장 중…"
+      : model.status === "editing"
+        ? "변경사항 반영 중…"
+        : model.status === "error"
+          ? "저장하지 못했어요"
+          : model.status === "loading"
+            ? "노트 여는 중…"
+            : model.selected
+              ? "자동 저장됨"
+              : "작성하면 자동 저장돼요";
   return (
-    <div className={styles.body}>
-      <label>
-        노트 제목
-        <Input
-          value={model.title}
-          maxLength={60}
-          placeholder="여행 날짜로 자동 제목을 만들어요"
-          disabled={disabled}
-          onChange={(e) => model.actions.title(e.target.value)}
-        />
-      </label>
-      <p role="status" aria-live="polite">
-        {model.status === "saving"
-          ? "자동 저장 중…"
-          : model.status === "editing"
-            ? "변경사항 저장 대기 중…"
-            : model.status === "error"
-              ? "자동 저장을 완료하지 못했어요"
-              : model.status === "loading"
-                ? "노트 복원 중…"
-                : model.selected
-                  ? "모든 변경사항을 저장했어요"
-                  : "작성하면 자동으로 저장돼요"}
-      </p>
-      <div className={styles.actions}>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          onClick={() => void perform(model.actions.fresh)}
-        >
-          새 여행 노트
-        </Button>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          aria-expanded={model.open}
-          onClick={() => model.setOpen(!model.open)}
-        >
-          계정 노트 목록
-        </Button>
-        {model.status === "error" && (
-          <Button
+    <>
+      <div className={styles.toolbar}>
+        <div className={styles.titleField}>
+          <label htmlFor="trip-note-title">나의 여행 노트</label>
+          <Input
+            id="trip-note-title"
+            aria-label="노트 제목"
+            value={model.title}
+            maxLength={60}
+            placeholder="이번 여행에 이름을 붙여주세요"
             disabled={disabled}
-            onClick={() => void perform(model.actions.flush)}
+            onChange={(event) => model.actions.title(event.target.value)}
+          />
+          <p
+            className={styles.status}
+            data-state={model.status}
+            role="status"
+            aria-live="polite"
           >
-            자동 저장 다시 시도
+            <Icon
+              name={
+                model.status === "error"
+                  ? "info"
+                  : model.status === "saved" && model.selected
+                    ? "check"
+                    : "clock"
+              }
+              size={14}
+            />
+            {message}
+          </p>
+        </div>
+        <div className={styles.actions}>
+          <Dialog
+            open={model.open}
+            onOpenChange={(open) => {
+              if (!pending) {
+                setError("");
+                model.setOpen(open);
+              }
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button variant="outline" disabled={disabled}>
+                <Icon name="bag" size={17} />내 여행 노트
+              </Button>
+            </DialogTrigger>
+            <NoteLibrary
+              allowReload={model.status === "error"}
+              notes={model.list.data}
+              selected={model.selected}
+              loading={model.list.isFetching}
+              disabled={disabled}
+              error={error || model.list.error?.message || ""}
+              refresh={() => void model.list.refetch()}
+              openNote={(trip) => {
+                if (model.status === "error")
+                  setConfirmation({ action: "load", trip });
+                else void perform(() => model.actions.load(trip), true);
+              }}
+              deleteNote={(trip) => setConfirmation({ action: "delete", trip })}
+            />
+          </Dialog>
+          <Button
+            variant="ghost"
+            disabled={disabled}
+            onClick={() => void perform(model.actions.fresh)}
+          >
+            <Icon name="plus" size={17} />새 여행 노트
           </Button>
-        )}
+        </div>
       </div>
-      {(error || model.error || model.list.error) && (
+      {(error || model.error) && (
         <p role="alert" className={styles.error}>
-          {error || model.error || model.list.error?.message}
+          {error || model.error}
         </p>
       )}
-      {model.open && (
-        <div className={styles.list}>
-          <div className={styles.actions}>
-            <strong>저장한 노트 · 최대 20개</strong>
-            <Button
-              variant="link"
-              disabled={disabled || model.list.isFetching}
-              onClick={() => void model.list.refetch()}
-            >
-              목록 새로고침
-            </Button>
-          </div>
-          {model.list.isFetching && (
-            <p role="status">노트를 불러오고 있어요…</p>
-          )}
-          {model.list.data?.length === 0 && <p>아직 저장한 노트가 없어요.</p>}
-          {model.list.data?.map((note) => (
-            <article className={styles.item} key={note.id}>
-              <h4>{note.title}</h4>
-              <p>
-                {note.trip.date} · {note.trip.pets.length}마리 ·{" "}
-                {note.trip.visits.length}곳 ·{" "}
-                {note.trip.mode === "demo" ? "가상 체험" : "실제 장소"}
-              </p>
-              <p>{note.verification ? "검사 기록 포함" : "작성 중인 코스"}</p>
-              <div className={styles.actions}>
-                <Button
-                  variant="outline"
-                  disabled={disabled}
-                  onClick={() =>
-                    setConfirmation({ action: "load", trip: note })
-                  }
-                >
-                  노트 불러오기
-                </Button>
-                <Button
-                  variant="ghost"
-                  disabled={disabled}
-                  onClick={() =>
-                    setConfirmation({ action: "delete", trip: note })
-                  }
-                >
-                  계정 노트 삭제
-                </Button>
-              </div>
-            </article>
-          ))}
-        </div>
+      {model.status === "error" && (
+        <Button
+          variant="link"
+          disabled={disabled}
+          onClick={() => void perform(model.actions.flush)}
+        >
+          자동 저장 다시 시도
+        </Button>
       )}
       <Dialog
         open={!!confirmation}
@@ -195,15 +204,20 @@ function Editor({
         <DialogContent>
           <DialogTitle>
             {confirmation?.action === "load"
-              ? "선택한 여행을 열까요?"
+              ? "저장하지 못한 변경사항을 버릴까요?"
               : "계정 노트를 삭제할까요?"}
           </DialogTitle>
           <DialogDescription>
             {confirmation?.action === "load"
-              ? "현재 변경사항을 저장한 뒤 선택한 장소와 검사 기록을 불러와요. 저장 충돌이 있다면 미전송 초안을 버리고 선택한 노트를 열어요."
-              : "선택한 노트를 계정에서 삭제해요. 현재 입력은 남지만 다음 편집부터 새 노트로 저장돼요."}
+              ? "현재 미전송 초안을 버리고 선택한 노트를 열어요. 서버에 저장된 내용은 바뀌지 않아요."
+              : "이 노트를 계정에서 삭제해요. 현재 열린 노트라면 화면의 입력은 유지되고, 다음 편집부터 새 노트로 자동 저장돼요."}
           </DialogDescription>
           <p>{confirmation?.trip.title}</p>
+          {error && (
+            <p role="alert" className={styles.error}>
+              {error}
+            </p>
+          )}
           <div className={styles.actions}>
             <DialogClose asChild>
               <Button variant="outline" disabled={pending}>
@@ -214,20 +228,22 @@ function Editor({
               disabled={pending}
               onClick={() => {
                 if (confirmation)
-                  void perform(() =>
-                    confirmation.action === "load"
-                      ? model.actions.load(confirmation.trip)
-                      : model.actions.remove(confirmation.trip),
+                  void perform(
+                    () =>
+                      confirmation.action === "load"
+                        ? model.actions.load(confirmation.trip)
+                        : model.actions.remove(confirmation.trip),
+                    confirmation.action === "load",
                   );
               }}
             >
               {confirmation?.action === "load"
-                ? "입력 바꾸고 불러오기"
+                ? "변경사항 버리고 열기"
                 : "삭제 확인"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

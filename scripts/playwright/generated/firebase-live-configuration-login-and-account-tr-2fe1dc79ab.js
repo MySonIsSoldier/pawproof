@@ -176,20 +176,21 @@ try {
   stage = "cloud note create and list";
   const panel = page.getByRole("region", { name: "계정 여행 노트" });
   await panel.getByLabel("노트 제목").fill("자동 연결 점검 · 종료 후 삭제");
-  await expect(
-    panel.getByText("모든 변경사항을 저장했어요", { exact: true }),
-  ).toBeVisible();
+  await expect(panel.getByText("자동 저장됨", { exact: true })).toBeVisible();
   await panel
-    .getByRole("button", { name: "계정 노트 목록", exact: true })
+    .getByRole("button", { name: "내 여행 노트", exact: true })
     .click();
   await expect(
-    panel.getByRole("heading", { name: "자동 연결 점검 · 종료 후 삭제" }),
+    page
+      .getByRole("dialog", { name: "내 여행 노트", exact: true })
+      .getByRole("heading", { name: "자동 연결 점검 · 종료 후 삭제" }),
   ).toBeVisible();
   const saved = await db.collection(`accounts/${uid}/trips`).get();
   expect(saved.size).toBe(1);
   expect(saved.docs[0].data().revision).toBe(1);
   pass(stage);
   stage = "cloud note update, login persistence and reload";
+  await page.getByRole("button", { name: "노트 목록 닫기" }).click();
   await page.getByLabel("반려견 1 이름", { exact: true }).fill("연결점검");
 
   await expect
@@ -200,21 +201,29 @@ try {
     page.getByRole("link", { name: "프로필", exact: true }),
   ).toBeVisible();
   await panel
-    .getByRole("button", { name: "계정 노트 목록", exact: true })
+    .getByRole("button", { name: "내 여행 노트", exact: true })
     .click();
-  await panel
-    .getByRole("button", { name: "노트 불러오기", exact: true })
-    .click();
-  await page.getByRole("button", { name: "입력 바꾸고 불러오기" }).click();
+  await page.getByRole("button", { name: "노트 목록 닫기" }).click();
   await expect(page.getByLabel("반려견 1 이름", { exact: true })).toHaveValue(
     "연결점검",
   );
   pass(stage);
   stage = "cloud note deletion and logout";
-  await panel.getByRole("button", { name: "계정 노트 삭제" }).click();
+  await panel
+    .getByRole("button", { name: "내 여행 노트", exact: true })
+    .click();
+  await page
+    .getByRole("dialog", { name: "내 여행 노트", exact: true })
+    .getByRole("button", { name: "삭제", exact: true })
+    .click();
   await page.getByRole("button", { name: "삭제 확인" }).click();
-  await expect(panel.getByText("아직 저장한 노트가 없어요.")).toBeVisible();
+  await expect(
+    page
+      .getByRole("dialog", { name: "내 여행 노트", exact: true })
+      .getByText("첫 여행을 기다리고 있어요"),
+  ).toBeVisible();
   expect((await saved.docs[0].ref.get()).exists).toBe(false);
+  await page.getByRole("button", { name: "노트 목록 닫기" }).click();
   await page.getByRole("link", { name: "프로필", exact: true }).click();
   await page.getByRole("button", { name: "로그아웃", exact: true }).click();
   await expect(

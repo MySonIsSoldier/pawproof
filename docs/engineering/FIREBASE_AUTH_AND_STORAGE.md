@@ -18,11 +18,11 @@ accounts/{verifiedUid}/trips/{uuid}     -> title, trip, places, verification, re
 accounts/{uid}/profile/main             -> pets (stable IDs), revision
 ```
 
-계정 노트는 최대 20개다. 작성 중인 0~5개 방문지·미완성 반려견 입력도 초안으로 저장하지만 코스 검증 API의 엄격한 3~5곳 요건은 유지한다. 900ms 입력 대기 후 직렬로 저장하고 저장 중 새 입력은 다음 요청에 반영한다. 미전송 초안은 계정별 sessionStorage에 두며 성공한 최신 내용만 지운다. 실패·revision 충돌은 자동 반복하지 않고 화면에 남긴다. 탭을 닫을 때 미저장 입력이 있으면 브라우저 이탈 경고를 사용한다. 로그아웃 후 다른 계정에는 이전 계정의 초안을 불러오지 않는다.
+계정 노트는 최대 20개다. 작성 중인 0~5개 방문지·미완성 반려견 입력도 초안으로 저장하지만 코스 검증 API의 엄격한 3~5곳 요건은 유지한다. 900ms 입력 대기 후 직렬로 저장하고 저장 중 새 입력은 다음 요청에 반영한다. 미전송 초안은 계정별 sessionStorage에 두며 성공한 최신 내용만 지운다. 실패·revision 충돌은 자동 반복하지 않고 화면에 남긴다. 새로고침·탭 닫기 때 미저장 입력이 있으면 브라우저 이탈 경고를 요청한다. 브라우저 기본 문구와 모바일 호출 제한을 따르며 저장 성공 후에는 경고하지 않는다. 로그아웃 후 다른 계정에는 이전 계정의 초안을 불러오지 않는다.
 
 저장 범위는 사용자 입력, 선택한 장소의 표시 정보(이름·주소·유형·좌표·ID), 검사 당시 입력과 앱의 계산 결과(상태·이유·준비사항·시간·검사 시각)다. 공급자 규정 원문·인용문·추출 규칙·사진은 저장하지 않는다. 이는 사용자가 요청한 개인 노트 복원을 위한 기록이며 장소 규정 DB 적재/재사용 용도가 아니다. 저장된 결과는 과거 요약으로 표시하고 최신 원문은 명시적인 재검사로 조회한다.
 
-계정 노트 URL에는 해당 노트 ID를 기록해 새로고침 후 복원한다. ID 자체가 접근 권한은 아니며 다른 계정이면 조회되지 않는다. 이전 버전의 ID만 있는 노트는 현재 장소 표시 정보를 재조회하고, 과거에 저장하지 않은 검사 결과는 만들어내지 않는다. 기기 저장도 v2 기록으로 전환하되 v1 입력은 계속 읽는다. 계정 API는 no-store이며 PWA Service Worker는 계정 요청과 토큰을 캐시하지 않는다.
+계정 노트 URL에는 해당 노트 ID를 기록해 새로고침 후 복원한다. ID 자체가 접근 권한은 아니며 다른 계정이면 조회되지 않는다. 이전 버전의 ID만 있는 노트는 현재 장소 표시 정보를 재조회하고, 과거에 저장하지 않은 검사 결과는 만들어내지 않는다. 비회원 기기 저장은 제거했으며 이전 기기 기록은 읽거나 계정에 이전하지 않는다. 현재 화면에서 로그인한 사용자의 편집 입력은 유지하여 자동 저장한다. 로그아웃·다른 계정 전환 시 이전 스토어와 노트 URL 선택을 비운다. 계정 API는 no-store이며 PWA Service Worker는 계정 요청과 토큰을 캐시하지 않는다.
 
 ## Firebase Console 설정 순서
 
@@ -53,7 +53,7 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
 
 두 project ID는 동일해야 한다. private_key 안의 줄바꿈은 실제 줄바꿈 또는 `\n` 형식을 지원한다. 서비스 계정 키에 `NEXT_PUBLIC_` 접두사를 붙이지 않는다. Vercel에서도 같은 이름으로 설정하며, Firebase Web의 공개 API 키와 Admin 개인 키를 혼동하지 않는다.
 
-설정이 없거나 불완전하면 로그인 패널에서 준비 중임을 안내하고 비로그인 검사·기기 저장을 계속 제공한다. 서버 설정이 없으면 DB API가 503을 반환한다. 오프라인 계정 저장을 성공 처리하거나 나중에 몰래 업로드하지 않는다.
+설정이 없거나 불완전하면 로그인 패널에서 준비 중임을 안내하고 비로그인 검사를 계속 제공하되 저장할 수 없음을 안내한다. 서버 설정이 없으면 DB API가 503을 반환한다. 오프라인 계정 저장을 성공 처리하거나 나중에 몰래 업로드하지 않는다.
 
 ## 로컬 검증
 
@@ -96,3 +96,6 @@ OCI에서는 `PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright`, `LD_LIBRARY_PATH=/tm
 - [인증 상태 보존](https://firebase.google.com/docs/auth/web/auth-state-persistence), [서버 ID 토큰 검증](https://firebase.google.com/docs/auth/admin/verify-id-tokens)
 - [Admin SDK 초기화](https://firebase.google.com/docs/admin/setup), [서버 SDK와 Firestore Rules](https://firebase.google.com/docs/firestore/security/rules-conditions)
 - [로컬 에뮬레이터](https://firebase.google.com/docs/emulator-suite/install_and_configure)
+
+
+노트 관리 UI는 여행 화면 상단의 제목·자동 저장 상태·내 여행 노트·새 여행 노트로 구성한다. 노트 목록은 제목/날짜로 검색하고 선택 즉시 열며 정상 미전송 변경은 전환 전에 flush한다. 저장 실패 초안 폐기와 삭제만 확인한다. 비회원과 이메일 미인증 사용자에게는 저장 전제와 새로고침 시 손실을 안내한다.

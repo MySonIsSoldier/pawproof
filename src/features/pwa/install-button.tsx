@@ -71,8 +71,8 @@ export function InstallButton() {
         )}
         <p className="field-caption">
           장소 검색과 규정 검사는 인터넷 연결이 필요해요. 앱을 설치해도 여행
-          비로그인 입력은 기기별로 보관돼요. 로그인 후 자동 저장된 노트는 다른
-          기기에서 불러올 수 있어요.
+          비로그인 입력은 새로고침하면 사라져요. 로그인하면 여행 노트가 계정에
+          자동 저장되어 다른 기기에서도 이어갈 수 있어요.
         </p>
         {pwa.enabled && pwa.supported && !pwa.error && (
           <p className="field-caption">

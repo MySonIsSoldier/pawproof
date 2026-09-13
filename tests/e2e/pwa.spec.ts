@@ -164,9 +164,10 @@ test("offline keeps edits, blocks API work and falls back without caching privat
   );
   expect(verifications).toBe(1);
   await expect(page.getByLabel("반려견 1 이름")).toHaveValue("오프라인 두부");
-  await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
-    .click();
+  expect(
+    await page.evaluate(() => localStorage.getItem("pawproof.trip.v1")),
+  ).toBeNull();
+  page.once("dialog", (dialog) => dialog.accept());
   await page.goto(new URL("about", baseURL).href);
   await expect(
     page.getByRole("heading", { name: "연결을 기다리고 있어요." }),
@@ -217,8 +218,7 @@ test("offline keeps edits, blocks API work and falls back without caching privat
   expect(apiAvailable).toBe(false);
   await context.setOffline(false);
   await page.getByRole("link", { name: "여행 노트 다시 열기" }).click();
-  await page.getByRole("button", { name: "불러오기", exact: true }).click();
-  await expect(page.getByLabel("반려견 1 이름")).toHaveValue("오프라인 두부");
+  await expect(page.getByLabel("반려견 1 이름")).toHaveValue("");
   expect(verifications).toBe(1);
 });
 
@@ -253,6 +253,7 @@ test("worker update waits for consent, cleans only its caches and preserves anot
     await page
       .getByRole("button", { name: "업데이트 안내", exact: true })
       .click();
+    page.once("dialog", (dialog) => dialog.accept());
     await Promise.all([
       page.waitForEvent("load"),
       dialog.getByRole("button", { name: "새 버전으로 열기" }).click(),

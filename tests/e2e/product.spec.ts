@@ -38,7 +38,7 @@ test("Korean landing, working CTA, FAQ, local font and responsive screenshot", a
   expect(errors).toEqual([]);
 });
 
-test("complete trip: four states, evidence, stale inputs, replacement, undo, preparation and saved inputs", async ({
+test("complete trip: four states, evidence, stale inputs, replacement, undo, preparation and ephemeral guest inputs", async ({
   page,
 }, info) => {
   const errors: string[] = [];
@@ -157,25 +157,15 @@ test("complete trip: four states, evidence, stale inputs, replacement, undo, pre
     ),
   ).toBe(true);
   await page.getByLabel("반려견 1 이름").fill("콩이");
-  await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
-    .click();
-  const stored = await page.evaluate(() =>
-    localStorage.getItem("pawproof.trip.v1"),
-  );
-  expect(stored).toContain("콩이");
-  expect(stored).not.toContain('"raw"');
-  expect(stored).not.toContain('"rules"');
-  await page.reload();
-  await page.getByRole("button", { name: "불러오기", exact: true }).click();
-  await expect(page.getByLabel("반려견 1 이름")).toHaveValue("콩이");
-  await expect(
-    page.getByRole("heading", { name: "코스 확인 결과" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "저장 삭제", exact: true }).click();
   expect(
     await page.evaluate(() => localStorage.getItem("pawproof.trip.v1")),
   ).toBeNull();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.reload();
+  await expect(page.getByLabel("반려견 1 이름")).toHaveValue("두부");
+  await expect(
+    page.getByRole("heading", { name: "코스 확인 결과" }),
+  ).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 

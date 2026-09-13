@@ -7,7 +7,7 @@ PawProof는 반려견 동반 여행 코스를 규정과 일정에 대조하고 �
 ## 현재 상태
 
 - 운영 주소: https://pawproof-rose.vercel.app/ — Vercel 배포 완료는 사용자 확인 기준이다.
-- PWA·실 API 어댑터·Firebase 인증·프로필/반려견·여행 노트 자동 저장을 구현했다. 인천 데이터 보강은 진행 중이다.
+- PWA·실 API 어댑터·Firebase 인증·프로필/반려견·여행 노트 자동 저장을 구현했다. 비회원 코스는 메모리 전용이며 새로고침 경고를 제공하고, 노트 저장은 로그인한 계정에 한정한다. 인천 데이터 보강은 진행 중이다.
 - 검증 범위와 실기기 미확인 사항은 [작업 로그](docs/delivery/WORK_LOG.md)와 [구현 기록](docs/delivery/IMPLEMENTATION_STATUS.md)에 둔다. 에뮬레이터 성공을 실제 Google 로그인·iPhone 키보드 검증으로 표현하지 않는다.
 
 ## 개발 원칙

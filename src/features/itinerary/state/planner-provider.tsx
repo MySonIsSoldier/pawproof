@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { useStore } from "zustand";
+import { useAuth } from "../../auth/auth-provider";
 
 import type { TripInput } from "../../../domain/policies/types";
 import {
@@ -18,9 +19,23 @@ export function PlannerProvider({
   initialTrip: TripInput;
   children: ReactNode;
 }) {
-  const [store] = useState(() => createTripStore(initialTrip));
+  const { user } = useAuth();
+  const owner = user?.uid ?? null;
+  const [session, setSession] = useState(() => ({
+    owner,
+    store: createTripStore(initialTrip),
+  }));
+  // Adopt guest work on login, but never carry one account's work into another.
+  if (session.owner !== owner) {
+    setSession({
+      owner,
+      store: session.owner ? createTripStore(initialTrip) : session.store,
+    });
+  }
   return (
-    <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+    <StoreContext.Provider value={session.store}>
+      {children}
+    </StoreContext.Provider>
   );
 }
 export function useTripStoreApi() {

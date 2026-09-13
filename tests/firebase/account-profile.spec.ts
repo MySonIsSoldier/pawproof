@@ -112,9 +112,7 @@ test("signup redirects to planner; profile verification and registered pets are 
   await expect(page.getByLabel("반려견 1 체중", { exact: true })).toHaveValue(
     "7.5",
   );
-  await expect(
-    page.getByText("모든 변경사항을 저장했어요", { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText("자동 저장됨", { exact: true })).toBeVisible();
   expect(
     (await db.collection(`accounts/${user.uid}/trips`).get()).docs[0].data()
       .trip.visits,

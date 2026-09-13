@@ -62,9 +62,7 @@ test("live places and verification summary survive autosave, a new note and relo
   ).toBeVisible();
   const panel = page.getByRole("region", { name: "계정 여행 노트" });
   await panel.getByLabel("노트 제목").fill("인천 자동 저장 검증");
-  await expect(
-    panel.getByText("모든 변경사항을 저장했어요", { exact: true }),
-  ).toBeVisible();
+  await expect(panel.getByText("자동 저장됨", { exact: true })).toBeVisible();
   const notes = await db.collection(`accounts/${user.uid}/trips`).get();
   expect(notes.size).toBe(1);
   const record = notes.docs[0].data();
@@ -77,12 +75,12 @@ test("live places and verification summary survive autosave, a new note and relo
   await panel.getByRole("button", { name: "새 여행 노트" }).click();
   await expect(page.locator(".visit-card")).toHaveCount(0);
   await panel
-    .getByRole("button", { name: "계정 노트 목록", exact: true })
+    .getByRole("button", { name: "내 여행 노트", exact: true })
     .click();
-  await panel
-    .getByRole("button", { name: "노트 불러오기", exact: true })
+  await page
+    .getByRole("dialog", { name: "내 여행 노트", exact: true })
+    .getByRole("button", { name: "노트 열기", exact: true })
     .click();
-  await page.getByRole("button", { name: "입력 바꾸고 불러오기" }).click();
   await expect(page.locator(".visit-card")).toHaveCount(places.length);
   await expect(page.locator(".visit-card").first()).toContainText(
     places[0].name,
@@ -101,15 +99,20 @@ test("live places and verification summary survive autosave, a new note and relo
   await expect(
     page.getByText("입력이 변경되었어요. 다시 검사해 주세요.", { exact: true }),
   ).toBeVisible();
-  await expect(
-    panel.getByText("모든 변경사항을 저장했어요", { exact: true }),
-  ).toBeVisible();
+  await expect(panel.getByText("자동 저장됨", { exact: true })).toBeVisible();
   await panel
-    .getByRole("button", { name: "계정 노트 목록", exact: true })
+    .getByRole("button", { name: "내 여행 노트", exact: true })
     .click();
-  await panel.getByRole("button", { name: "계정 노트 삭제" }).click();
+  await page
+    .getByRole("dialog", { name: "내 여행 노트", exact: true })
+    .getByRole("button", { name: "삭제", exact: true })
+    .click();
   await page.getByRole("button", { name: "삭제 확인" }).click();
-  await expect(panel.getByText("아직 저장한 노트가 없어요.")).toBeVisible();
+  await expect(
+    page
+      .getByRole("dialog", { name: "내 여행 노트", exact: true })
+      .getByText("첫 여행을 기다리고 있어요"),
+  ).toBeVisible();
   expect((await db.collection(`accounts/${user.uid}/trips`).get()).empty).toBe(
     true,
   );
@@ -139,9 +142,7 @@ test("autosave retains concurrent edits and reports network failure without losi
   await expect.poll(() => intercepted).toBe(true);
   await page.getByLabel("반려견 1 이름", { exact: true }).fill("저장 중 수정");
   release();
-  await expect(
-    panel.getByText("모든 변경사항을 저장했어요", { exact: true }),
-  ).toBeVisible();
+  await expect(panel.getByText("자동 저장됨", { exact: true })).toBeVisible();
   const notes = await db.collection(`accounts/${user.uid}/trips`).get();
   expect(notes.size).toBe(1);
   expect(notes.docs[0].data().trip.pets[0].name).toBe("저장 중 수정");
@@ -156,9 +157,7 @@ test("autosave retains concurrent edits and reports network failure without losi
   );
   await page.unroute("**/api/account/trips/*");
   await panel.getByRole("button", { name: "자동 저장 다시 시도" }).click();
-  await expect(
-    panel.getByText("모든 변경사항을 저장했어요", { exact: true }),
-  ).toBeVisible();
+  await expect(panel.getByText("자동 저장됨", { exact: true })).toBeVisible();
   expect((await notes.docs[0].ref.get()).data()!.trip.pets[0].name).toBe(
     "실패해도 보존",
   );
@@ -168,15 +167,18 @@ test("autosave retains concurrent edits and reports network failure without losi
     .getByLabel("반려견 1 이름", { exact: true })
     .fill("삭제 중에도 보존");
   await panel
-    .getByRole("button", { name: "계정 노트 목록", exact: true })
+    .getByRole("button", { name: "내 여행 노트", exact: true })
     .click();
-  const previous = panel.getByRole("article").filter({
-    has: page.getByRole("heading", {
-      name: notes.docs[0].data().title,
-      exact: true,
-    }),
-  });
-  await previous.getByRole("button", { name: "계정 노트 삭제" }).click();
+  const previous = page
+    .getByRole("dialog", { name: "내 여행 노트", exact: true })
+    .getByRole("article")
+    .filter({
+      has: page.getByRole("heading", {
+        name: notes.docs[0].data().title,
+        exact: true,
+      }),
+    });
+  await previous.getByRole("button", { name: "삭제", exact: true }).click();
   const deletion = page.waitForResponse(
     (r) =>
       r.request().method() === "DELETE" &&
@@ -188,13 +190,18 @@ test("autosave retains concurrent edits and reports network failure without losi
   const remaining = await db.collection(`accounts/${user.uid}/trips`).get();
   expect(remaining.size).toBe(1);
   expect(remaining.docs[0].data().trip.pets[0].name).toBe("삭제 중에도 보존");
+  await page.getByRole("button", { name: "노트 목록 닫기" }).click();
   await page.getByRole("link", { name: "프로필", exact: true }).click();
   await page.getByRole("button", { name: "로그아웃", exact: true }).click();
   const other = await createUser();
   await login(page, other.email);
   await expect(page).toHaveURL(/\/plan(?:\?|$)/);
   await panel
-    .getByRole("button", { name: "계정 노트 목록", exact: true })
+    .getByRole("button", { name: "내 여행 노트", exact: true })
     .click();
-  await expect(panel.getByText("아직 저장한 노트가 없어요.")).toBeVisible();
+  await expect(
+    page
+      .getByRole("dialog", { name: "내 여행 노트", exact: true })
+      .getByText("첫 여행을 기다리고 있어요"),
+  ).toBeVisible();
 });

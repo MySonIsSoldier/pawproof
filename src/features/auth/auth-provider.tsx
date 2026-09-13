@@ -91,6 +91,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               if (lastUid.current && lastUid.current !== next?.uid) {
                 void queryClient.cancelQueries({ queryKey: ["account"] });
                 queryClient.removeQueries({ queryKey: ["account"] });
+                const url = new URL(window.location.href);
+                url.searchParams.delete("note");
+                window.history.replaceState(null, "", url);
               }
               lastUid.current = next?.uid || null;
               setUser(identity(next));

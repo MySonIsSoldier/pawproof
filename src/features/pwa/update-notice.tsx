@@ -21,7 +21,8 @@ export function UpdateNotice({ apply }: { apply: () => void }) {
           <DialogTitle>새 버전으로 다시 열까요?</DialogTitle>
           <DialogDescription>
             열린 화면이 새로고침됩니다. 저장하지 않은 입력은 사라질 수 있어요.
-            여행 노트에서 ‘이 기기에 저장’을 먼저 눌러 주세요.
+            비회원의 작성 내용과 검사 결과는 사라져요. 로그인한 경우 여행 노트
+            상단의 ‘자동 저장됨’을 확인해 주세요.
           </DialogDescription>
           <div className="pwa-dialog-actions">
             <DialogClose asChild>

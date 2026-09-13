@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 const activeToast =
   '[data-sonner-toast][data-front="true"]:not([data-removed="true"])';
 
-test("action notifications refresh, dismiss by keyboard and stay out of saved data and print", async ({
+test("action notifications refresh, dismiss by keyboard and stay out of guest storage and print", async ({
   page,
 }, info) => {
   const errors: string[] = [];
@@ -12,12 +12,12 @@ test("action notifications refresh, dismiss by keyboard and stay out of saved da
   const toast = page.locator(activeToast);
   await expect(toast).toHaveCount(0);
   await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
+    .getByRole("button", { name: /^(이 코스|코스 다시) 검사하기$/ })
     .click();
   await expect(toast).toHaveAttribute("data-type", "success");
-  await expect(toast).toContainText("여행 노트를 이 기기에 저장했어요");
+  await expect(toast).toContainText("코스 검사를 마쳤어요");
   await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
+    .getByRole("button", { name: /^(이 코스|코스 다시) 검사하기$/ })
     .click();
   await expect(toast).toHaveCount(1);
   await page.keyboard.press("Alt+t");
@@ -33,9 +33,9 @@ test("action notifications refresh, dismiss by keyboard and stay out of saved da
   await page.keyboard.press("Enter");
   await expect(toast).toHaveCount(0);
   await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
+    .getByRole("button", { name: /^(이 코스|코스 다시) 검사하기$/ })
     .click();
-  await expect(toast).toContainText("여행 노트를 이 기기에 저장했어요");
+  await expect(toast).toContainText("코스 검사를 마쳤어요");
   await expect(toast).toHaveCSS("opacity", "1");
   await expect(toast).toHaveCSS("background-color", "rgb(250, 251, 247)");
   await expect(toast).toHaveCSS("color", "rgb(25, 61, 48)");
@@ -53,11 +53,10 @@ test("action notifications refresh, dismiss by keyboard and stay out of saved da
   await page.emulateMedia({ media: "print" });
   await expect(toast).not.toBeVisible();
   await page.emulateMedia({ media: "screen" });
-  const saved = await page.evaluate(() =>
-    JSON.parse(localStorage.getItem("pawproof.trip.v1")!),
-  );
-  expect(Object.keys(saved).sort()).toEqual(["record", "version"]);
-  expect(saved).not.toHaveProperty("feedback");
+  expect(
+    await page.evaluate(() => localStorage.getItem("pawproof.trip.v1")),
+  ).toBeNull();
+  page.once("dialog", (dialog) => dialog.accept());
   await page.reload();
   await expect(
     page.getByRole("heading", { name: "우리의 여행 노트" }),
@@ -101,9 +100,6 @@ test("invalid input and malformed proxy failures notify without reporting a comp
   await expect(toast).toHaveAttribute("data-type", "success");
   await expect(toast).toContainText("코스 검사를 마쳤어요");
   await expect(page.getByRole("main").getByRole("alert")).toHaveCount(0);
-  await page.getByRole("button", { name: "불러오기", exact: true }).click();
-  await expect(toast).toHaveAttribute("data-type", "info");
-  await expect(toast).toContainText("저장된 여행 노트가 없어요");
 });
 
 test("clipboard rejection is an error and leaving the planner clears notifications", async ({

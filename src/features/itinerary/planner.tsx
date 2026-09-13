@@ -30,9 +30,6 @@ function PlannerScreen() {
     recover,
     move,
     add,
-    save,
-    load,
-    removeSaved,
     copied,
     fail,
     remove,
@@ -69,6 +66,7 @@ function PlannerScreen() {
           </Button>
         </div>
       </div>
+      <CloudTrips busy={!!busy} restore={model.restoreTrip} />
       <div className={`mode-notice ${trip.mode}`}>
         <Icon name={trip.mode === "demo" ? "leaf" : "shield"} size={18} />
         <p>
@@ -170,38 +168,6 @@ function PlannerScreen() {
             />
             <VerificationPanel {...model} />
             <AlternativesPanel {...model} />
-            <div className="save-actions no-print">
-              <Button
-                variant="plain"
-                type="button"
-                disabled={!!busy}
-                onClick={save}
-              >
-                <Icon name="save" size={15} /> 이 기기에 저장
-              </Button>
-              <Button
-                variant="plain"
-                type="button"
-                disabled={!!busy}
-                onClick={load}
-              >
-                불러오기
-              </Button>
-              <Button
-                variant="plain"
-                type="button"
-                disabled={!!busy}
-                onClick={removeSaved}
-              >
-                저장 삭제
-              </Button>
-            </div>
-            <CloudTrips busy={!!busy} restore={model.restoreTrip} />
-            <p className="privacy-note no-print">
-              회원가입 없이 사용해요.
-              <br />
-              기기 저장에는 장소와 검사 당시 요약도 포함돼요.
-            </p>
           </div>
         </aside>
       </div>

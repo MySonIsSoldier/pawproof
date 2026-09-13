@@ -163,25 +163,19 @@ try {
     ),
   ).toBe(true);
   report.reverification = summary(again);
-  await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
-    .click();
-  const stored = await page.evaluate(() =>
-    localStorage.getItem("pawproof.trip.v1"),
-  );
-  expect(stored).toContain("실사용 검증견");
-  expect(stored).not.toContain('"raw"');
-  expect(stored).not.toContain('"rules"');
+  expect(
+    await page.evaluate(() => localStorage.getItem("pawproof.trip.v1")),
+  ).toBeNull();
+  page.once("dialog", (dialog) => dialog.accept());
   await page.reload();
-  await page.getByRole("button", { name: "불러오기", exact: true }).click();
-  await expect(page.getByLabel("반려견 1 체중")).toHaveValue("20");
+  await expect(page.getByLabel("반려견 1 이름")).toHaveValue("");
   await expect(
     page.getByRole("heading", { name: "코스 확인 결과" }),
   ).toHaveCount(0);
   expect(errors).toEqual([]);
   report.checks.push(
     "profile change and reverify",
-    "input-only save and reload",
+    "guest refresh clears unsaved input",
     "zero browser exceptions",
   );
   report.success = true;

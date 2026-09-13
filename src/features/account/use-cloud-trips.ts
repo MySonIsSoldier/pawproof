@@ -217,9 +217,6 @@ export function useCloudTrips(
           if (!blocked) await flush();
           if (!alive) return;
           clearTimeout(timer);
-          try {
-            sessionStorage.removeItem(outbox);
-          } catch {}
           const latest = await accountRequest(
             `/api/account/trips/${note.id}`,
             savedTripSchema,
@@ -228,7 +225,12 @@ export function useCloudTrips(
             undefined,
             controller.signal,
           );
-          if (alive) apply(latest);
+          if (alive) {
+            try {
+              sessionStorage.removeItem(outbox);
+            } catch {}
+            apply(latest);
+          }
         }),
       fresh: (mode) =>
         transition(async () => {
@@ -331,7 +333,10 @@ export function useCloudTrips(
             );
             if (!alive) return;
             apply(saved);
-          } else dirty = store.getState().revision > 0;
+          } else {
+            const current = store.getState();
+            dirty = current.revision > 0 || current.verification !== null;
+          }
         }
         paused = false;
         patch({ status: dirty ? "editing" : "saved" });
@@ -348,6 +353,7 @@ export function useCloudTrips(
     const unload = (event: BeforeUnloadEvent) => {
       if (dirty || inFlight) {
         event.preventDefault();
+        event.returnValue = "";
       }
     };
     const online = () => {

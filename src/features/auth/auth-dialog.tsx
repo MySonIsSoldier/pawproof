@@ -142,8 +142,8 @@ function AuthDialogScreen() {
         </DialogDescription>
         {!auth.configured ? (
           <p className={styles.notice}>
-            계정 연결을 준비하고 있어요. 지금은 ‘이 기기에 저장’을 이용해
-            주세요.
+            계정 연결을 준비하고 있어요. 코스 검사는 계속 이용할 수 있지만,
+            지금은 여행 노트를 저장할 수 없어요.
           </p>
         ) : !auth.ready ? (
           <p role="status">로그인 상태를 확인하고 있어요…</p>

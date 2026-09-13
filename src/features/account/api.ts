@@ -11,7 +11,7 @@ export async function accountRequest<T>(
 ): Promise<T> {
   if (!navigator.onLine)
     throw new Error(
-      "오프라인에서는 계정 노트를 사용할 수 없어요. 이 기기에 저장을 이용해 주세요.",
+      "오프라인에서는 자동 저장할 수 없어요. 연결 후 다시 시도해 주세요.",
     );
   return withRequestSignal(30_000, signal, async (requestSignal) => {
     const response = await fetch(apiPath(path), {

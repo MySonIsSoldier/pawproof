@@ -16,7 +16,7 @@ export function offlineDocument(planUrl: string): string {
 </style></head><body><main id="main">
 <div class="mark"><svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v9m0 5v1M4 7a10 10 0 0 1 16 0M7 10a6 6 0 0 1 10 0"/></svg></div>
 <small>PAWPROOF · TRAVEL NOTE</small><h1>연결을 기다리고 있어요.</h1><p>인터넷 연결을 확인한 뒤<br>우리의 여행 노트를 다시 열어주세요.</p>
-<div class="note"><strong>동반 조건은 최신 정보로 확인해요.</strong><p>오프라인에서는 장소 검색과 코스 검사를 할 수 없어요. 이전 규정을 대신 보여드리지 않아요.</p><p>‘이 기기에 저장’한 여행 입력은 이 브라우저에 남아 있어요. 연결 후 여행 노트에서 불러와 주세요.</p></div>
+<div class="note"><strong>동반 조건은 최신 정보로 확인해요.</strong><p>오프라인에서는 장소 검색과 코스 검사를 할 수 없어요. 이전 규정을 대신 보여드리지 않아요.</p><p>로그인 후 저장한 여행 노트는 계정에 남아 있어요. 연결 후 다시 열어 주세요. 비회원의 여행 입력은 저장하지 않아요.</p></div>
 <a href="${href}">여행 노트 다시 열기</a><footer>작은 발걸음도, 여행의 끝까지. PawProof</footer>
 </main></body></html>`;
 }

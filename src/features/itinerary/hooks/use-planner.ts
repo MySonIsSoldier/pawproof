@@ -15,7 +15,7 @@ import { initialTrip } from "../state/initial-trip";
 import { useResolvePlaces } from "./use-resolve-places";
 import { useTripOperations } from "./use-trip-operations";
 import { usePlannerNotifications } from "./use-planner-notifications";
-import { useTripPersistence } from "./use-trip-persistence";
+import { useGuestLeaveWarning } from "./use-guest-leave-warning";
 
 /** Compose UI operations; business policy evaluation remains on the server. */
 export function usePlanner() {
@@ -36,7 +36,7 @@ export function usePlanner() {
     })),
   );
   const operations = useTripOperations();
-  const persistence = useTripPersistence();
+  useGuestLeaveWarning();
   const [detail, setDetail] = useState<VisitResult | null>(null);
   function update(trip: TripInput) {
     if (operations.busy) return;
@@ -48,7 +48,6 @@ export function usePlanner() {
     ...state,
     ...operations,
     busy: operations.busy || (state.loading ? ("load" as const) : null),
-    ...persistence,
     detail,
     setDetail,
     update,

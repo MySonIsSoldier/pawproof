@@ -9,11 +9,7 @@ import { demoProviders } from "../../src/infrastructure/demo/catalog.ts";
 import { verifyTrip } from "../../src/application/use-cases/verify-trip.ts";
 import { recoverTrip } from "../../src/application/use-cases/recover-trip.ts";
 import { initialTrip } from "../../src/features/itinerary/state/initial-trip.ts";
-import {
-  loadTrip,
-  saveTrip,
-  tripStorageKey,
-} from "../../src/features/itinerary/state/trip-storage.ts";
+
 import { koreaToday } from "../../src/domain/itinerary/time.ts";
 
 const trip = () => createDemoTrip("2026-09-14");
@@ -77,35 +73,6 @@ test("new edits invalidate undo so it cannot erase unrelated input changes", asy
   store.getState().undo();
   assert.equal(store.getState().trip.startTime, "12:07");
   assert.equal(store.getState().previous, null);
-});
-
-test("explicit storage validates envelopes and saves only trip inputs", () => {
-  const map = new Map<string, string>();
-  const storage = {
-    getItem: (key: string) => map.get(key) ?? null,
-    setItem: (key: string, value: string) => {
-      map.set(key, value);
-    },
-    removeItem: (key: string) => {
-      map.delete(key);
-    },
-  };
-  assert.equal(loadTrip(storage), null);
-  assert.throws(() =>
-    saveTrip(storage, {
-      ...trip(),
-      raw: "must not persist",
-      result: {},
-    } as ReturnType<typeof trip>),
-  );
-  assert.equal(loadTrip(storage), null);
-  saveTrip(storage, trip());
-  assert.deepEqual(loadTrip(storage), trip());
-  assert.ok(!map.get(tripStorageKey)?.includes("must not persist"));
-  storage.setItem(tripStorageKey, '{"version":99,"trip":{}}');
-  assert.throws(() => loadTrip(storage));
-  storage.setItem(tripStorageKey, "null");
-  assert.throws(() => loadTrip(storage));
 });
 
 test("initial date uses an injected Korean day across UTC midnight boundaries", () => {

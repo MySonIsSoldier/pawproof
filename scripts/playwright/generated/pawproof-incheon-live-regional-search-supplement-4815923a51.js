@@ -93,14 +93,9 @@ try {
     ),
   ).toBe(true);
   await page.keyboard.press("Escape");
-  await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
-    .click();
-  const stored = await page.evaluate(() =>
-    localStorage.getItem("pawproof.trip.v1"),
-  );
-  expect(stored).not.toContain('"raw"');
-  expect(stored).not.toContain('"sources"');
+  expect(
+    await page.evaluate(() => localStorage.getItem("pawproof.trip.v1")),
+  ).toBeNull();
   expect(errors).toEqual([]);
   report.success = true;
 } catch (error) {

@@ -31,7 +31,7 @@ OCI에서 기존 /tmp/ms-playwright와 /tmp/pawproof-browser-libs가 있으면 v
 - 원문 근거가 없는 LLM 결과 거부, KTO JSON 및 비정상 HTML/XML 응답·빈 목록, 초/분 변환, 입력 바디 크기와 키 포함 오류 제거.
 - 데스크톱 1440×1000, 모바일 390×844, 한국어/Asia-Seoul 시간 설정.
 - 홈·폰트·사진·FAQ·CTA, 방문지/반려견 편집, 검색/빈 결과, 네 상태와 원문 dialog.
-- 프로필 수정 뒤 이전 결과 표시, 대체 후보·적용·되돌리기, 준비물·문의 문구·기기 저장/삭제.
+- 프로필 수정 뒤 이전 결과 표시, 대체 후보·적용·되돌리기, 준비물·문의 문구·비회원 새로고침 손실/취소.
 - 인쇄 시 여행 날짜/반려견 정보와 결과 유지, 모바일 고정 검사 버튼 숨김.
 - 실제 모드 준비 부족, 잘못된 입력 거부, 공급자 장애 후 재시도.
 - CSS/JS/MIME/새로고침/API, 개발 WebSocket·HMR 상태 유지, 운영에서 dev/check 404.
@@ -76,7 +76,7 @@ node scripts/playwright/generated/hwp-extension-hydration-diagnosis-0cec3a7842.j
 
 2026-09-11 검사에서 홈과 가상 코스 각각 정상 브라우저는 hydration 경고 0건, 같은 두 속성을 document-start에 주입한 브라우저는 경고 1건을 확인했다. 네 경우 모두 페이지 예외 0건, 클라이언트 이동/반려견 추가 동작 정상이다. 실제 RHWP 패키지를 설치한 검사가 아니라 사용자가 보고한 속성 변경을 재현한 것이다. 서버 응답에는 해당 속성이 없었다. 외부 IDE 인증 세션은 이 로컬 검사 범위에 포함되지 않는다.
 
-`tests/e2e/notifications.spec.ts`는 반복 저장·키보드 닫기·기기 저장 경계·인쇄 숨김·초기 렌더/타이핑 시 무알림·입력 및 HTML 프록시 오류·재시도 성공·클립보드 거부·클라이언트 화면 이동 후 알림 정리를 검사한다. 기존 `pnpm verify`의 직접 개발/로컬 code-server 프록시/운영 및 데스크톱/모바일 조합에 자동 포함한다. `controls.spec.ts`는 개발 갤러리의 성공/안내/오류 알림도 검증한다.
+`tests/e2e/notifications.spec.ts`는 반복 검사·키보드 닫기·비회원 미저장 경계·인쇄 숨김·초기 렌더/타이핑 시 무알림·입력 및 HTML 프록시 오류·재시도 성공·클립보드 거부·클라이언트 화면 이동 후 알림 정리를 검사한다. 기존 `pnpm verify`의 직접 개발/로컬 code-server 프록시/운영 및 데스크톱/모바일 조합에 자동 포함한다. `controls.spec.ts`는 개발 갤러리의 성공/안내/오류 알림도 검증한다.
 
 PWA 검사는 [PWA 계약](PWA.md)을 따른다. pnpm verify의 Playwright 서버는 PWA_ENABLED=true로 워커까지 검사한다. pwa.spec.ts가 설치 메타데이터·offline·실제 업데이트·탭/캐시 격리를 검증하며 실제 OS 설치와 설치 이벤트 시뮬레이션은 구분한다.
 
@@ -108,7 +108,7 @@ node scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-
 
 Firebase account-profile.spec.ts와 account.spec.ts는 10자 가입·로그인 후 /plan 이동·전환 후 성공 토스트, 프로필 인증/반려견 등록/재조회/여행에 가져오기, 다른 탭의 계정 전환 시 이전 프로필 초안 폐기, 실제 장소 형식의 합성 후보와 결과를 자동 저장/새 노트/다시 불러오기/새로고침/삭제, 직렬 쓰기 도중 새 입력 보존·실패/재시도·계정 전환, 비밀번호 재설정 접근을 검사한다. Firebase는 로컬 에뮬레이터이고 관광 데이터는 합성 응답이다. security.spec.ts는 프로필 소유권·revision 충돌도 검사한다.
 
-일반 place-discovery.spec.ts는 입력 전 탐색 후보·최근 검색 재사용/삭제 및 v1 기기 노트의 실제 장소명 재조회(합성 응답)를 검사한다. trip-state 단위 검사는 원문/인용/규칙 제외·과거 결과 복원·입력 변경 시 stale 유지·초안과 엄격한 검증 계약 분리를 확인한다. 기존 기기 저장 테스트는 v2 기록 형식에 맞추고 v1 읽기 호환성도 유지한다.
+일반 place-discovery.spec.ts는 입력 전 탐색 후보·최근 검색 재사용/삭제 및 이전 기기 노트를 자동 복원하지 않는 정책를 검사한다. trip-state 단위 검사는 원문/인용/규칙 제외·과거 결과 복원·입력 변경 시 stale 유지·초안과 엄격한 검증 계약 분리를 확인한다. 기존 기기 저장 테스트는 v2 기록 형식에 맞추고 v1 읽기 호환성도 유지한다.
 
 헤더 아바타·로그인 모달 후속 검사는 `account-profile.spec.ts`에 있다. 마지막 헤더 항목의 원형 아바타, 320px 터치 영역, Enter/클릭의 프로필 이동과 모달 부재, 사진 실패 fallback, 문구 없는 1px 구분선과 중앙 보조 버튼 간격을 확인한다. `E2E_MODE=proxy pnpm test:firebase`로 재실행한다. 사진은 로컬 테스트 계정과 합성 이미지 응답으로 검증한다.
 
@@ -130,3 +130,12 @@ node scripts/playwright/generated/verify-deployed-pawproof-login-popup-releases-
 `request-signal.test.ts`는 정적 AbortSignal API 의존 없이 취소 전파·이미 취소된 요청·본문 대기 중 시간 제한·성공/실패 후 자원 해제를 검사한다. `place-discovery.spec.ts`의 첫 검색 흐름과 Firebase `account-profile.spec.ts`의 반려견 등록/재조회 흐름은 페이지 로드 전에 `AbortSignal.any`와 `timeout`을 제거한다. 실제 iPhone WebKit 검증을 대신하지 않는다.
 
 운영 클라이언트 회귀 확인 스크립트 **CREATED**: `scripts/playwright/generated/verify-deployed-pawproof-place-search-without-ab-4ae0015793.js`. 공개 HTTPS 주소를 인자로 받고 인천 검색 API를 합성 응답으로 대체한다. 실제 계정·유료 공급자는 호출하지 않는다. 수정 전 재현에는 `--baseline`, 수정 후 확인에는 생략한다.
+
+
+## 계정 전용 노트 UX (2026-09-13)
+
+`guest-notebook.spec.ts`는 실제 beforeunload 대화상자의 취소/확인, 취소 시 입력·검사 결과 유지, 확인 후 초기화와 비회원 미저장을 검사한다. `notebook-ux.spec.ts`는 demo Firebase에서 로그인 전 작성 보존, 제목 자동 저장·새로고침, 상단 배치, 제목 검색·즉시 열기, 다른 탭의 로그아웃/계정 변경 시 입력 분리를 검사하고 모바일/데스크톱 스크린샷을 남긴다. `account.spec.ts`는 자동 저장 중 추가 편집·실패/재시도·노트 전환/삭제·기록 복원을 검사한다. controls 검사는 저장소 주입 대신 UI로 날짜/시간을 고르고 검증 요청의 실제 입력을 확인한다.
+
+브라우저 기본 경고 문구는 제품에서 지정하지 않는다. Chromium 대화상자 검증은 실제 iPhone PWA 강제 종료·당겨서 새로고침의 검증이 아니다.
+
+`notebook-recovery.spec.ts`는 입력 수정 없이 검사한 비회원 결과의 로그인 후 저장, 현재 열린 노트의 충돌 복구, 불러오기 실패 시 계정별 미전송 초안 유지와 성공 후 정리를 검사한다. 운영 확인 스크립트 **CREATED**: `scripts/playwright/generated/verify-deployed-account-only-pawproof-notebook-g-ee05ec317a.js`. 공개 HTTPS 주소에서 합성 검색 응답을 사용해 상단 로그인 CTA·기기 저장 제거·새로고침 취소/확인과 모바일 폭을 확인한다. 실제 계정·유료 API는 호출하지 않는다. 기존 opt-in 실연결 스크립트의 노트 UI 경로도 갱신했으나 이번 회귀에서 실제 서비스 호출은 수행하지 않는다.

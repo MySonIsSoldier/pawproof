@@ -33,39 +33,29 @@ test("discovery appears before typing and recent search terms can be reused or r
   await page.getByRole("button", { name: "기록 지우기" }).click();
   await expect(page.getByText("최근 검색", { exact: true })).toHaveCount(0);
 });
-test("legacy input-only notes resolve real place names without inventing old verification", async ({
+test("guest ignores old device notes and offers account saving at the top", async ({
   page,
 }) => {
-  const trip = {
-    ...createDemoTrip("2026-09-20"),
-    mode: "live",
-    visits: createDemoTrip("2026-09-20")
-      .visits.slice(0, 3)
-      .map((v, i) => ({ ...v, placeId: places[i].id })),
-  };
-  await page.route("**/api/places?*", (route) =>
-    route.fulfill({ json: { places } }),
-  );
-  await page.route(/\/api\/places\/\d+$/, (route) =>
-    route.fulfill({
-      json: places.find((p) => route.request().url().endsWith(p.id)),
-    }),
-  );
+  await page.addInitScript((trip) => {
+    localStorage.setItem(
+      "pawproof.trip.v1",
+      JSON.stringify({ version: 1, trip }),
+    );
+  }, createDemoTrip("2026-09-20"));
   await page.goto("plan");
-  await page.evaluate(
-    (trip) =>
-      localStorage.setItem(
-        "pawproof.trip.v1",
-        JSON.stringify({ version: 1, trip }),
-      ),
-    trip,
-  );
-  await page.getByRole("button", { name: "불러오기", exact: true }).click();
-  await expect(page.locator(".visit-card")).toHaveCount(3);
-  await expect(page.locator(".visit-card").first()).toContainText(
-    places[0].name,
-  );
+  await expect(page.locator(".visit-card")).toHaveCount(0);
   await expect(
-    page.getByRole("heading", { name: "코스 확인 결과" }),
+    page.getByRole("button", { name: "이 기기에 저장", exact: true }),
   ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "불러오기", exact: true }),
+  ).toHaveCount(0);
+  const panel = page.getByRole("region", { name: "계정 여행 노트" });
+  await expect(
+    panel.getByRole("button", { name: "로그인하고 이어가기" }),
+  ).toBeVisible();
+  const panelBox = (await panel.boundingBox())!;
+  expect(panelBox.y).toBeLessThan(
+    (await page.locator(".planner-grid").boundingBox())!.y,
+  );
 });

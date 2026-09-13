@@ -13,34 +13,38 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
       errors.push(message.text());
   });
   await page.goto("plan?mode=demo");
-  await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
-    .click();
-  await page.evaluate(() => {
-    const saved = JSON.parse(localStorage.getItem("pawproof.trip.v1")!);
-    saved.record.trip.date = "2026-12-31";
-    saved.record.trip.startTime = "23:59";
-    saved.record.trip.visits[0].duration = 75;
-    localStorage.setItem("pawproof.trip.v1", JSON.stringify(saved));
-  });
-  await page.getByRole("button", { name: "불러오기", exact: true }).click();
   const date = page.getByRole("button", { name: "여행 날짜", exact: true });
-  await expect(date).toHaveText("2026. 12. 31");
+  const year = Number((await date.innerText()).slice(0, 4));
+  const month = Number((await date.innerText()).split(". ")[1]);
   await date.click();
   const calendar = page.getByRole("dialog", { name: "여행 날짜 선택" });
-  await expect(calendar).toContainText("2026년 12월");
+  for (let i = month; i < 12; i++)
+    await calendar.getByRole("button", { name: "다음 달" }).click();
+  await calendar
+    .getByRole("button", { name: new RegExp(`${year}년 12월 31일`) })
+    .click();
+  await expect(date).toHaveText(`${year}. 12. 31`);
+  await date.click();
   await calendar.getByRole("button", { name: "다음 달" }).click();
-  await expect(calendar).toContainText("2027년 1월");
+  await expect(calendar).toContainText(`${year + 1}년 1월`);
   await page.screenshot({ path: info.outputPath("calendar.png") });
-  await calendar.getByRole("button", { name: /2027년 1월 1일/ }).click();
+  await calendar
+    .getByRole("button", { name: new RegExp(`${year + 1}년 1월 1일`) })
+    .click();
   await expect(calendar).not.toBeVisible();
-  await expect(date).toHaveText("2027. 01. 01");
+  await expect(date).toHaveText(`${year + 1}. 01. 01`);
   await expect(date).toBeFocused();
 
   const arrival = page.getByRole("button", {
     name: "첫 장소 도착",
     exact: true,
   });
+  await arrival.click();
+  await page.getByRole("combobox", { name: "도착 시", exact: true }).click();
+  await page.getByRole("option", { name: "23시", exact: true }).click();
+  await page.getByRole("combobox", { name: "도착 분", exact: true }).click();
+  await page.getByRole("option", { name: "59분", exact: true }).click();
+  await page.getByRole("button", { name: "이 시간으로 적용" }).click();
   await expect(arrival).toContainText("23:59");
   await arrival.click();
   await page.getByRole("combobox", { name: "도착 시", exact: true }).click();
@@ -59,7 +63,7 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
   const duration = page.getByRole("combobox", {
     name: "초록숲 산책길 체류시간",
   });
-  await expect(duration).toHaveText("75분");
+
   await duration.focus();
   await page.keyboard.press("Enter");
   await page.getByRole("option", { name: "90분", exact: true }).click();
@@ -84,15 +88,16 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
     "outline-color",
     "rgb(47, 107, 80)",
   );
-  await page
-    .getByRole("button", { name: "이 기기에 저장", exact: true })
-    .click();
-  const saved = await page.evaluate(
-    () => JSON.parse(localStorage.getItem("pawproof.trip.v1")!).record.trip,
+  const request = page.waitForRequest((request) =>
+    request.url().endsWith("/api/verify"),
   );
-  expect(saved.date).toBe("2027-01-01");
-  expect(saved.startTime).toBe("00:07");
-  expect(saved.visits[0]).toMatchObject({ duration: 90, zone: "indoor" });
+  await page
+    .getByRole("button", { name: "이 코스 검사하기", exact: true })
+    .click();
+  const input = (await request).postDataJSON();
+  expect(input.date).toBe(`${year + 1}-01-01`);
+  expect(input.startTime).toBe("00:07");
+  expect(input.visits[0]).toMatchObject({ duration: 90, zone: "indoor" });
   expect(
     await page.locator('input[type="date"], input[type="time"]').count(),
   ).toBe(0);

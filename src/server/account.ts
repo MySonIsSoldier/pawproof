@@ -16,7 +16,7 @@ export async function requireAccount(request: Request, verified = true) {
   } catch {
     throw new AccountError(
       "UNAVAILABLE",
-      "계정 저장 연결을 준비하고 있어요. 이 기기에 저장은 계속 이용할 수 있어요.",
+      "계정 저장 연결을 준비하고 있어요. 지금은 여행 노트를 저장할 수 없어요.",
     );
   }
   let token;

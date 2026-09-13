@@ -8,8 +8,8 @@
 - 설치 UI가 없는 브라우저에는 수동 안내를 제공한다. iPhone/iPad는 Safari의 공유 → 홈 화면에 추가 경로를 안내한다. 실제 설치 허용과 메뉴 명칭은 브라우저/OS가 결정한다.
 - manifest는 한국어, standalone, start_url=/plan, 안정적인 앱 ID와 scope, 192/512 아이콘·maskable·가상 체험 shortcut을 제공한다. Apple touch icon은 180px다. 기존 발바닥 SVG를 원본으로 `pnpm assets:pwa`에서 PNG를 재생성한다.
 - 독립 창에서는 설치 버튼을 숨긴다. 노치/하단 안전 영역과 기존 모바일 입력 화면을 유지한다.
-- 연결이 끊겨도 이미 열린 편집 입력을 초기화하거나 강제 이동하지 않는다. 상단 띠가 오프라인 상태와 기존 검사 결과의 한계를 설명한다. API 호출은 한국어 안내와 함께 차단하고, 기기 저장은 계속 가능하다.
-- 워커가 준비된 이후 오프라인에서 새로 열거나 새로고침하면 전용 안내 화면을 표시한다. 실제 웹앱 전체를 오프라인으로 실행하는 기능은 아니다. 연결 후 기기에 명시적으로 저장한 입력을 불러와 다시 검사한다.
+- 연결이 끊겨도 이미 열린 편집 입력을 초기화하거나 강제 이동하지 않는다. 상단 띠가 오프라인 상태와 기존 검사 결과의 한계를 설명한다. API 호출은 한국어 안내와 함께 차단한다. 비회원 기기 저장은 제공하지 않으며 회원 미전송 초안은 계정별 sessionStorage에 남긴다.
+- 워커가 준비된 이후 오프라인에서 새로 열거나 새로고침하면 전용 안내 화면을 표시한다. 실제 웹앱 전체를 오프라인으로 실행하는 기능은 아니다. 연결 후 로그인한 계정의 노트를 다시 연다. 비회원의 새로고침 전 작업은 복원하지 않는다.
 - 네트워크 연결 이벤트는 인터넷/API 정상 응답을 보장하지 않는다. 온라인으로 표시돼도 요청 실패는 기존 API 오류 흐름으로 처리한다. 다시 연결됐다고 자동으로 유료 API를 재호출하지 않는다.
 
 ## 파일·책임
@@ -82,7 +82,7 @@ Next가 정규화한 개발 홈 주소 `/absproxy/<port>`는 마지막 `/`가 �
 참고: [Next.js PWA 가이드](https://nextjs.org/docs/app/guides/progressive-web-apps), [MDN 설치 요건](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable), [MDN 캐시 전략](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching), [skipWaiting](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting). 구현 시 설치된 Next 16.3.4 가이드도 대조했다.
 
 
-2026-09-12 계정 인증·저장 추가: Firebase Auth의 브라우저 세션과 별개로 워커는 `/api/account`와 Firebase 외부 인증 요청·계정 노트를 캐시하지 않는다. 온라인 Google 팝업 또는 이메일 로그인으로 인증하며 오프라인 계정 작업은 오류로 안내하고 기기 저장을 유지한다. 실제 설치 기기의 OAuth/메일 인증 복원은 프로젝트 연결 후 검증한다. [Firebase 기준](FIREBASE_AUTH_AND_STORAGE.md)
+2026-09-12 계정 인증·저장 추가: Firebase Auth의 브라우저 세션과 별개로 워커는 `/api/account`와 Firebase 외부 인증 요청·계정 노트를 캐시하지 않는다. 온라인 Google 팝업 또는 이메일 로그인으로 인증하며 오프라인 계정 작업은 오류로 안내한다. 기기 저장은 2026-09-13 계정 전용 저장 정책으로 제거했다. 실제 설치 기기의 OAuth/메일 인증 복원은 프로젝트 연결 후 검증한다. [Firebase 기준](FIREBASE_AUTH_AND_STORAGE.md)
 
 
-2026-09-13 개인 여행 노트는 앱의 명시적 기기 저장 및 로그인 후 자동 저장으로 관리한다. 기기 기록 v2는 입력·장소 표시 정보·검사 당시 요약을 포함하며 미전송 계정 초안은 계정별 sessionStorage에 둔다. 이는 Service Worker 캐시와 분리된다. 워커는 여전히 API·Auth·여행 HTML·RSC·계정 데이터·토큰을 캐시하지 않는다. 오프라인에 불러온 결과는 저장 시점의 기록으로 표시하고 새 검증은 연결 후 수행한다.
+2026-09-13 개인 여행 노트는 로그인 후 자동 저장으로 관리한다. 미전송 계정 초안은 계정별 sessionStorage에 두고 비회원 코스·검사 결과는 저장하지 않는다. 워커는 API·Auth·여행 HTML·RSC·계정 데이터·토큰을 캐시하지 않는다. 업데이트 안내는 비회원 작업 손실과 회원의 ‘자동 저장됨’ 확인을 설명한다. 브라우저 새로고침 경고는 beforeunload로 요청하되 모바일 강제 종료 등까지 보장하지 않는다.
