@@ -31,7 +31,7 @@ pnpm start
 
 `build`·`start`는 개발 환경 파일을 읽지 않고 프로덕션 환경을 사용합니다. `start`는 빌드 시점과 현재 경로 프로필이 다르면 중단합니다. `.env.local`에 프록시 설정을 넣지 말고 `.env.development.local`에 둡니다.
 
-외부 서비스 키는 `.env.example`의 이름을 참고하여 `.env.local` 또는 배포 플랫폼의 서버 환경변수에 설정합니다. 키 없이도 현재 앱의 개발·빌드·테스트가 가능합니다. KTO·OpenRouter·Kakao의 실제 연결 결과와 한계는 [실사용 검증 기록](docs/delivery/LIVE_VALIDATION_2026-09-11.md)에 있습니다. 인천의 지역 검색·보완 자료·임시 휴장은 [인천 데이터 보강](docs/data/INCHEON_COVERAGE.md)에 정리했습니다. Firebase 연결은 후속 작업입니다.
+`.env.example`은 Vercel Production 기본값을 채운 배포 템플릿입니다. `[직접 입력]` API 키·Firebase 설정 10개만 Vercel 또는 비추적 `.env.vercel.local` 사본에 입력합니다. 공개 템플릿과 기존 `.env.local`은 덮어쓰지 않습니다. 개발 비밀은 `.env.local`, code-server 프로필은 `.env.development.local`에서 관리합니다. [Vercel 배포 안내](docs/operations/VERCEL_DEPLOYMENT.md)를 따릅니다. 키 없이 빌드·가상 체험은 가능하지만 실제 API와 계정 기능은 설정이 필요합니다. 연결 결과는 [실사용 검증](docs/delivery/LIVE_VALIDATION_2026-09-11.md), [인천 데이터 보강](docs/data/INCHEON_COVERAGE.md), [Firebase 기준](docs/engineering/FIREBASE_AUTH_AND_STORAGE.md)을 참고합니다.
 
 터미널 종료 후에도 개발 미리보기를 유지하거나 접속 장애를 복구하는 절차는 [개발 서버 유지와 접속 장애 점검](docs/engineering/DEVELOPMENT_ENVIRONMENT.md#개발-서버-유지와-접속-장애-점검)을 따른다. 의존성 재설치와 개발 모드 E2E 실행 전에는 실행 중인 개발 서버를 중지한다.
 
@@ -47,7 +47,7 @@ pnpm preview:stop
 
 리포트: `playwright-report/{direct,proxy,production}/index.html`. 스크린샷·실패 trace: `test-results/`. `preview:start`는 code-server 개발 실행기를 별도 세션·파일 로그로 유지합니다. 컨테이너 재시작 후 자동 기동하는 배포 서비스는 아닙니다.
 
-실제 API를 연결하려면 [설정 안내](docs/engineering/API_INTEGRATION.md)에 따라 루트 `.env.local`을 작성합니다. KTO Decoding 키, OpenRouter 키·모델, Kakao Mobility REST 키를 넣고 `LIVE_SERVICES_ENABLED=true`로 변경합니다. Firestore는 현재 흐름에 필요하지 않습니다.
+실제 API를 연결하려면 [설정 안내](docs/engineering/API_INTEGRATION.md)에 따라 루트 `.env.local`을 작성합니다. KTO Decoding 키, OpenRouter 키·모델, Kakao Mobility REST 키를 넣고 `LIVE_SERVICES_ENABLED=true`로 설정합니다. Firestore는 계정 여행 노트와 등록 반려견 저장에 사용합니다.
 
 ## 브라우저 검증
 

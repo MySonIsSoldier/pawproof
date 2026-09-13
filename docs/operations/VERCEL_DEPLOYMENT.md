@@ -42,6 +42,8 @@ Import 화면의 Environment Variables 또는 **Project → Settings → Environ
 
 `.env.local`은 GitHub에 올라가지 않으므로 자동 복사되지 않는다. 아래 기존 값은 사용자가 로컬 파일에서 직접 옮긴다. 실제 키를 문서·커밋·채팅에 넣지 않는다.
 
+루트 [.env.example](../../.env.example)은 Production 기본값을 채운 템플릿이다. `[직접 입력]` 10개만 본인 값으로 채운다. APP_BASE_PATH와 선택 항목 APP_ORIGIN의 빈칸은 누락이 아니다. 실제 값은 Vercel 입력란 또는 비추적 `.env.vercel.local` 사본에 입력한다. 공개 템플릿과 기존 `.env.local`을 덮어쓰지 않는다. `.env.vercel.local`은 가져오기용 사본이며 Next.js가 자동으로 읽는 파일은 아니다.
+
 | 변수 | 입력 값 |
 |---|---|
 | ENABLE_EXPERIMENTAL_COREPACK | `1` |
