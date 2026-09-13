@@ -45,3 +45,5 @@
 검증: frozen-lockfile 설치, 단위 96개, lint·typecheck·운영 빌드, demo Firebase Playwright 8개 통과. 수정 후 3개 계정 라우트의 추적 파일만 각각 격리 복사하고 require(ESM)을 비활성화해 6개 메서드 모두 401 JSON을 확인했다. 전체 Next CLI에 같은 플래그를 적용한 첫 E2E 실행은 next.config.ts의 별도 로딩 경로에서 서버 시작 전에 실패했다. Vercel의 빌드/함수 실행 구분에 맞춰 모듈 제한은 위 격리 함수 검사에 적용하고 HTTP E2E는 정상 운영 실행기로 확인한다. 운영 실계정과 유료 API는 회귀에 사용하지 않았다.
 
 운영 빌드 HTTP Playwright 2개(데스크톱·모바일)도 통과했다. 개발 미리보기는 Firebase 검사 후 복원했다.
+
+운영 반영: 수정 커밋 `a6a7ecb`를 main에 푸시했고 GitHub의 Vercel 상태 success, 새 `/sw.js` 릴리스와 health 200을 확인했다. 운영 계정 API 6개 메서드 모두 수정 전 빈 500 → 수정 후 401 UNAUTHORIZED JSON/no-store로 바뀌었다. 가짜 bearer 요청도 Admin 설정 로딩 후 401을 반환했다. 이 변경만으로 운영 초기화 오류가 해소됐지만 실제 사용자 토큰·계정으로 프로필/노트를 쓰지는 않았으며 실제 저장 재시도 결과는 사용자 확인이 남는다.
