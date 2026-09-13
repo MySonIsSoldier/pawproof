@@ -246,14 +246,14 @@ function AuthDialogScreen() {
                     autoComplete={
                       mode === "signup" ? "new-password" : "current-password"
                     }
-                    minLength={mode === "signup" ? 12 : 1}
+                    minLength={mode === "signup" ? 10 : 1}
                     maxLength={128}
                     required
                     disabled={pending}
                   />
                   {mode === "signup" && (
                     <span className="field-caption" id={passwordHint}>
-                      12자 이상으로 입력해 주세요.
+                      10자 이상으로 입력해 주세요.
                     </span>
                   )}
                 </label>
