@@ -123,3 +123,10 @@ PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright \
 LD_LIBRARY_PATH=/tmp/pawproof-browser-libs/usr/lib/aarch64-linux-gnu \
 node scripts/playwright/generated/verify-deployed-pawproof-login-popup-releases-mo-3c2f676ac4.js https://pawproof-rose.vercel.app/
 ```
+
+
+## 브라우저 요청 취소 호환성 (2026-09-13)
+
+`request-signal.test.ts`는 정적 AbortSignal API 의존 없이 취소 전파·이미 취소된 요청·본문 대기 중 시간 제한·성공/실패 후 자원 해제를 검사한다. `place-discovery.spec.ts`의 첫 검색 흐름과 Firebase `account-profile.spec.ts`의 반려견 등록/재조회 흐름은 페이지 로드 전에 `AbortSignal.any`와 `timeout`을 제거한다. 실제 iPhone WebKit 검증을 대신하지 않는다.
+
+운영 클라이언트 회귀 확인 스크립트 **CREATED**: `scripts/playwright/generated/verify-deployed-pawproof-place-search-without-ab-4ae0015793.js`. 공개 HTTPS 주소를 인자로 받고 인천 검색 API를 합성 응답으로 대체한다. 실제 계정·유료 공급자는 호출하지 않는다. 수정 전 재현에는 `--baseline`, 수정 후 확인에는 생략한다.

@@ -12,6 +12,11 @@ const places = [0, 1, 2].map((i) => ({
 test("discovery appears before typing and recent search terms can be reused or removed", async ({
   page,
 }) => {
+  // Reproduce browsers that lack the newer AbortSignal static methods.
+  await page.addInitScript(() => {
+    Object.defineProperty(AbortSignal, "any", { value: undefined });
+    Object.defineProperty(AbortSignal, "timeout", { value: undefined });
+  });
   await page.route("**/api/places?*", (route) =>
     route.fulfill({ json: { places } }),
   );

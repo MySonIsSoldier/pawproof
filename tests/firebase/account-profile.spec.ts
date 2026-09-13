@@ -3,6 +3,11 @@ import { auth, db, email, createUser, login } from "./helpers";
 test("signup redirects to planner; profile verification and registered pets are reusable", async ({
   page,
 }, info) => {
+  // Reproduce browsers that lack the newer AbortSignal static methods.
+  await page.addInitScript(() => {
+    Object.defineProperty(AbortSignal, "any", { value: undefined });
+    Object.defineProperty(AbortSignal, "timeout", { value: undefined });
+  });
   const address = email();
   await page.goto("./");
   await page.getByRole("button", { name: "로그인", exact: true }).click();

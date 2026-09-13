@@ -267,3 +267,8 @@ Vercel에서 보고된 ERR_PNPM_IGNORED_BUILDS는 firebase-tools → superstatic
 iPhone Safari 설치 PWA에서 Google 이메일 입력 시 키보드가 뜨지 않는 제보를 받았다. 앱 모달을 유지한 채 OAuth 창을 열던 흐름을 수정해 포커스/스크롤 잠금을 먼저 제거하고 클릭 전 준비된 Auth SDK를 사용한다. iOS의 창 닫기 미감지에는 잠금 없는 대기 종료 버튼을 제공하며 요청 식별자로 재시도 경합을 막는다. Firebase authDomain과 로그인 프로토콜은 유지한다. 자동화의 앱 포커스 검사와 실제 iPhone 키보드 확인을 구분한다.
 
 사용자는 검증 후 main 푸시와 Vercel 자동 배포를 승인했다. AGENTS.md와 코드·배포 기준 문서에 이를 반영하며 기존 문서의 미배포 상태를 갱신했다. 상세 검증 결과·남은 사항은 delivery/WORK_LOG.md에 기록한다.
+
+
+## 38. 2026-09-13 브라우저 요청 취소 호환성
+
+배포 버전의 반려견 프로필 조회·인천 검색에서 `AbortSignal.any is not a function` 제보를 받았다. 두 클라이언트 API가 취소 신호와 시간 제한을 합칠 때 신규 정적 메서드를 무조건 호출해 네트워크 요청 전에 실패한다. Next.js의 기본 Safari 16.4+ 지원 범위와 달리 `AbortSignal.any()`는 [Safari 17.4에서 추가](https://webkit.org/blog/15063/webkit-features-in-safari-17-4/)되었으므로 브라우저 API를 무조건 전제하지 않는다. 공통 AbortController 기반 요청 범위를 사용하고 기존 시간 예산·취소를 유지한다. 정적 메서드를 제거한 Chromium·Firebase 에뮬레이터 검사와 실제 사용자 기기 검증은 구분한다. 상세 결과는 [작업 로그](../delivery/WORK_LOG.md)에 기록한다.
