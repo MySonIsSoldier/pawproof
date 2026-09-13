@@ -111,3 +111,15 @@ Firebase account-profile.spec.ts와 account.spec.ts는 10자 가입·로그인 �
 일반 place-discovery.spec.ts는 입력 전 탐색 후보·최근 검색 재사용/삭제 및 v1 기기 노트의 실제 장소명 재조회(합성 응답)를 검사한다. trip-state 단위 검사는 원문/인용/규칙 제외·과거 결과 복원·입력 변경 시 stale 유지·초안과 엄격한 검증 계약 분리를 확인한다. 기존 기기 저장 테스트는 v2 기록 형식에 맞추고 v1 읽기 호환성도 유지한다.
 
 헤더 아바타·로그인 모달 후속 검사는 `account-profile.spec.ts`에 있다. 마지막 헤더 항목의 원형 아바타, 320px 터치 영역, Enter/클릭의 프로필 이동과 모달 부재, 사진 실패 fallback, 문구 없는 1px 구분선과 중앙 보조 버튼 간격을 확인한다. `E2E_MODE=proxy pnpm test:firebase`로 재실행한다. 사진은 로컬 테스트 계정과 합성 이미지 응답으로 검증한다.
+
+## PWA Google 로그인 포커스 (2026-09-13)
+
+`pnpm test:firebase --grep 'Google popup'`은 로컬 Auth 에뮬레이터에서 모달/포커스 가드/스크롤 잠금의 해제 시점, 팝업 이메일 입력·로그인 완료·취소·차단·재시도를 검사한다. iPhone userAgent와 standalone 신호로 Firebase의 별도 앵커 열기 경로도 실행한다. 이는 실제 iPhone WebKit이나 OS 키보드 검사와 다르다.
+
+운영 점검 스크립트 **CREATED**: `scripts/playwright/generated/verify-deployed-pawproof-login-popup-releases-mo-3c2f676ac4.js`. 기존 배포를 열고 Google 팝업을 닫는 읽기 위주 검사이며 사용자 자격증명 입력·계정 생성·관광 API 호출은 하지 않는다. 이후 같은 검사는 이 파일을 재사용한다. `--baseline`은 수정 전 배포의 잠금 유지 상태를 확인할 때만 사용한다.
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright \
+LD_LIBRARY_PATH=/tmp/pawproof-browser-libs/usr/lib/aarch64-linux-gnu \
+node scripts/playwright/generated/verify-deployed-pawproof-login-popup-releases-mo-3c2f676ac4.js https://pawproof-rose.vercel.app/
+```

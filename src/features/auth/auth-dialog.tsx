@@ -17,10 +17,12 @@ import {
 } from "../../components/notifications/with-notifications";
 import { useAuth } from "./auth-provider";
 import { authErrorMessage } from "./errors";
+import { useGoogleSignIn } from "./use-google-sign-in";
 import styles from "./auth.module.css";
 
 function AuthDialogScreen() {
   const auth = useAuth();
+  const google = useGoogleSignIn();
   const passwordHint = useId();
   const notify = useNotify();
   const dismiss = useDismissNotifications();
@@ -39,6 +41,7 @@ function AuthDialogScreen() {
     if (pending) return;
     setPending(true);
     setError("");
+    google.clearError();
     setMessage("");
     try {
       await auth.run(action);
@@ -85,6 +88,17 @@ function AuthDialogScreen() {
       .querySelector<HTMLInputElement>('[name="password"]')
       ?.blur();
   }
+  // Unmount the entire modal, including Radix focus guards and scroll lock.
+  // Merely closing it keeps those layers alive during the exit animation.
+  if (google.pending)
+    return (
+      <section className={styles.googlePending} aria-label="Google 로그인 진행">
+        <p role="status">Google 로그인 창에서 계속해 주세요.</p>
+        <Button variant="outline" onClick={google.returnToLogin}>
+          로그인 화면으로 돌아가기
+        </Button>
+      </section>
+    );
   return (
     <Dialog
       open={auth.open && !auth.user}
@@ -92,11 +106,15 @@ function AuthDialogScreen() {
         if (!pending) {
           auth.setOpen(next);
           setError("");
+          google.clearError();
           setMessage("");
         }
       }}
     >
-      <DialogContent className={styles.dialog}>
+      <DialogContent
+        className={styles.dialog}
+        onCloseAutoFocus={google.onCloseAutoFocus}
+      >
         <div className="dialog-header">
           <div>
             <p className="eyebrow">YOUR TRAVEL NOTE</p>
@@ -136,17 +154,11 @@ function AuthDialogScreen() {
             <Button
               variant="outline"
               disabled={pending}
-              onClick={() =>
-                void perform(
-                  async (auth, sdk) => {
-                    const provider = new sdk.GoogleAuthProvider();
-                    provider.setCustomParameters({ prompt: "select_account" });
-                    await sdk.signInWithPopup(auth, provider);
-                  },
-                  "Google 계정으로 로그인했어요.",
-                  true,
-                )
-              }
+              onClick={() => {
+                setError("");
+                setMessage("");
+                void google.start();
+              }}
             >
               Google로 계속하기
             </Button>
@@ -238,9 +250,9 @@ function AuthDialogScreen() {
             </div>
           </div>
         )}
-        {(error || auth.error) && (
+        {(error || google.error || auth.error) && (
           <p role="alert" className={styles.error}>
-            {error || auth.error}
+            {error || google.error || auth.error}
           </p>
         )}
         {message && (

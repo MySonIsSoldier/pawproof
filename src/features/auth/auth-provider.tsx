@@ -70,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
   const instance = useRef<Auth | null>(null);
+  const authSdk = useRef<typeof import("firebase/auth") | null>(null);
   useEffect(() => {
     if (!configured) return;
     let active = true;
@@ -82,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!active) return;
         const auth = client.firebaseAuth();
         instance.current = auth;
+        authSdk.current = sdk;
         unsubscribe = sdk.onIdTokenChanged(
           auth,
           (next) => {
@@ -115,13 +117,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       active = false;
       unsubscribe?.();
       instance.current = null;
+      authSdk.current = null;
     };
   }, [configured, queryClient]);
   async function run(action: AuthAction) {
-    if (!instance.current) throw new Error("로그인 연결을 준비하고 있어요.");
-    const sdk = await import("firebase/auth");
-    await action(instance.current, sdk);
-    setUser(identity(instance.current.currentUser));
+    const auth = instance.current;
+    const sdk = authSdk.current;
+    if (!auth || !sdk) throw new Error("로그인 연결을 준비하고 있어요.");
+    // The SDK is loaded before ready; preserve the click's user activation for OAuth.
+    await action(auth, sdk);
+    if (instance.current === auth) setUser(identity(auth.currentUser));
   }
   const token = useCallback(async (expectedUid: string) => {
     const current = instance.current?.currentUser;
