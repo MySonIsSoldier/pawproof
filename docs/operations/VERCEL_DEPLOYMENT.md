@@ -122,6 +122,14 @@ Deploy를 눌러 Ready가 되면 프로젝트의 **고정 Production 주소**를
 
 ## 문제별 확인
 
+### 계정 API가 빈 본문과 HTTP 500을 반환하면
+
+2026-09-13 운영에서 프로필 조회와 노트 저장이 인증 검사 전에 실패했다. Firebase Admin 14.4.0 → jwks-rsa 4.1.0이 ESM 전용 jose 6을 `require()`하는 경로가 있으며, [Vercel은 require(ESM)을 기본 비활성화](https://vercel.com/docs/functions/runtimes/node-js/advanced-node-configuration#experimental-nodejs-require-of-es-module)한다. Node 24 로컬 기본 설정의 성공만으로 운영 호환성을 판단하지 않는다.
+
+`patches/jwks-rsa@4.1.0.patch`는 두 진입점의 jose 로딩을 기존 비동기 처리 안의 `import()`로 바꾼다. pnpm-workspace.yaml의 patchedDependencies와 lockfile을 함께 유지한다. SDK/암호화 라이브러리 버전과 인증 검증은 유지하며 별도 NODE_OPTIONS 변경은 필요하지 않다. 상위 패키지가 이 문제를 해결하면 패치를 제거하고 제한 조건의 회귀 검사를 다시 실행한다.
+
+배포 후 `/api/health`뿐 아니라 인증 정보 없는 `/api/account/profile`·`/api/account/trips`가 401 JSON을 반환하는지 확인한다. 이는 계정 함수 로딩 검사이며 실제 계정 저장 성공을 의미하지 않는다. 빈 500은 Runtime Logs의 모듈 로딩 스택을 확인하고, JSON 503은 Admin 설정·Firestore 연결을 구분해서 확인한다.
+
 | 현상 | 확인할 것 |
 |---|---|
 | pnpm/lockfile 오류 | Corepack 플래그·실제 pnpm 12.3.4·버전 고정 Install Command |

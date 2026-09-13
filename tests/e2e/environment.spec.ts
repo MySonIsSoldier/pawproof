@@ -3,6 +3,25 @@ import { expect, test } from "@playwright/test";
 
 const production = process.env.E2E_MODE === "production";
 
+test("account routes load and reject unauthenticated requests with JSON", async ({
+  request,
+}) => {
+  const note = "api/account/trips/00000000-0000-4000-8000-000000000000";
+  for (const [method, path] of [
+    ["GET", "api/account/profile"],
+    ["PUT", "api/account/profile"],
+    ["GET", "api/account/trips"],
+    ["GET", note],
+    ["PUT", note],
+    ["DELETE", note],
+  ]) {
+    const response = await request.fetch(path, { method });
+    expect(response.status(), `${method} ${path}`).toBe(401);
+    expect(response.headers()["cache-control"]).toBe("no-store");
+    expect(await response.json()).toMatchObject({ code: "UNAUTHORIZED" });
+  }
+});
+
 test("HTML, CSS, JS, client navigation, deep refresh and health route", async ({
   page,
   baseURL,

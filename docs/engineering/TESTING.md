@@ -139,3 +139,10 @@ node scripts/playwright/generated/verify-deployed-pawproof-login-popup-releases-
 브라우저 기본 경고 문구는 제품에서 지정하지 않는다. Chromium 대화상자 검증은 실제 iPhone PWA 강제 종료·당겨서 새로고침의 검증이 아니다.
 
 `notebook-recovery.spec.ts`는 입력 수정 없이 검사한 비회원 결과의 로그인 후 저장, 현재 열린 노트의 충돌 복구, 불러오기 실패 시 계정별 미전송 초안 유지와 성공 후 정리를 검사한다. 운영 확인 스크립트 **CREATED**: `scripts/playwright/generated/verify-deployed-account-only-pawproof-notebook-g-ee05ec317a.js`. 공개 HTTPS 주소에서 합성 검색 응답을 사용해 상단 로그인 CTA·기기 저장 제거·새로고침 취소/확인과 모바일 폭을 확인한다. 실제 계정·유료 API는 호출하지 않는다. 기존 opt-in 실연결 스크립트의 노트 UI 경로도 갱신했으나 이번 회귀에서 실제 서비스 호출은 수행하지 않는다.
+
+
+## Firebase 서버 모듈 호환성 (2026-09-13)
+
+`firebase-admin-runtime.test.ts`는 별도 Node 프로세스를 `--no-experimental-require-module`로 시작해 Vercel의 기본 로딩 제한을 재현한다. 실제 Firebase 설정 없이 Admin Auth/Firestore 진입점을 로드하고 합성 JWKS의 서명 키 변환·변조 서명 거부·누락 키 거부·Passport 콜백 호환성을 검사한다. 수정 전 ERR_REQUIRE_ESM 실패를 확인한 회귀이며 `pnpm test`에 포함된다.
+
+`environment.spec.ts`는 프로필·노트 목록·개별 노트의 6개 읽기/쓰기 경로를 인증 없이 요청해 401 JSON과 no-store를 확인한다. 계정 라우트 로딩 실패를 놓치지 않기 위한 검사다. 실제 회원 저장은 별도의 demo Firebase 브라우저 검사로 확인하며 운영 실계정 성공과 구분한다.

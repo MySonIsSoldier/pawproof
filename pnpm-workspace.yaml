@@ -13,3 +13,5 @@ minimumReleaseAgeExclude:
   - react-dom@19.3.0
   - react@19.3.0
   - scheduler@0.28.0
+patchedDependencies:
+  jwks-rsa@4.1.0: patches/jwks-rsa@4.1.0.patch

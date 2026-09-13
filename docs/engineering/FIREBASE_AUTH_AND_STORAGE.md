@@ -4,6 +4,8 @@
 
 ## 구조와 저장 범위
 
+서버 SDK의 `jwks-rsa@4.1.0`에는 jose를 비동기 import하는 버전 한정 pnpm 패치를 적용한다. Vercel의 require(ESM) 기본 비활성화 조건에서 계정 라우트가 로딩되도록 하며, 토큰 검증·서명 키 처리·SDK 버전은 유지한다. [운영 장애와 패치 유지 기준](../operations/VERCEL_DEPLOYMENT.md#계정-api가-빈-본문과-http-500을-반환하면), [반복 검사](TESTING.md#firebase-서버-모듈-호환성-2026-09-13)를 따른다.
+
 - Google 로그인은 `useGoogleSignIn`이 담당한다. SDK는 AuthProvider 초기화 때 로드하고 클릭 시 다시 import하지 않는다. 클릭 안에서 flushSync로 앱 로그인 모달을 완전히 제거한 뒤 팝업을 열어 Radix 포커스 잠금·스크롤 잠금·종료 시 포커스 복귀가 외부 인증 입력에 간섭하지 않게 한다. 취소·차단·실패하면 모달과 안내를 복원하고 성공하면 기존 `/plan` 이동·토스트를 유지한다.
 - iOS standalone에서 SDK가 창 참조를 받지 못해 취소를 감지하지 못할 수 있으므로 잠금 없는 진행 안내에 ‘로그인 화면으로 돌아가기’를 제공한다. 이 버튼은 앱 대기를 종료하며 Google의 인증 요청을 취소하는 기능은 아니다. 요청별 식별자로 이전 요청의 취소/완료가 재시도 상태를 덮어쓰지 않게 한다.
 - iPhone Safari 설치 PWA의 Google 화면 키보드 미표시 제보에 대한 앱 측 포커스 간섭 완화다. Google 도메인의 입력과 OS 키보드는 앱에서 직접 제어할 수 없다. 자동 검사는 로컬 Auth 에뮬레이터 팝업의 입력·취소·차단·복귀를 확인하며 실제 iPhone에서 해결됐는지는 별도 확인한다. 리디렉션은 동일 출처 인증 헬퍼 등 [Firebase 선행 조건](https://firebase.google.com/docs/auth/web/redirect-best-practices)이 필요하므로 임의 전환하지 않는다.
