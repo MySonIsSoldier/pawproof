@@ -35,6 +35,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [Vercel 첫 배포 안내](operations/VERCEL_DEPLOYMENT.md) | GitHub 연결·Node/pnpm·운영 환경변수·Firebase 도메인·배포 후 점검 |
 | [구현·검증·제출 계획](delivery/DELIVERY_PLAN.md) | 제출 버전 범위, 역할 분담, 개발 일정, 품질 평가, 시연 |
 | [현재 구현·검증 기록](delivery/IMPLEMENTATION_STATUS.md) | 실제 구현한 파일·실행한 검사·아직 검증하지 않은 연결 |
+| [최근 작업 로그](delivery/WORK_LOG.md) | 운영 배포·PWA 로그인 수정·검증 결과·남은 실기기 확인 |
 | [실 API 검증 실행](engineering/LIVE_VALIDATION.md) | 비용·호출 상한이 있는 공급자/브라우저 검사, 비밀 없는 집계 기록 |
 | [2026-09-11 실사용 검증](delivery/LIVE_VALIDATION_2026-09-11.md) | 실제 장소 결과·수정한 오류·처리 시간·비용·미완료 범위 |
 | [의사결정 및 대화 히스토리](history/DECISION_HISTORY.md) | 아이디어 발전 과정, 확정한 선택, 수정한 가정, 미결 사항 |

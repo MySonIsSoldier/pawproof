@@ -100,7 +100,7 @@ fix(itinerary): preserve closing-time constraints after replacement
 docs: record hosting and development decisions
 ```
 
-위 메시지는 예시이며 구현 실적이 아니다. 완료 보고에는 커밋 해시·변경 목적·검증 결과를 남긴다. 원격 푸시와 배포는 커밋과 별개이며 해당 요청 범위에서 진행한다.
+위 메시지는 예시이며 구현 실적이 아니다. 완료 보고에는 커밋 해시·변경 목적·검증 결과를 남긴다. 2026-09-13 사용자는 이후 관련 변경의 검증·커밋 후 `git push origin main`과 Vercel 자동 배포를 승인했다. 별도 재확인 없이 진행하되 무관한 변경을 포함하거나 강제 푸시하지 않는다. 푸시 성공과 배포 반영·실기기 성공은 구분해 보고한다.
 
 ## 문서와 변경 관리
 

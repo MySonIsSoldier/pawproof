@@ -261,3 +261,9 @@ Google 및 이메일 로그인/가입/인증/재설정/로그아웃을 공통 �
 ## 36. 2026-09-13 Vercel 의존성 설치 정책 보완
 
 Vercel에서 보고된 ERR_PNPM_IGNORED_BUILDS는 firebase-tools → superstatic의 선택적 re2 빌드 정책 누락으로 확인했다. pnpm-workspace.yaml에 re2: false를 추가해 불필요한 네이티브 빌드를 생략하며 전체 스크립트 제한은 유지한다. 별도 임시 복사본에서 Node 24.15.0·pnpm 12.3.4로 기존 설정의 동일 오류를 재현했고, 수정 후 node_modules가 없는 상태의 frozen-lockfile 설치·운영 빌드(TypeScript 포함)·Firebase CLI 15.30.0 실행·superstatic의 JavaScript RegExp 대체 동작을 확인했다. 실제 키·기존 개발 서버 설정은 변경하지 않았다. Vercel의 수정 커밋 배포와 실 API 연결 검증은 이 검사에 포함하지 않는다.
+
+## 37. 2026-09-13 iPhone PWA OAuth 포커스와 배포 운영
+
+iPhone Safari 설치 PWA에서 Google 이메일 입력 시 키보드가 뜨지 않는 제보를 받았다. 앱 모달을 유지한 채 OAuth 창을 열던 흐름을 수정해 포커스/스크롤 잠금을 먼저 제거하고 클릭 전 준비된 Auth SDK를 사용한다. iOS의 창 닫기 미감지에는 잠금 없는 대기 종료 버튼을 제공하며 요청 식별자로 재시도 경합을 막는다. Firebase authDomain과 로그인 프로토콜은 유지한다. 자동화의 앱 포커스 검사와 실제 iPhone 키보드 확인을 구분한다.
+
+사용자는 검증 후 main 푸시와 Vercel 자동 배포를 승인했다. AGENTS.md와 코드·배포 기준 문서에 이를 반영하며 기존 문서의 미배포 상태를 갱신했다. 상세 검증 결과·남은 사항은 delivery/WORK_LOG.md에 기록한다.
