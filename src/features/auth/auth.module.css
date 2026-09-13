@@ -24,6 +24,9 @@
 }
 .links {
   justify-content: center;
+  align-items: center;
+  column-gap: 28px;
+  row-gap: 8px;
 }
 .links button {
   font-size: 13px;
@@ -33,18 +36,9 @@
   color: var(--muted);
 }
 .divider {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
   height: 1px;
-  background: var(--line);
+  width: 100%;
+  background: var(--forest);
 }
 .notice {
   padding: 14px;

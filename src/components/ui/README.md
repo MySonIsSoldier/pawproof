@@ -10,6 +10,7 @@ shadcn/ui `new-york-v4`의 Select, Popover, Input, Calendar 소스(2026-09-11 �
 - `time-picker.tsx`: 24시간, 1분 단위, 확인 후 값 적용. 취소 시 기존 값 유지.
 - `input.tsx`: HTML 입력 의미와 ref/aria/disabled를 유지하는 공통 입력.
 - `button.tsx`, `checkbox.tsx`, `dialog.tsx`: shadcn 기반 버튼 변형·asChild와 Radix 체크/모달. 원본 button/checkbox/dialog도 동일 registry 경로에서 확인했다.
+- `avatar.tsx`: [shadcn Avatar 원본](https://ui.shadcn.com/r/styles/new-york-v4/avatar.json)의 Root/Image/Fallback을 Radix Avatar와 브랜드 CSS로 조정했다. 이미지 로딩·실패 전환은 Radix가 처리하고 링크 의미·44px 터치 영역은 사용하는 계정 버튼이 담당한다.
 
 토큰 소유권·상태 관리·개발용 갤러리는 [UI 디자인 시스템](../../../docs/engineering/UI_DESIGN_SYSTEM.md)에 정리한다.
 

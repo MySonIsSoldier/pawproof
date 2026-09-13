@@ -6,7 +6,26 @@ test("signup redirects to planner; profile verification and registered pets are 
   const address = email();
   await page.goto("./");
   await page.getByRole("button", { name: "로그인", exact: true }).click();
-  await expect(page.getByText("또는 이메일로")).toBeVisible();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("separator")).toBeVisible();
+  await expect(dialog.getByRole("separator")).toHaveCSS("height", "1px");
+  await expect(dialog.getByText("또는 이메일로")).toHaveCount(0);
+  const signup = dialog.getByRole("button", { name: "회원가입", exact: true });
+  const reset = dialog.getByRole("button", {
+    name: "비밀번호 찾기",
+    exact: true,
+  });
+  const signupBox = (await signup.boundingBox())!;
+  const resetBox = (await reset.boundingBox())!;
+  const dialogBox = (await dialog.boundingBox())!;
+  expect(resetBox.x - signupBox.x - signupBox.width).toBeGreaterThanOrEqual(24);
+  expect(
+    Math.abs(
+      (signupBox.x + resetBox.x + resetBox.width) / 2 -
+        (dialogBox.x + dialogBox.width / 2),
+    ),
+  ).toBeLessThan(2);
+  await dialog.screenshot({ path: info.outputPath("login.png") });
   await expect(page.getByLabel("이메일", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "회원가입", exact: true }).click();
   await expect(page.getByLabel("비밀번호", { exact: true })).toHaveAttribute(
@@ -27,7 +46,18 @@ test("signup redirects to planner; profile verification and registered pets are 
   await expect(
     page.locator('[data-sonner-toast][data-type="success"]'),
   ).toContainText("가입했어요");
-  await page.getByRole("link", { name: "프로필", exact: true }).click();
+  const avatar = page.getByRole("link", { name: "프로필", exact: true });
+  await expect(avatar).toHaveAttribute("href", /\/profile$/);
+  await expect(avatar).toHaveCSS("border-radius", "50%");
+  expect(
+    await avatar.evaluate(
+      (node) => node === node.parentElement?.lastElementChild,
+    ),
+  ).toBe(true);
+  await avatar.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
     page.getByRole("heading", { name: "나의 계정", exact: true }),
   ).toBeVisible();
@@ -58,6 +88,8 @@ test("signup redirects to planner; profile verification and registered pets are 
   ).toBe(true);
   const viewport = page.viewportSize()!;
   await page.setViewportSize({ width: 320, height: 840 });
+  await expect(avatar).toBeVisible();
+  expect((await avatar.boundingBox())!.width).toBe(44);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -112,6 +144,39 @@ test("password reset stays available below the login form", async ({
   await expect(dialog.getByRole("status")).toHaveText(
     "등록된 이메일이라면 재설정 메일이 전송돼요.",
   );
+});
+
+test("account avatar shows the account photo and falls back when it cannot load", async ({
+  page,
+}) => {
+  const user = await createUser();
+  const photoURL = "https://avatar.example.test/profile.svg";
+  await auth.updateUser(user.uid, { displayName: "콩이 보호자", photoURL });
+  let photoAvailable = true;
+  await page.route(photoURL, (route) =>
+    photoAvailable
+      ? route.fulfill({
+          contentType: "image/svg+xml",
+          headers: { "cache-control": "no-store" },
+          body: '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36"><rect width="36" height="36" fill="#2e6a52"/></svg>',
+        })
+      : route.abort(),
+  );
+  await page.goto("./");
+  await login(page, user.email);
+  await expect(page).toHaveURL(/\/plan(?:\?|$)/);
+  const avatar = page.getByRole("link", { name: "프로필", exact: true });
+  await expect(avatar.locator("img")).toBeVisible();
+  await expect(avatar.locator("img")).toHaveAttribute(
+    "referrerpolicy",
+    "no-referrer",
+  );
+  photoAvailable = false;
+  await page.reload();
+  await expect(avatar).toHaveText("콩");
+  await avatar.click();
+  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 
 test("a profile draft is discarded when another tab switches accounts", async ({

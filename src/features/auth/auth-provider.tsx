@@ -21,7 +21,13 @@ type AuthAction = (
   sdk: typeof import("firebase/auth"),
 ) => Promise<void>;
 
-type Identity = { uid: string; email: string | null; verified: boolean };
+type Identity = {
+  uid: string;
+  email: string | null;
+  verified: boolean;
+  displayName: string | null;
+  photoURL: string | null;
+};
 type AuthContextValue = {
   configured: boolean;
   ready: boolean;
@@ -38,7 +44,13 @@ type AuthContextValue = {
 const Context = createContext<AuthContextValue | null>(null);
 const identity = (user: User | null): Identity | null =>
   user
-    ? { uid: user.uid, email: user.email, verified: user.emailVerified }
+    ? {
+        uid: user.uid,
+        email: user.email,
+        verified: user.emailVerified,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      }
     : null;
 export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();

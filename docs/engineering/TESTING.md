@@ -109,3 +109,5 @@ node scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-
 Firebase account-profile.spec.ts와 account.spec.ts는 10자 가입·로그인 후 /plan 이동·전환 후 성공 토스트, 프로필 인증/반려견 등록/재조회/여행에 가져오기, 다른 탭의 계정 전환 시 이전 프로필 초안 폐기, 실제 장소 형식의 합성 후보와 결과를 자동 저장/새 노트/다시 불러오기/새로고침/삭제, 직렬 쓰기 도중 새 입력 보존·실패/재시도·계정 전환, 비밀번호 재설정 접근을 검사한다. Firebase는 로컬 에뮬레이터이고 관광 데이터는 합성 응답이다. security.spec.ts는 프로필 소유권·revision 충돌도 검사한다.
 
 일반 place-discovery.spec.ts는 입력 전 탐색 후보·최근 검색 재사용/삭제 및 v1 기기 노트의 실제 장소명 재조회(합성 응답)를 검사한다. trip-state 단위 검사는 원문/인용/규칙 제외·과거 결과 복원·입력 변경 시 stale 유지·초안과 엄격한 검증 계약 분리를 확인한다. 기존 기기 저장 테스트는 v2 기록 형식에 맞추고 v1 읽기 호환성도 유지한다.
+
+헤더 아바타·로그인 모달 후속 검사는 `account-profile.spec.ts`에 있다. 마지막 헤더 항목의 원형 아바타, 320px 터치 영역, Enter/클릭의 프로필 이동과 모달 부재, 사진 실패 fallback, 문구 없는 1px 구분선과 중앙 보조 버튼 간격을 확인한다. `E2E_MODE=proxy pnpm test:firebase`로 재실행한다. 사진은 로컬 테스트 계정과 합성 이미지 응답으로 검증한다.

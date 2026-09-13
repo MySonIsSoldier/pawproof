@@ -87,7 +87,7 @@ function AuthDialogScreen() {
   }
   return (
     <Dialog
-      open={auth.open}
+      open={auth.open && !auth.user}
       onOpenChange={(next) => {
         if (!pending) {
           auth.setOpen(next);
@@ -150,9 +150,7 @@ function AuthDialogScreen() {
             >
               Google로 계속하기
             </Button>
-            <div className={styles.divider}>
-              <span>또는 이메일로</span>
-            </div>
+            <div className={styles.divider} role="separator" />
             <form className={styles.form} onSubmit={submit} key={mode}>
               <label>
                 이메일

@@ -19,6 +19,7 @@ shadcn/ui의 Radix 구현 소스를 기반으로 컴포넌트를 직접 소유�
 | TimePicker | 24시간·1분 단위. 편집 초안과 적용 값 분리, 취소 시 기존 값 유지 |
 | Toaster | shadcn 기반 Sonner. 숲색 토큰, 짧은 작업 결과, 키보드 닫기·화면 이탈 정리 |
 | Dialog | Radix 모달·배경·제목·설명. 근거 모달은 열었던 버튼으로 포커스 복귀 |
+| Avatar | Radix 사진 로딩·실패 fallback. 계정 헤더는 44px 원형 링크에 조합하고 이름·이메일 첫 글자를 fallback으로 제공 |
 
 색상·포커스·반경 토큰은 globals.css, 공통 버튼/입력/선택/모달 스타일은 components/ui/controls.css, 업무 화면 레이아웃은 planner.css가 소유한다. 컴포넌트에서 API·스토어·판정을 호출하지 않는다. 상태별 판정 배지는 업무 의미가 있으므로 verification 기능에 둔다.
 
@@ -83,4 +84,4 @@ Accordion/Item/Trigger/Content는 shadcn 기반 Radix 컴포넌트이며, FAQ는
 AuthProvider는 인증 수명만 관리하고 AuthDialog는 기존 shadcn/Radix Dialog·Input·Button과 Sonner 경계를 재사용한다. CloudTrips는 화면 표현, useCloudTrips는 계정별 TanStack Query와 저장 요청, FirestoreTrips는 서버 DB 접근을 맡는다. 실제 여행 편집 상태는 기존 Zustand를 유지한다. 계정 변경 시 Query와 선택된 노트의 revision을 폐기하고 늦게 끝난 요청은 이전 계정 UI를 되살리지 않는다. 입력 교체는 usePlanner의 복원 동작을 거쳐 장소 표시 정보·저장 당시 검사 요약을 되살리고 대체 후보를 초기화한다. 과거 기록의 원문을 만들어내지 않고 재검사로 최신 근거를 조회한다. 자세한 계약은 [Firebase 인증·저장](FIREBASE_AUTH_AND_STORAGE.md)을 따른다.
 
 
-로그인 화면은 Google·이메일 구분선과 기본 로그인 폼, 밑줄 보조 버튼을 사용한다. 성공 알림은 라우트 전환 후 루트의 account-global Toaster에 게시해 모달 종료와 함께 사라지지 않는다. /profile의 세이지 계정 카드·흰 반려견 폼과 여행의 반려견 입력은 PetFields를 공유한다. QueryProvider는 루트로 이동해 계정 데이터를 UID별로 관리한다. 자동 저장은 매 타이핑마다 토스트를 만들지 않고 상태 문구로 알린다.
+로그인 화면은 문구 없는 1px 숲색 구분선과 기본 로그인 폼, 중앙 정렬·28px 간격의 밑줄 보조 버튼을 사용한다. 헤더의 계정 진입점은 마지막 항목이며 인증된 사용자는 아바타 링크로 /profile에 바로 이동한다. AuthDialog는 비로그인 사용자에게만 열리고 인증 복원 중 로그인 버튼은 비활성화한다. 사진 로딩 실패는 첫 글자 아바타로 대체한다. 성공 알림은 라우트 전환 후 루트의 account-global Toaster에 게시해 모달 종료와 함께 사라지지 않는다. /profile의 세이지 계정 카드·흰 반려견 폼과 여행의 반려견 입력은 PetFields를 공유한다. QueryProvider는 루트로 이동해 계정 데이터를 UID별로 관리한다. 자동 저장은 매 타이핑마다 토스트를 만들지 않고 상태 문구로 알린다.
