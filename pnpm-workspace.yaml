@@ -1,6 +1,8 @@
 allowBuilds:
   '@firebase/util': false
   protobufjs: false
+  # Optional firebase-tools -> superstatic native regex; JS RegExp fallback is sufficient.
+  re2: false
   unrs-resolver: false
 engineStrict: true
 savePrefix: ''

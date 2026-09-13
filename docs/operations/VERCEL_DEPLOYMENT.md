@@ -36,6 +36,12 @@ Corepack에서 버전 선택 문제가 나면 Install Command를 아래처럼 �
 npx --yes pnpm@12.3.4 install --frozen-lockfile
 ```
 
+### 설치 중 ERR_PNPM_IGNORED_BUILDS가 발생하면
+
+pnpm 12는 빌드 스크립트의 실행/생략 여부가 정해지지 않은 의존성을 만나면 설치를 중단한다. `re2@1.26.1`은 `firebase-tools → superstatic`의 선택적 네이티브 의존성이며 PawProof 런타임에서 사용하지 않는다. superstatic은 로딩 실패 시 JavaScript RegExp로 대체하고 현재 Firebase 검사는 Auth·Firestore 에뮬레이터만 사용한다. 따라서 `pnpm-workspace.yaml`의 `allowBuilds`에 `re2: false`를 명시하여 빌드를 생략한다. RE2 전용 정규식이 필요한 Firebase Hosting 설정을 추가할 때는 이 결정을 재검토한다. [pnpm 빌드 정책](https://pnpm.io/settings/build#allowbuilds).
+
+수정된 커밋을 GitHub main에 반영한 뒤 **그 커밋**으로 배포한다. 같은 실패 커밋을 Redeploy하면 저장소 수정이 적용되지 않는다. 환경변수나 Install Command를 바꾸거나 전체 빌드 스크립트를 허용할 필요는 없다.
+
 ## 3. Production 환경변수
 
 Import 화면의 Environment Variables 또는 **Project → Settings → Environment Variables**에 입력한다. 첫 운영 연결은 Production에 적용한다. Preview는 필요할 때 별도 구성한다. Corepack 플래그는 Preview 빌드를 사용할 때 해당 환경에도 필요하다.

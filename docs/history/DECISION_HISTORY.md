@@ -257,3 +257,7 @@ Google 및 이메일 로그인/가입/인증/재설정/로그아웃을 공통 �
 ## 35. 2026-09-13 Production 환경변수 템플릿
 
 사용자가 API 키만 채워 배포할 수 있도록 .env.example을 Vercel Production 기본값으로 정리했다. Corepack·운영 프로필·PWA·실 API 활성화·기존 모델 ID는 채우고 API 키와 Firebase 프로젝트별 값 10개는 비워 둔다. 운영 경로와 선택 origin의 빈칸을 구분하고 개발 전용 설정을 제외했다. 실제 값은 Vercel 또는 비추적 사본에 넣으며 기존 로컬 설정은 변경하지 않는다.
+
+## 36. 2026-09-13 Vercel 의존성 설치 정책 보완
+
+Vercel에서 보고된 ERR_PNPM_IGNORED_BUILDS는 firebase-tools → superstatic의 선택적 re2 빌드 정책 누락으로 확인했다. pnpm-workspace.yaml에 re2: false를 추가해 불필요한 네이티브 빌드를 생략하며 전체 스크립트 제한은 유지한다. 별도 임시 복사본에서 Node 24.15.0·pnpm 12.3.4로 기존 설정의 동일 오류를 재현했고, 수정 후 node_modules가 없는 상태의 frozen-lockfile 설치·운영 빌드(TypeScript 포함)·Firebase CLI 15.30.0 실행·superstatic의 JavaScript RegExp 대체 동작을 확인했다. 실제 키·기존 개발 서버 설정은 변경하지 않았다. Vercel의 수정 커밋 배포와 실 API 연결 검증은 이 검사에 포함하지 않는다.
