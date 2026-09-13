@@ -56,3 +56,7 @@
 - 조치: 인증 서버의 자격증명/권한/연결/의존성 오류를 503으로 분리하고 고정 reason만 반환/기록한다. 만료/철회/비활성·삭제 계정/잘못된 토큰은 401로 거부한다. 토큰과 SDK 원문 메시지는 기록하지 않는다. 이는 오진 방지이며 운영 저장 문제의 해결 완료를 뜻하지 않는다.
 
 검증: 단위 99개, lint·typecheck·운영 빌드, Firebase 프로필/노트/소유권 Playwright 8개, 운영 빌드 계정 API Playwright 2개 통과. 최초 단위 실행의 TypeScript parameter property 오류는 오류 클래스의 명시적 필드 선언으로 바꿔 해소했다. demo 에뮬레이터 검사 후 개발 미리보기를 복원했다.
+
+운영 진단 결과: `75d7a25`를 main에 푸시한 후 Vercel success와 TOKEN_INVALID 응답 반영을 확인했다. 세 번째 임시 계정으로 발급한 새 토큰은 로컬 철회 검증까지 통과했지만 운영 프로필/노트 목록은 모두 503 / AUTH_CREDENTIAL_INVALID였다. 로그인 만료가 아니라 서버 자격증명 처리 실패임을 확인했다. 진단 계정은 삭제했다. 로컬 서비스 계정의 Auth 및 존재하지 않는 합성 문서에 대한 Firestore 읽기도 통과했다.
+
+남은 조치: Vercel 환경변수 조회/수정 연결이 없어 운영 설정은 아직 바꾸지 못했다. 검증된 로컬 FIREBASE_PROJECT_ID·FIREBASE_CLIENT_EMAIL·FIREBASE_PRIVATE_KEY만 담은 `.env.vercel.firebase.local`을 권한 0600으로 만들고 Git 제외 및 파싱 왕복을 확인했다. 사용자가 Vercel Production의 해당 3개 값을 이 파일로 다시 적용한 후 Redeploy해야 한다. 파일/키 내용은 커밋·로그·채팅에 기록하지 않는다. 운영 저장 성공은 아직 확인되지 않았다.

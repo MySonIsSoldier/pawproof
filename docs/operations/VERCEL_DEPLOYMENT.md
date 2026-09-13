@@ -126,6 +126,8 @@ Deploy를 눌러 Ready가 되면 프로젝트의 **고정 Production 주소**를
 
 로그인 토큰 검증 실패의 응답 `reason`을 확인한다. TOKEN_EXPIRED는 실제 만료, SESSION_REJECTED는 철회/비활성·삭제 계정, TOKEN_INVALID는 잘못된 토큰이다. AUTH_CREDENTIAL_INVALID는 서버 자격증명, AUTH_PERMISSION_DENIED는 Admin 권한, AUTH_CONNECTION_FAILED는 인증 서버 연결, AUTH_DEPENDENCY_ERROR는 서버 의존성 문제다. 서버 문제는 503으로 반환하며 로그에 고정 reason만 기록한다. 키나 토큰을 공유하지 않는다. 유효한 새 토큰도 서버에서 거부될 때 무작정 재로그인을 반복하거나 철회 검사를 끄지 않는다.
 
+2026-09-13 후속 진단에서는 유효한 새 토큰의 운영 응답이 AUTH_CREDENTIAL_INVALID로 확인됐다. 로컬 Auth/Firestore 접근에 성공한 서버 설정 3개(FIREBASE_PROJECT_ID·FIREBASE_CLIENT_EMAIL·FIREBASE_PRIVATE_KEY)를 Production에 다시 적용한 뒤 Redeploy한다. 계정 이메일과 개인 키는 동일한 서비스 계정의 쌍을 사용한다. 로컬의 비추적 `.env.vercel.firebase.local`은 이 3개만 담은 가져오기용 사본이다. 파일을 .env 형식으로 가져오며, 개별 Value에 넣을 때는 바깥 따옴표를 제외한다. 환경변수 교체 전 운영 값을 직접 비교하지 못했으므로 특정 키의 오타까지 확정한 것은 아니다.
+
 ### 계정 API가 빈 본문과 HTTP 500을 반환하면
 
 2026-09-13 운영에서 프로필 조회와 노트 저장이 인증 검사 전에 실패했다. Firebase Admin 14.4.0 → jwks-rsa 4.1.0이 ESM 전용 jose 6을 `require()`하는 경로가 있으며, [Vercel은 require(ESM)을 기본 비활성화](https://vercel.com/docs/functions/runtimes/node-js/advanced-node-configuration#experimental-nodejs-require-of-es-module)한다. Node 24 로컬 기본 설정의 성공만으로 운영 호환성을 판단하지 않는다.
