@@ -126,7 +126,7 @@ try {
   expect(response.status()).toBe(200);
   const { idToken } = await response.json();
   await expect(
-    page.getByRole("heading", { name: "나의 계정", exact: true }),
+    page.getByRole("heading", { name: "우리의 여행 노트" }),
   ).toBeVisible();
   pass(stage);
   stage = "unverified and unauthenticated API denial";
@@ -164,19 +164,21 @@ try {
   stage = "verified token refresh";
   // No email sent: checks the refresh/server gate, not delivery or verification links.
   await auth.updateUser(uid, { emailVerified: true });
+  await page.getByRole("link", { name: "프로필", exact: true }).click();
   await page.getByRole("button", { name: "인증 완료 확인" }).click();
   await expect(
     page.getByRole("button", { name: "인증 완료 확인" }),
   ).toHaveCount(0);
-  await page.getByRole("button", { name: "계정 안내 닫기" }).click();
+  await page.goto(new URL("plan?mode=demo", base).href, {
+    waitUntil: "networkidle",
+  });
   pass(stage);
   stage = "cloud note create and list";
   const panel = page.getByRole("region", { name: "계정 여행 노트" });
   await panel.getByLabel("노트 제목").fill("자동 연결 점검 · 종료 후 삭제");
-  await panel.getByRole("button", { name: "계정에 새 노트 저장" }).click();
   await expect(
-    panel.getByRole("button", { name: "계정 노트 수정 저장" }),
-  ).toBeEnabled();
+    panel.getByText("모든 변경사항을 저장했어요", { exact: true }),
+  ).toBeVisible();
   await panel
     .getByRole("button", { name: "계정 노트 목록", exact: true })
     .click();
@@ -189,13 +191,13 @@ try {
   pass(stage);
   stage = "cloud note update, login persistence and reload";
   await page.getByLabel("반려견 1 이름", { exact: true }).fill("연결점검");
-  await panel.getByRole("button", { name: "계정 노트 수정 저장" }).click();
+
   await expect
     .poll(async () => (await saved.docs[0].ref.get()).data()?.revision)
     .toBe(2);
   await page.reload();
   await expect(
-    page.getByRole("button", { name: "내 계정", exact: true }),
+    page.getByRole("link", { name: "프로필", exact: true }),
   ).toBeVisible();
   await panel
     .getByRole("button", { name: "계정 노트 목록", exact: true })
@@ -213,10 +215,10 @@ try {
   await page.getByRole("button", { name: "삭제 확인" }).click();
   await expect(panel.getByText("아직 저장한 노트가 없어요.")).toBeVisible();
   expect((await saved.docs[0].ref.get()).exists).toBe(false);
-  await page.getByRole("button", { name: "내 계정", exact: true }).click();
+  await page.getByRole("link", { name: "프로필", exact: true }).click();
   await page.getByRole("button", { name: "로그아웃", exact: true }).click();
   await expect(
-    page.getByRole("button", { name: "이메일로 로그인", exact: true }),
+    page.getByRole("button", { name: "로그인", exact: true }),
   ).toBeVisible();
   expect(pageErrors).toHaveLength(0);
   pass(stage);

@@ -200,7 +200,7 @@ function PlannerScreen() {
             <p className="privacy-note no-print">
               회원가입 없이 사용해요.
               <br />
-              기기 저장은 입력한 프로필·코스에만 적용돼요.
+              기기 저장에는 장소와 검사 당시 요약도 포함돼요.
             </p>
           </div>
         </aside>
@@ -239,7 +239,11 @@ function PlannerScreen() {
         <span>작은 발걸음도, 여행의 끝까지. PawProof</span>
       </footer>
       {detail && (
-        <EvidenceDialog result={detail} onClose={() => setDetail(null)} />
+        <EvidenceDialog
+          historical={model.historical}
+          result={detail}
+          onClose={() => setDetail(null)}
+        />
       )}
     </main>
   );

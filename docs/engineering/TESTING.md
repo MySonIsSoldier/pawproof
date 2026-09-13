@@ -101,4 +101,11 @@ node scripts/playwright/generated/pawproof-dialog-accordion-motion-and-dog-card-
 
 `pnpm test:firebase`는 인증/Firestore 에뮬레이터를 demo-pawproof 프로젝트로 시작하고 별도 `playwright.firebase.config.ts`로 데스크톱·모바일을 검사한다. `E2E_MODE=proxy pnpm test:firebase`는 같은 검사를 개발 basePath에서 수행한다. 구성과 Java/브라우저 준비, 실제 인증과의 차이는 [Firebase 기준](FIREBASE_AUTH_AND_STORAGE.md)에 있다. `pnpm verify`는 실제 Firebase 키를 사용하지 않도록 공개 설정과 에뮬레이터 연결을 비활성화하고 기존 회귀를 수행한다. 인증 관련 로그/스크린샷에는 로컬 테스트 사용자만 사용하며 실제 토큰·서비스 계정 키를 포함하지 않는다.
 
-특정 Firebase 브라우저 흐름만 반복할 때는 `pnpm test:firebase --grep "signup, email verification"`처럼 Playwright 인자를 전달할 수 있다.
+특정 Firebase 브라우저 흐름만 반복할 때는 `pnpm test:firebase --grep "signup redirects"`처럼 Playwright 인자를 전달할 수 있다.
+
+
+## 계정 UX·자동 저장·검색 발견성 (2026-09-13)
+
+Firebase account-profile.spec.ts와 account.spec.ts는 10자 가입·로그인 후 /plan 이동·전환 후 성공 토스트, 프로필 인증/반려견 등록/재조회/여행에 가져오기, 다른 탭의 계정 전환 시 이전 프로필 초안 폐기, 실제 장소 형식의 합성 후보와 결과를 자동 저장/새 노트/다시 불러오기/새로고침/삭제, 직렬 쓰기 도중 새 입력 보존·실패/재시도·계정 전환, 비밀번호 재설정 접근을 검사한다. Firebase는 로컬 에뮬레이터이고 관광 데이터는 합성 응답이다. security.spec.ts는 프로필 소유권·revision 충돌도 검사한다.
+
+일반 place-discovery.spec.ts는 입력 전 탐색 후보·최근 검색 재사용/삭제 및 v1 기기 노트의 실제 장소명 재조회(합성 응답)를 검사한다. trip-state 단위 검사는 원문/인용/규칙 제외·과거 결과 복원·입력 변경 시 stale 유지·초안과 엄격한 검증 계약 분리를 확인한다. 기존 기기 저장 테스트는 v2 기록 형식에 맞추고 v1 읽기 호환성도 유지한다.

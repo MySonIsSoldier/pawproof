@@ -171,7 +171,7 @@ test("complete trip: four states, evidence, stale inputs, replacement, undo, pre
   await expect(page.getByLabel("반려견 1 이름")).toHaveValue("콩이");
   await expect(
     page.getByRole("heading", { name: "코스 확인 결과" }),
-  ).not.toBeVisible();
+  ).toBeVisible();
   await page.getByRole("button", { name: "저장 삭제", exact: true }).click();
   expect(
     await page.evaluate(() => localStorage.getItem("pawproof.trip.v1")),

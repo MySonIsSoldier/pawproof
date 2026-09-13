@@ -1,5 +1,6 @@
 "use client";
 
+import type { TripRecord } from "../../../application/contracts/trip-record";
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import type {
@@ -11,6 +12,7 @@ import type { Alternative } from "../../../application/use-cases/recover-trip";
 import { useTripStore, useTripStoreApi } from "../state/planner-provider";
 import { findTripPlace, isTripStale } from "../state/trip-store";
 import { initialTrip } from "../state/initial-trip";
+import { useResolvePlaces } from "./use-resolve-places";
 import { useTripOperations } from "./use-trip-operations";
 import { usePlannerNotifications } from "./use-planner-notifications";
 import { useTripPersistence } from "./use-trip-persistence";
@@ -18,10 +20,13 @@ import { useTripPersistence } from "./use-trip-persistence";
 /** Compose UI operations; business policy evaluation remains on the server. */
 export function usePlanner() {
   usePlannerNotifications();
+  useResolvePlaces();
   const store = useTripStoreApi();
   const state = useTripStore(
     useShallow((s) => ({
       trip: s.trip,
+      loading: s.loading,
+      historical: !!s.verification?.historical,
       places: s.places,
       result: s.verification?.result || null,
       stale: isTripStale(s),
@@ -42,18 +47,14 @@ export function usePlanner() {
   return {
     ...state,
     ...operations,
+    busy: operations.busy || (state.loading ? ("load" as const) : null),
     ...persistence,
     detail,
     setDetail,
     update,
-    restoreTrip: (trip: TripInput) => {
+    restoreTrip: (record: TripRecord) => {
       if (operations.busy) return;
-      store
-        .getState()
-        .reset(
-          trip,
-          "계정의 입력을 불러왔어요. 최신 규정으로 다시 검사해 주세요.",
-        );
+      store.getState().restore(record);
       operations.clearAlternatives();
       setDetail(null);
     },
@@ -63,6 +64,13 @@ export function usePlanner() {
     placeFor: (id: string) => findTripPlace(state.places, id),
     switchMode: (mode: TripInput["mode"]) => {
       if (operations.busy || mode === state.trip.mode) return;
+      const start = store.getState().startNote;
+      if (start) {
+        void start(mode).catch((error: Error) =>
+          store.getState().fail(error.message),
+        );
+        return;
+      }
       store
         .getState()
         .reset(

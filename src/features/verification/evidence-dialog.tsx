@@ -15,9 +15,11 @@ import {
 } from "../../components/ui/dialog";
 export function EvidenceDialog({
   result,
+  historical = false,
   onClose,
 }: {
   result: VisitResult;
+  historical?: boolean;
   onClose: () => void;
 }) {
   const returnFocus = useRef<HTMLElement | null>(null);
@@ -39,6 +41,12 @@ export function EvidenceDialog({
           if (!open) onClose();
         }}
       >
+        {historical && (
+          <p className="stale-notice">
+            저장 당시의 판정 이유예요. 규정 원문은 저장하지 않으며, 최신 근거는
+            코스를 다시 검사하면 확인할 수 있어요.
+          </p>
+        )}
         <div className="dialog-header">
           <div>
             <p className="eyebrow">WHY THIS RESULT?</p>

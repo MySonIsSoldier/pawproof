@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 type Props = Pick<
   ReturnType<typeof usePlanner>,
+  | "historical"
   | "result"
   | "trip"
   | "stale"
@@ -16,6 +17,7 @@ type Props = Pick<
 >;
 export function VerificationPanel({
   result,
+  historical,
   trip,
   stale,
   busy,
@@ -54,6 +56,17 @@ export function VerificationPanel({
           ),
         )}
       </div>
+      {historical && result && (
+        <p className="stale-notice" role="status">
+          저장 당시 검사 결과 ·{" "}
+          {new Date(result.verifiedAt).toLocaleString("ko-KR", {
+            timeZone: "Asia/Seoul",
+          })}
+          <br />
+          현재 이용 가능 여부를 보장하지 않아요. 원문과 최신 조건은 다시 검사해
+          주세요.
+        </p>
+      )}
       {stale && (
         <p role="status" className="stale-notice">
           입력이 변경되었어요. 다시 검사해 주세요.

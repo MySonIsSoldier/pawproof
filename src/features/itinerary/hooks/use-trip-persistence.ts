@@ -1,7 +1,8 @@
 "use client";
 
 import { useTripStoreApi } from "../state/planner-provider";
-import { loadTrip, saveTrip, removeTrip } from "../state/trip-storage";
+import { loadTripRecord, saveTrip, removeTrip } from "../state/trip-storage";
+import { tripRecord } from "../state/trip-store";
 import { tripSchema } from "../../../application/contracts/trip";
 
 export function useTripPersistence() {
@@ -14,9 +15,9 @@ export function useTripPersistence() {
         return;
       }
       try {
-        saveTrip(localStorage, state.trip);
+        saveTrip(localStorage, state.trip, tripRecord(state));
         state.succeed(
-          "프로필과 코스 입력만 이 기기에 저장했어요. 규정·검사 결과는 저장하지 않아요.",
+          "코스와 장소 표시 정보, 저장 당시 검사 요약을 이 기기에 저장했어요.",
           "여행 노트를 이 기기에 저장했어요",
         );
       } catch {
@@ -27,14 +28,8 @@ export function useTripPersistence() {
     },
     load: () => {
       try {
-        const trip = loadTrip(localStorage);
-        if (trip)
-          store
-            .getState()
-            .reset(
-              trip,
-              "저장한 입력을 불러왔어요. 최신 규정으로 다시 검사해 주세요.",
-            );
+        const record = loadTripRecord(localStorage);
+        if (record) store.getState().restore(record);
         else
           store
             .getState()

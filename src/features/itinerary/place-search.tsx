@@ -16,6 +16,10 @@ export function PlaceSearch({
   add: (place: Place) => void;
 }) {
   const {
+    recommendationFailed,
+    recommended,
+    recent,
+    clearRecent,
     query,
     setQuery,
     category,
@@ -80,6 +84,52 @@ export function PlaceSearch({
       {mode === "live" && (
         <p className="field-caption">
           ‘인천’은 인천 지역에서, 다른 검색어는 장소 이름으로 찾아요.
+        </p>
+      )}
+      {recommended && (
+        <div className="search-suggestions">
+          {!!recent.length && (
+            <>
+              <div className="search-heading">
+                <strong>최근 검색</strong>
+                <Button variant="link" onClick={clearRecent}>
+                  기록 지우기
+                </Button>
+              </div>
+              <div className="filter-chips">
+                {recent.map((term) => (
+                  <Button
+                    variant="outline"
+                    key={term}
+                    disabled={busy || loading}
+                    onClick={() => search(term)}
+                  >
+                    {term}
+                  </Button>
+                ))}
+              </div>
+            </>
+          )}
+          <h4>
+            {mode === "live"
+              ? "인천에서 먼저 둘러볼 곳"
+              : "가상 코스에서 둘러볼 곳"}
+          </h4>
+          <p className="field-caption">
+            {mode === "live"
+              ? "현재 관광 정보에서 가져온 탐색 후보예요. 반려견의 이용 조건은 코스에 담아 검사해 주세요."
+              : "설명용 가상 장소예요."}
+          </p>
+        </div>
+      )}
+      {recommendationFailed && (
+        <p className="field-caption">
+          추천 장소를 불러오지 못했어요. 지역이나 장소 이름으로 검색해 주세요.
+        </p>
+      )}
+      {loading && (
+        <p role="status" className="field-caption">
+          장소를 불러오고 있어요…
         </p>
       )}
       {message && (
