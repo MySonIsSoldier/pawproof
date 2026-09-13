@@ -158,7 +158,7 @@ select {
   font-size: 14px;
   font-weight: 550;
 }
-.site-header nav > a:not(.button):hover {
+.site-header nav > a:not(.button):not(.account-button):hover {
   color: var(--forest);
   text-decoration: underline;
   text-underline-offset: 6px;
@@ -782,7 +782,7 @@ select {
   .site-header nav {
     gap: 6px;
   }
-  .site-header nav > a:not(.button) {
+  .site-header nav > a:not(.button):not(.account-button) {
     display: none;
   }
   .site-header .button {
@@ -1020,3 +1020,8 @@ select {
   .site-header .button { padding-inline: 8px; }
   .site-header .brand { gap: 6px; }
 }
+
+.registered-pets { padding: 16px; border-radius: 16px; background: var(--sage); margin-bottom: 20px; }
+.registered-pets .search-heading a { font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.search-suggestions { padding-top: 18px; }
+.search-suggestions h4 { margin: 16px 0 6px; font-size: 14px; }

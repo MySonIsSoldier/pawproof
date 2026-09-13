@@ -42,7 +42,10 @@ export async function createUser(verified = true) {
   return { uid: user.uid, email: address, token: data.idToken as string };
 }
 export async function login(page: Page, email: string) {
-  await page.getByRole("button", { name: "로그인", exact: true }).click();
+  await page
+    .getByRole("banner")
+    .getByRole("button", { name: "로그인", exact: true })
+    .click();
   await page.getByLabel("이메일", { exact: true }).fill(email);
   await page.getByLabel("비밀번호", { exact: true }).fill(password);
   await page

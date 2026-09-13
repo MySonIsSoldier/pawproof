@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import localFont from "next/font/local";
 import { publicAssetPath } from "../config/public";
+import { QueryProvider } from "../components/providers/query-provider";
 import { AuthProvider } from "../features/auth/auth-provider";
 import { AuthDialog } from "../features/auth/auth-dialog";
 import { PwaProvider } from "../features/pwa/pwa-provider";
@@ -43,10 +44,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a className="skip-link" href="#main">
           본문으로 바로가기
         </a>
-        <AuthProvider>
-          <PwaProvider>{children}</PwaProvider>
-          <AuthDialog />
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <PwaProvider>{children}</PwaProvider>
+            <AuthDialog />
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

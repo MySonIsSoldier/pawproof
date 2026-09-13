@@ -12,7 +12,7 @@ export function authErrorMessage(error: unknown): string {
     "auth/email-already-in-use":
       "가입할 수 없는 이메일이에요. 로그인 또는 비밀번호 재설정을 이용해 주세요.",
     "auth/weak-password":
-      "더 안전한 비밀번호를 입력해 주세요. 10자 이상을 권장해요.",
+      "더 안전한 비밀번호를 입력해 주세요. 10자 이상으로 입력해 주세요.",
     "auth/popup-blocked":
       "로그인 팝업이 차단됐어요. 팝업을 허용하거나 이메일로 로그인해 주세요.",
     "auth/popup-closed-by-user":

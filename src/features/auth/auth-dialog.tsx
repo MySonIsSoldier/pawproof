@@ -34,6 +34,7 @@ function AuthDialogScreen() {
   async function perform(
     action: Parameters<typeof auth.run>[0],
     success: string,
+    navigate = false,
   ) {
     if (pending) return;
     setPending(true);
@@ -42,7 +43,9 @@ function AuthDialogScreen() {
     try {
       await auth.run(action);
       setMessage(success);
-      notify({ kind: "success", title: success });
+      if (navigate) {
+        auth.completeLogin(success);
+      } else notify({ kind: "success", title: success });
     } catch (error) {
       const text = authErrorMessage(error);
       setError(text);
@@ -76,6 +79,7 @@ function AuthDialogScreen() {
         : mode === "signup"
           ? "가입했어요. 이메일의 인증 링크를 확인해 주세요."
           : "로그인했어요. 여행 노트를 계정에 보관할 수 있어요.",
+      mode !== "reset",
     );
     event.currentTarget
       .querySelector<HTMLInputElement>('[name="password"]')
@@ -97,7 +101,11 @@ function AuthDialogScreen() {
           <div>
             <p className="eyebrow">YOUR TRAVEL NOTE</p>
             <DialogTitle>
-              {auth.user ? "나의 계정" : "어디서든 이어가는 여행"}
+              {mode === "signup"
+                ? "우리의 첫 여행을 시작해요"
+                : mode === "reset"
+                  ? "비밀번호를 다시 설정해요"
+                  : "어디서든 이어가는 여행"}
             </DialogTitle>
           </div>
           <DialogClose asChild>
@@ -122,104 +130,28 @@ function AuthDialogScreen() {
         ) : !auth.ready ? (
           <p role="status">로그인 상태를 확인하고 있어요…</p>
         ) : auth.user ? (
-          <div className={styles.body}>
-            <p className={styles.email}>
-              {auth.user.email || "로그인한 사용자"}
-            </p>
-            {!auth.user.verified && (
-              <div className={styles.notice}>
-                <p>계정에 저장하려면 이메일 인증이 필요해요.</p>
-                <div className={styles.actions}>
-                  <Button
-                    variant="outline"
-                    disabled={pending}
-                    onClick={() =>
-                      void perform(async (auth, sdk) => {
-                        if (auth.currentUser)
-                          await sdk.sendEmailVerification(auth.currentUser);
-                      }, "인증 메일을 보냈어요.")
-                    }
-                  >
-                    인증 메일 다시 보내기
-                  </Button>
-                  <Button
-                    disabled={pending}
-                    onClick={() =>
-                      void perform(async (auth) => {
-                        if (auth.currentUser) {
-                          await auth.currentUser.reload();
-                          await auth.currentUser.getIdToken(true);
-                          if (!auth.currentUser.emailVerified)
-                            throw Object.assign(new Error("Not verified"), {
-                              code: "auth/email-not-verified",
-                            });
-                        }
-                      }, "이메일 인증을 확인했어요.")
-                    }
-                  >
-                    인증 완료 확인
-                  </Button>
-                </div>
-              </div>
-            )}
-            <p>
-              로그아웃하면 계정의 노트 목록을 화면에서 지워요. 편집 중인 입력과
-              직접 기기에 저장한 노트는 유지돼요.
-            </p>
-            <Button
-              variant="outline"
-              disabled={pending}
-              onClick={() =>
-                void perform(async (auth, sdk) => {
-                  await sdk.signOut(auth);
-                  setMode("login");
-                }, "로그아웃했어요.")
-              }
-            >
-              로그아웃
-            </Button>
-          </div>
+          <p role="status">여행 노트를 준비하고 있어요…</p>
         ) : (
           <div className={styles.body}>
             <Button
               variant="outline"
               disabled={pending}
               onClick={() =>
-                void perform(async (auth, sdk) => {
-                  const provider = new sdk.GoogleAuthProvider();
-                  provider.setCustomParameters({ prompt: "select_account" });
-                  await sdk.signInWithPopup(auth, provider);
-                }, "Google 계정으로 로그인했어요.")
+                void perform(
+                  async (auth, sdk) => {
+                    const provider = new sdk.GoogleAuthProvider();
+                    provider.setCustomParameters({ prompt: "select_account" });
+                    await sdk.signInWithPopup(auth, provider);
+                  },
+                  "Google 계정으로 로그인했어요.",
+                  true,
+                )
               }
             >
               Google로 계속하기
             </Button>
-            <div
-              className={styles.tabs}
-              role="group"
-              aria-label="이메일 로그인 방식"
-            >
-              {(
-                [
-                  ["login", "이메일 로그인"],
-                  ["signup", "회원가입"],
-                  ["reset", "비밀번호 찾기"],
-                ] as const
-              ).map(([value, label]) => (
-                <Button
-                  key={value}
-                  variant="plain"
-                  disabled={pending}
-                  aria-pressed={mode === value}
-                  onClick={() => {
-                    setMode(value);
-                    setError("");
-                    setMessage("");
-                  }}
-                >
-                  {label}
-                </Button>
-              ))}
+            <div className={styles.divider}>
+              <span>또는 이메일로</span>
             </div>
             <form className={styles.form} onSubmit={submit} key={mode}>
               <label>
@@ -268,6 +200,44 @@ function AuthDialogScreen() {
                       : "재설정 메일 받기"}
               </Button>
             </form>
+            <div className={styles.links}>
+              {mode !== "login" && (
+                <Button
+                  variant="link"
+                  disabled={pending}
+                  onClick={() => {
+                    setMode("login");
+                    setError("");
+                  }}
+                >
+                  이메일 로그인
+                </Button>
+              )}
+              {mode !== "signup" && (
+                <Button
+                  variant="link"
+                  disabled={pending}
+                  onClick={() => {
+                    setMode("signup");
+                    setError("");
+                  }}
+                >
+                  회원가입
+                </Button>
+              )}
+              {mode !== "reset" && (
+                <Button
+                  variant="link"
+                  disabled={pending}
+                  onClick={() => {
+                    setMode("reset");
+                    setError("");
+                  }}
+                >
+                  비밀번호 찾기
+                </Button>
+              )}
+            </div>
           </div>
         )}
         {(error || auth.error) && (

@@ -80,4 +80,7 @@ Accordion/Item/Trigger/Content는 shadcn 기반 Radix 컴포넌트이며, FAQ는
 
 ## Firebase 인증과 계정 노트
 
-AuthProvider는 인증 수명만 관리하고 AuthDialog는 기존 shadcn/Radix Dialog·Input·Button과 Sonner 경계를 재사용한다. CloudTrips는 화면 표현, useCloudTrips는 계정별 TanStack Query와 저장 요청, FirestoreTrips는 서버 DB 접근을 맡는다. 실제 여행 편집 상태는 기존 Zustand를 유지한다. 계정 변경 시 Query와 선택된 노트의 revision을 폐기하고 늦게 끝난 요청은 이전 계정 UI를 되살리지 않는다. 입력 교체는 기존 usePlanner의 복원 동작을 거쳐 판정·대체 결과를 초기화한다. 자세한 계약은 [Firebase 인증·저장](FIREBASE_AUTH_AND_STORAGE.md)을 따른다.
+AuthProvider는 인증 수명만 관리하고 AuthDialog는 기존 shadcn/Radix Dialog·Input·Button과 Sonner 경계를 재사용한다. CloudTrips는 화면 표현, useCloudTrips는 계정별 TanStack Query와 저장 요청, FirestoreTrips는 서버 DB 접근을 맡는다. 실제 여행 편집 상태는 기존 Zustand를 유지한다. 계정 변경 시 Query와 선택된 노트의 revision을 폐기하고 늦게 끝난 요청은 이전 계정 UI를 되살리지 않는다. 입력 교체는 usePlanner의 복원 동작을 거쳐 장소 표시 정보·저장 당시 검사 요약을 되살리고 대체 후보를 초기화한다. 과거 기록의 원문을 만들어내지 않고 재검사로 최신 근거를 조회한다. 자세한 계약은 [Firebase 인증·저장](FIREBASE_AUTH_AND_STORAGE.md)을 따른다.
+
+
+로그인 화면은 Google·이메일 구분선과 기본 로그인 폼, 밑줄 보조 버튼을 사용한다. 성공 알림은 라우트 전환 후 루트의 account-global Toaster에 게시해 모달 종료와 함께 사라지지 않는다. /profile의 세이지 계정 카드·흰 반려견 폼과 여행의 반려견 입력은 PetFields를 공유한다. QueryProvider는 루트로 이동해 계정 데이터를 UID별로 관리한다. 자동 저장은 매 타이핑마다 토스트를 만들지 않고 상태 문구로 알린다.

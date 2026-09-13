@@ -2,7 +2,8 @@ import type { TripInput } from "../../domain/policies/types";
 import { equipmentOptions } from "../../domain/policies/types";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
-import { Input } from "../../components/ui/input";
+import { PetFields } from "../profile/pet-fields";
+import { RegisteredPets } from "../profile/registered-pets";
 import { DatePicker } from "../../components/ui/date-picker";
 import { TimePicker } from "../../components/ui/time-picker";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -28,6 +29,11 @@ export function ProfileEditor({
         </div>
         <span className="counter">{trip.pets.length}마리</span>
       </div>
+      <RegisteredPets
+        pets={trip.pets}
+        change={(pets) => update({ ...trip, pets })}
+        busy={busy}
+      />
       <div className="pet-list">
         {trip.pets.map((pet, index) => (
           <div className="pet-form" key={index}>
@@ -49,63 +55,16 @@ export function ProfileEditor({
                 </Button>
               )}
             </div>
-            <div className="pet-fields">
-              <label>
-                이름
-                <Input
-                  aria-label={`반려견 ${index + 1} 이름`}
-                  value={pet.name}
-                  maxLength={20}
-                  onChange={(e) =>
-                    update({
-                      ...trip,
-                      pets: trip.pets.map((p, i) =>
-                        i === index ? { ...p, name: e.target.value } : p,
-                      ),
-                    })
-                  }
-                  placeholder="예: 두부"
-                />
-              </label>
-              <label>
-                견종
-                <Input
-                  aria-label={`반려견 ${index + 1} 견종`}
-                  value={pet.breed}
-                  maxLength={40}
-                  onChange={(e) =>
-                    update({
-                      ...trip,
-                      pets: trip.pets.map((p, i) =>
-                        i === index ? { ...p, breed: e.target.value } : p,
-                      ),
-                    })
-                  }
-                  placeholder="믹스·모름도 가능"
-                />
-              </label>
-              <label>
-                체중 <span className="muted">kg</span>
-                <Input
-                  aria-label={`반려견 ${index + 1} 체중`}
-                  type="number"
-                  min="0.1"
-                  max="120"
-                  step="0.1"
-                  value={pet.weight || ""}
-                  onChange={(e) =>
-                    update({
-                      ...trip,
-                      pets: trip.pets.map((p, i) =>
-                        i === index
-                          ? { ...p, weight: Number(e.target.value) }
-                          : p,
-                      ),
-                    })
-                  }
-                />
-              </label>
-            </div>
+            <PetFields
+              pet={pet}
+              label={`반려견 ${index + 1}`}
+              change={(next) =>
+                update({
+                  ...trip,
+                  pets: trip.pets.map((p, i) => (i === index ? next : p)),
+                })
+              }
+            />
           </div>
         ))}
       </div>

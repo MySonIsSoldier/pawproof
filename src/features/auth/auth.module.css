@@ -16,34 +16,35 @@
   font-size: 14px;
   font-weight: 600;
 }
-.tabs,
-.actions {
+.actions,
+.links {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
 }
-.tabs {
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--sage);
+.links {
+  justify-content: center;
 }
-.tabs button {
-  flex: 1;
+.links button {
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
   min-height: 44px;
-  padding: 8px 6px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
+  color: var(--muted);
+}
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   color: var(--muted);
   font-size: 12px;
-  white-space: nowrap;
 }
-.tabs button[aria-pressed="true"] {
-  background: #fff;
-  color: var(--forest);
-  box-shadow: 0 2px 6px rgb(25 61 48 / 8%);
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
 }
 .notice {
   padding: 14px;
