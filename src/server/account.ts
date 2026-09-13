@@ -2,6 +2,10 @@ import "server-only";
 import { z } from "zod";
 import { AccountError } from "../application/ports/trip-repository";
 import { adminAuth, adminDb } from "../infrastructure/firebase/admin";
+import {
+  firebaseAuthError,
+  FirebaseAccountAuthError,
+} from "../infrastructure/firebase/auth-error";
 import { FirestoreTrips } from "../infrastructure/persistence/firestore-trips";
 import { json } from "./http";
 export async function requireAccount(request: Request, verified = true) {
@@ -22,11 +26,13 @@ export async function requireAccount(request: Request, verified = true) {
   let token;
   try {
     token = await auth.verifyIdToken(bearer, true);
-  } catch {
-    throw new AccountError(
-      "UNAUTHORIZED",
-      "로그인이 만료되었어요. 다시 로그인해 주세요.",
-    );
+  } catch (error) {
+    const failure = firebaseAuthError(error);
+    if (failure.code === "UNAVAILABLE")
+      console.error("Account authentication failed", {
+        reason: failure.reason,
+      });
+    throw failure;
   }
   if (verified && !token.email_verified)
     throw new AccountError(
@@ -47,7 +53,13 @@ export function accountErrorResponse(error: unknown) {
       NOT_FOUND: 404,
     };
     return json(
-      { error: error.message, code: error.code },
+      {
+        error: error.message,
+        code: error.code,
+        ...(error instanceof FirebaseAccountAuthError
+          ? { reason: error.reason }
+          : {}),
+      },
       statuses[error.code],
     );
   }

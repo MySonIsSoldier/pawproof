@@ -6,16 +6,15 @@ export interface TripRepository {
   remove(ownerId: string, id: string, expectedRevision: number): Promise<void>;
 }
 export class AccountError extends Error {
-  constructor(
-    public code:
-      | "UNAUTHORIZED"
-      | "VERIFY_EMAIL"
-      | "UNAVAILABLE"
-      | "CONFLICT"
-      | "LIMIT"
-      | "NOT_FOUND",
-    message: string,
-  ) {
+  code:
+    | "UNAUTHORIZED"
+    | "VERIFY_EMAIL"
+    | "UNAVAILABLE"
+    | "CONFLICT"
+    | "LIMIT"
+    | "NOT_FOUND";
+  constructor(code: AccountError["code"], message: string) {
     super(message);
+    this.code = code;
   }
 }

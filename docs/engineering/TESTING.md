@@ -146,3 +146,6 @@ node scripts/playwright/generated/verify-deployed-pawproof-login-popup-releases-
 `firebase-admin-runtime.test.ts`는 별도 Node 프로세스를 `--no-experimental-require-module`로 시작해 Vercel의 기본 로딩 제한을 재현한다. 실제 Firebase 설정 없이 Admin Auth/Firestore 진입점을 로드하고 합성 JWKS의 서명 키 변환·변조 서명 거부·누락 키 거부·Passport 콜백 호환성을 검사한다. 수정 전 ERR_REQUIRE_ESM 실패를 확인한 회귀이며 `pnpm test`에 포함된다.
 
 `environment.spec.ts`는 프로필·노트 목록·개별 노트의 6개 읽기/쓰기 경로를 인증 없이 요청해 401 JSON과 no-store를 확인한다. 계정 라우트 로딩 실패를 놓치지 않기 위한 검사다. 실제 회원 저장은 별도의 demo Firebase 브라우저 검사로 확인하며 운영 실계정 성공과 구분한다.
+
+
+`firebase-auth-error.test.ts`는 만료·철회/비활성 계정·잘못된 토큰과 서버 자격증명/권한/네트워크/의존성 오류의 구분, 진단 응답에 민감한 원문이 포함되지 않는 것을 검사한다.

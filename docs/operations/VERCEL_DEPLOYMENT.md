@@ -122,6 +122,10 @@ Deploy를 눌러 Ready가 되면 프로젝트의 **고정 Production 주소**를
 
 ## 문제별 확인
 
+### 재로그인해도 계정 API가 실패하면
+
+로그인 토큰 검증 실패의 응답 `reason`을 확인한다. TOKEN_EXPIRED는 실제 만료, SESSION_REJECTED는 철회/비활성·삭제 계정, TOKEN_INVALID는 잘못된 토큰이다. AUTH_CREDENTIAL_INVALID는 서버 자격증명, AUTH_PERMISSION_DENIED는 Admin 권한, AUTH_CONNECTION_FAILED는 인증 서버 연결, AUTH_DEPENDENCY_ERROR는 서버 의존성 문제다. 서버 문제는 503으로 반환하며 로그에 고정 reason만 기록한다. 키나 토큰을 공유하지 않는다. 유효한 새 토큰도 서버에서 거부될 때 무작정 재로그인을 반복하거나 철회 검사를 끄지 않는다.
+
 ### 계정 API가 빈 본문과 HTTP 500을 반환하면
 
 2026-09-13 운영에서 프로필 조회와 노트 저장이 인증 검사 전에 실패했다. Firebase Admin 14.4.0 → jwks-rsa 4.1.0이 ESM 전용 jose 6을 `require()`하는 경로가 있으며, [Vercel은 require(ESM)을 기본 비활성화](https://vercel.com/docs/functions/runtimes/node-js/advanced-node-configuration#experimental-nodejs-require-of-es-module)한다. Node 24 로컬 기본 설정의 성공만으로 운영 호환성을 판단하지 않는다.

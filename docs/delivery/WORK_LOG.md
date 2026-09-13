@@ -47,3 +47,12 @@
 운영 빌드 HTTP Playwright 2개(데스크톱·모바일)도 통과했다. 개발 미리보기는 Firebase 검사 후 복원했다.
 
 운영 반영: 수정 커밋 `a6a7ecb`를 main에 푸시했고 GitHub의 Vercel 상태 success, 새 `/sw.js` 릴리스와 health 200을 확인했다. 운영 계정 API 6개 메서드 모두 수정 전 빈 500 → 수정 후 401 UNAUTHORIZED JSON/no-store로 바뀌었다. 가짜 bearer 요청도 Admin 설정 로딩 후 401을 반환했다. 이 변경만으로 운영 초기화 오류가 해소됐지만 실제 사용자 토큰·계정으로 프로필/노트를 쓰지는 않았으며 실제 저장 재시도 결과는 사용자 확인이 남는다.
+
+
+## 2026-09-13 · 새 로그인 토큰의 운영 401 추적
+
+- 제보: 초기화 장애 수정 후 프로필 GET·노트 PUT이 로그인 만료/401로 실패함. 기존 catch가 모든 verifyIdToken 오류를 만료로 바꿔 원인을 숨겼다.
+- 진단: 임시 Firebase 계정의 새 토큰은 로컬 verifyIdToken(checkRevoked=true)에 통과했지만 운영 프로필/노트 목록은 모두 401이었다. Node require(ESM) 비활성화 조건에서도 같았다. 두 진단 계정은 각각 삭제했고 실제 사용자 계정/노트에는 접근하지 않았다. 로컬 Admin과 격리한 배포 SDK의 존재하지 않는 합성 UID 조회는 user-not-found로 정상 도달했다. 운영 클라이언트 프로젝트 ID/API 키는 로컬과 일치했다.
+- 조치: 인증 서버의 자격증명/권한/연결/의존성 오류를 503으로 분리하고 고정 reason만 반환/기록한다. 만료/철회/비활성·삭제 계정/잘못된 토큰은 401로 거부한다. 토큰과 SDK 원문 메시지는 기록하지 않는다. 이는 오진 방지이며 운영 저장 문제의 해결 완료를 뜻하지 않는다.
+
+검증: 단위 99개, lint·typecheck·운영 빌드, Firebase 프로필/노트/소유권 Playwright 8개, 운영 빌드 계정 API Playwright 2개 통과. 최초 단위 실행의 TypeScript parameter property 오류는 오류 클래스의 명시적 필드 선언으로 바꿔 해소했다. demo 에뮬레이터 검사 후 개발 미리보기를 복원했다.
