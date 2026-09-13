@@ -49,6 +49,9 @@ test("server enforces authentication, ownership, strict input and optimistic rev
   ).toBe(400);
   const save = await request.put(`${path}/${id}`, { headers, data: input });
   expect(save.status()).toBe(200);
+  expect(
+    (await request.get(`${path}/${id}`, { headers: other })).status(),
+  ).toBe(404);
   expect((await save.json()).revision).toBe(1);
   expect(await (await request.get(path, { headers: other })).json()).toEqual(
     [],
@@ -87,10 +90,12 @@ test("server enforces authentication, ownership, strict input and optimistic rev
   ).data()!;
   expect(Object.keys(stored).sort()).toEqual([
     "createdAt",
+    "places",
     "revision",
     "title",
     "trip",
     "updatedAt",
+    "verification",
   ]);
   expect(
     (
@@ -127,4 +132,48 @@ test("browser cannot bypass the server and concurrent creation respects the acco
     { headers },
   );
   expect(direct.status).toBe(403);
+});
+
+test("profile ownership is token-bound and stale profile updates are rejected", async ({
+  request,
+}) => {
+  const a = await createUser(false),
+    b = await createUser();
+  const path = "./api/account/profile";
+  const headers = { Authorization: `Bearer ${a.token}` };
+  expect((await request.get(path)).status()).toBe(401);
+  const pets = [{ id: randomUUID(), name: "콩이", breed: "푸들", weight: 7.5 }];
+  expect(
+    (
+      await request.put(path, {
+        headers,
+        data: { pets, expectedRevision: 0, ownerId: b.uid },
+      })
+    ).status(),
+  ).toBe(400);
+  expect(
+    (
+      await request.put(path, { headers, data: { pets, expectedRevision: 0 } })
+    ).status(),
+  ).toBe(200);
+  expect(
+    (
+      await request.put(path, {
+        headers,
+        data: { pets: [], expectedRevision: 0 },
+      })
+    ).status(),
+  ).toBe(409);
+  expect(
+    (
+      await (
+        await request.get(path, {
+          headers: { Authorization: `Bearer ${b.token}` },
+        })
+      ).json()
+    ).pets,
+  ).toEqual([]);
+  expect((await (await request.get(path, { headers })).json()).pets).toEqual(
+    pets,
+  );
 });

@@ -16,6 +16,12 @@ export class FirestoreTrips implements TripRepository {
       throw new AccountError("UNAUTHORIZED", "다시 로그인해 주세요.");
     return this.db.collection("accounts").doc(uid);
   }
+  async get(uid: string, id: string) {
+    const snapshot = await this.owner(uid).collection("trips").doc(id).get();
+    if (!snapshot.exists)
+      throw new AccountError("NOT_FOUND", "이 계정에서 노트를 찾을 수 없어요.");
+    return savedTripSchema.parse({ ...snapshot.data(), id });
+  }
   async list(uid: string) {
     const result = await this.owner(uid)
       .collection("trips")
@@ -54,6 +60,8 @@ export class FirestoreTrips implements TripRepository {
         id,
         title: input.title,
         trip: input.trip,
+        places: input.places,
+        verification: input.verification,
         revision: (previous?.revision || 0) + 1,
         createdAt: previous?.createdAt || now,
         updatedAt: now,

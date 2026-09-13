@@ -9,10 +9,22 @@ import { demoPlaces } from "../../../fixtures/demo-trip.ts";
 
 import type { ActionNotification } from "../../../components/notifications/types.ts";
 
-type Verification = { fingerprint: string; result: TripResult };
+import {
+  draftTripSchema,
+  restoreVerification,
+  recordVerification,
+  type TripRecord,
+} from "../../../application/contracts/trip-record.ts";
+type Verification = {
+  fingerprint: string;
+  result: TripResult;
+  historical?: boolean;
+};
 type TripState = {
   trip: TripInput;
   revision: number;
+  loading: boolean;
+  startNote: ((mode?: TripInput["mode"]) => Promise<void>) | null;
   places: Record<string, Place>;
   verification: Verification | null;
   previous: { trip: TripInput; verification: Verification | null } | null;
@@ -21,6 +33,8 @@ type TripState = {
   error: string;
 };
 type TripActions = {
+  restore: (record: TripRecord) => void;
+  setLoading: (loading: boolean) => void;
   update: (trip: TripInput) => void;
   reset: (trip: TripInput, notice: string) => void;
   remember: (places: Place[]) => void;
@@ -45,6 +59,22 @@ export function createTripStore(trip: TripInput) {
   return createStore<TripStoreState>()((set, get) => ({
     trip,
     revision: 0,
+    loading: false,
+    startNote: null,
+    setLoading: (loading) => set({ loading }),
+    restore: (record) => {
+      get().reset(record.trip, "저장한 여행 노트를 불러왔어요.");
+      set({
+        places: { ...get().places, ...placeIndex(record.places) },
+        verification: record.verification
+          ? {
+              fingerprint: JSON.stringify(record.verification.input),
+              result: restoreVerification(record.verification),
+              historical: true,
+            }
+          : null,
+      });
+    },
     places: trip.mode === "demo" ? placeIndex(demoPlaces) : {},
     verification: null,
     previous: null,
@@ -170,4 +200,19 @@ export function findTripPlace(
       source: "kto",
     }
   );
+}
+
+export function tripRecord(state: TripStoreState): TripRecord {
+  return {
+    trip: draftTripSchema.parse(state.trip),
+    places: state.trip.visits
+      .map((v) => state.places[v.placeId])
+      .filter((p): p is Place => !!p),
+    verification: state.verification
+      ? recordVerification(
+          JSON.parse(state.verification.fingerprint),
+          state.verification.result,
+        )
+      : null,
+  };
 }

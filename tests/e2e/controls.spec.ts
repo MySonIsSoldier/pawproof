@@ -18,9 +18,9 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
     .click();
   await page.evaluate(() => {
     const saved = JSON.parse(localStorage.getItem("pawproof.trip.v1")!);
-    saved.trip.date = "2026-12-31";
-    saved.trip.startTime = "23:59";
-    saved.trip.visits[0].duration = 75;
+    saved.record.trip.date = "2026-12-31";
+    saved.record.trip.startTime = "23:59";
+    saved.record.trip.visits[0].duration = 75;
     localStorage.setItem("pawproof.trip.v1", JSON.stringify(saved));
   });
   await page.getByRole("button", { name: "불러오기", exact: true }).click();
@@ -88,7 +88,7 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
     .getByRole("button", { name: "이 기기에 저장", exact: true })
     .click();
   const saved = await page.evaluate(
-    () => JSON.parse(localStorage.getItem("pawproof.trip.v1")!).trip,
+    () => JSON.parse(localStorage.getItem("pawproof.trip.v1")!).record.trip,
   );
   expect(saved.date).toBe("2027-01-01");
   expect(saved.startTime).toBe("00:07");

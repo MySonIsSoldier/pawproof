@@ -56,7 +56,7 @@ test("action notifications refresh, dismiss by keyboard and stay out of saved da
   const saved = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("pawproof.trip.v1")!),
   );
-  expect(Object.keys(saved).sort()).toEqual(["trip", "version"]);
+  expect(Object.keys(saved).sort()).toEqual(["record", "version"]);
   expect(saved).not.toHaveProperty("feedback");
   await page.reload();
   await expect(

@@ -11,13 +11,16 @@ export function json(value: unknown, status = 200) {
     },
   });
 }
-export async function inputJson(request: Request): Promise<unknown> {
+export async function inputJson(
+  request: Request,
+  maxBytes = 24_000,
+): Promise<unknown> {
   if (!request.headers.get("content-type")?.includes("application/json"))
     throw new z.ZodError([]);
   if (request.headers.get("sec-fetch-site") === "cross-site")
     throw new z.ZodError([]);
   try {
-    return await readJson(request.body, 24_000);
+    return await readJson(request.body, maxBytes);
   } catch {
     throw new z.ZodError([]);
   }

@@ -135,3 +135,40 @@ test("feedback distinguishes repeated actions from edits and rejected stale resp
   store.getState().succeed("saved", "saved");
   assert.equal(events.length, 4);
 });
+
+test("saved notes restore places and historical results, preserve stale inputs, and exclude raw policy", async () => {
+  const { tripRecord } =
+    await import("../../src/features/itinerary/state/trip-store.ts");
+  const { tripRecordSchema } =
+    await import("../../src/application/contracts/trip-record.ts");
+  const store = createTripStore(trip());
+  const result = await verifyTrip(trip(), demoProviders());
+  store.getState().acceptVerification(0, result);
+  const saved = tripRecord(store.getState());
+  assert.ok(saved.places.length);
+  assert.ok(saved.verification);
+  assert.equal(JSON.stringify(saved).includes('"raw"'), false);
+  assert.equal(JSON.stringify(saved).includes('"quote"'), false);
+  const restored = createTripStore(initialTrip("live", "2026-09-15"));
+  restored.getState().restore(tripRecordSchema.parse(saved));
+  assert.equal(restored.getState().verification?.historical, true);
+  assert.equal(isTripStale(restored.getState()), false);
+  assert.deepEqual(
+    restored.getState().verification?.result.visits.map((v) => v.status),
+    result.visits.map((v) => v.status),
+  );
+  store.getState().update({ ...trip(), startTime: "13:00" });
+  restored.getState().restore(tripRecord(store.getState()));
+  assert.equal(isTripStale(restored.getState()), true);
+  assert.equal(restored.getState().trip.startTime, "13:00");
+});
+
+test("draft note schema accepts incomplete itinerary without weakening verification", async () => {
+  const { draftTripSchema } =
+    await import("../../src/application/contracts/trip-record.ts");
+  const { tripSchema } =
+    await import("../../src/application/contracts/trip.ts");
+  const draft = initialTrip("live", "2026-09-15");
+  assert.equal(draftTripSchema.safeParse(draft).success, true);
+  assert.equal(tripSchema.safeParse(draft).success, false);
+});

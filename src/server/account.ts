@@ -4,7 +4,7 @@ import { AccountError } from "../application/ports/trip-repository";
 import { adminAuth, adminDb } from "../infrastructure/firebase/admin";
 import { FirestoreTrips } from "../infrastructure/persistence/firestore-trips";
 import { json } from "./http";
-export async function requireAccount(request: Request) {
+export async function requireAccount(request: Request, verified = true) {
   const bearer = request.headers
     .get("authorization")
     ?.match(/^Bearer ([^\s]+)$/)?.[1];
@@ -28,7 +28,7 @@ export async function requireAccount(request: Request) {
       "로그인이 만료되었어요. 다시 로그인해 주세요.",
     );
   }
-  if (!token.email_verified)
+  if (verified && !token.email_verified)
     throw new AccountError(
       "VERIFY_EMAIL",
       "이메일 인증을 마친 뒤 계정 저장을 이용해 주세요.",
@@ -54,7 +54,7 @@ export function accountErrorResponse(error: unknown) {
   if (error instanceof z.ZodError)
     return json(
       {
-        error: "노트 제목과 반려견 정보, 방문지 3~5곳을 확인해 주세요.",
+        error: "노트와 반려견 정보의 형식을 확인해 주세요.",
         code: "INVALID_INPUT",
       },
       400,
