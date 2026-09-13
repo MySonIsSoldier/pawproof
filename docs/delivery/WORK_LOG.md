@@ -12,4 +12,6 @@
 
 검증: 관련 Playwright 26개(기존 Firebase 18개 + Google 팝업 6개 + iOS 신호 경로 2개), 단위 91개, lint·typecheck·운영 빌드 통과. iOS 신호 검사의 최초 시간 초과는 앵커로 열린 창을 일반 popup 이벤트로 기다린 검사 오류였으며 context의 새 page 이벤트로 수정해 통과했다. 운영 점검 스크립트는 실제 Google 창을 열고 닫기만 하며 사용자 자격증명을 입력하지 않는다. 개발 미리보기는 검사 후 재시작했다.
 
+운영 반영: 로그인 수정 `a90c3cb`와 문서 갱신 `d940bb8`을 main에 푸시했다. 이후 운영 `/sw.js`의 새 릴리스 반영과 홈 HTTP 200을 확인했다. 같은 운영 점검 스크립트에서 OAuth 창 열기 시 모달 잠금이 수정 전 `false`(해제 안 됨) → 수정 후 `true`(해제됨)로 바뀌었고 로그인 화면 복귀·닫기까지 통과했다. 실제 Google 자격증명은 입력하지 않았다.
+
 남은 확인: 수정 배포의 새 버전으로 iPhone PWA를 다시 열고 Google 이메일·비밀번호 입력 시 OS 키보드가 표시되는지 확인한다. Chromium의 standalone/iPhone 신호와 Auth 에뮬레이터 검사는 실제 iPhone WebKit·키보드 검증이 아니다. 환경변수·Firebase authDomain은 이번 수정에서 변경하지 않는다.
