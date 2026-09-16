@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { PlaceSource } from "../../application/ports/providers.ts";
 import type { Category, Place } from "../../domain/policies/types.ts";
 import { fetchJson, ProviderError } from "../http/fetch-json.ts";
+import { findSearchRegion } from "../../application/places/regions.ts";
 const row = z.record(z.string(), z.union([z.string(), z.number(), z.null()]));
 const envelope = z.object({
   response: z.object({
@@ -89,7 +90,7 @@ export function ktoSource(
       .map(placeFrom);
   return {
     search: async (query, category) => {
-      const incheon = /^(인천|인천광역시)$/.test(query.trim());
+      const region = findSearchRegion(query);
       // Excluded shops/accommodation must not consume the first page of results.
       const types =
         category === "카페" || category === "식당"
@@ -101,9 +102,9 @@ export function ktoSource(
       for (let index = 0; index < types.length; index += 2) {
         const batches = await Promise.all(
           types.slice(index, index + 2).map((contentTypeId) =>
-            request(incheon ? "areaBasedList2" : "searchKeyword2", {
-              ...(incheon
-                ? { lDongRegnCd: "28", numOfRows: "100" }
+            request(region ? "areaBasedList2" : "searchKeyword2", {
+              ...(region
+                ? { lDongRegnCd: region.province, numOfRows: "100" }
                 : { keyword: query }),
               arrange: "A",
               contentTypeId,
@@ -113,8 +114,16 @@ export function ktoSource(
         found.push(...batches.flatMap(supported));
       }
       return found
+        .filter(
+          (p, index) => found.findIndex((other) => other.id === p.id) === index,
+        )
+        .filter(
+          (p) =>
+            !region?.cities ||
+            region.cities.includes(p.address.trim().split(/\s+/)[1]),
+        )
         .filter((p) => !category || p.category === category)
-        .slice(0, incheon ? 100 : 20);
+        .slice(0, region ? 100 : 20);
     },
     nearby: async (place) =>
       supported(

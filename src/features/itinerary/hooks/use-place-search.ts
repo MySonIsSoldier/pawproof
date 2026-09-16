@@ -7,6 +7,7 @@ import type { Category, TripInput } from "../../../domain/policies/types";
 import { searchResultSchema } from "../../../application/contracts/result";
 import { callApi } from "../api";
 import { useNotify } from "../../../components/notifications/with-notifications";
+import { pilotRegion } from "../../../application/places/regions";
 
 export function usePlaceSearch(mode: TripInput["mode"], busy: boolean) {
   const notify = useNotify();
@@ -25,7 +26,7 @@ export function usePlaceSearch(mode: TripInput["mode"], busy: boolean) {
     queryFn: ({ signal }) => {
       const params = new URLSearchParams({
         mode,
-        q: submitted?.query ?? (mode === "live" ? "인천" : ""),
+        q: submitted?.query ?? (mode === "live" ? pilotRegion : ""),
       });
       if (category) params.set("category", category);
       return callApi(
@@ -58,7 +59,6 @@ export function usePlaceSearch(mode: TripInput["mode"], busy: boolean) {
     category,
     setCategory: (next: Category | "") => {
       setCategory(next);
-      setSubmitted(null);
       setMessage("");
     },
     places: (search.data?.places || []).slice(0, submitted ? 100 : 8),

@@ -4,6 +4,11 @@ import { usePlaceSearch } from "./hooks/use-place-search";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { Input } from "../../components/ui/input";
+import { Disclosure } from "../../components/ui/accordion";
+import {
+  pilotRegion,
+  regionSuggestions,
+} from "../../application/places/regions";
 export function PlaceSearch({
   mode,
   selected,
@@ -36,6 +41,49 @@ export function PlaceSearch({
         <h3>가고 싶은 곳 더하기</h3>
         <span>{selected.length}/5곳</span>
       </div>
+      {mode === "live" && (
+        <div className="region-discovery">
+          <p className="field-caption">가까운 당일 여행부터 · 고양·파주·양주</p>
+          <div
+            className="filter-chips"
+            role="group"
+            aria-label="지역 바로 찾기"
+          >
+            {regionSuggestions.map((region) => (
+              <Button
+                key={region}
+                variant="outline"
+                type="button"
+                disabled={busy || loading}
+                onClick={() => search(region)}
+              >
+                {region}
+              </Button>
+            ))}
+          </div>
+          <Disclosure title="왜 경기 북서부부터 시작하나요?">
+            <p>
+              수도권 반려가구의 당일 여행을 먼저 돕기 위해 고양·파주·양주를 집중
+              지역으로 정했어요.
+            </p>
+            <p>
+              경기도의 반려가구는 약 157만 가구로 추정돼요. 전국 반려가구 중
+              26.6%이며, 경기도 주민의 양육률을 뜻하지는 않아요.
+            </p>
+            <a
+              href="https://kbthink.com/investment/deepdive/research/250629-2.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              근거: KB 2025 한국 반려동물 보고서 · 2024년 말 추정
+            </a>
+            <p>
+              이 지역이 전국에서 양육률이 가장 높거나 모든 장소의 조건 확인이
+              끝났다는 뜻은 아니에요. 인천과 다른 지역도 검색할 수 있어요.
+            </p>
+          </Disclosure>
+        </div>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -83,7 +131,9 @@ export function PlaceSearch({
       </form>
       {mode === "live" && (
         <p className="field-caption">
-          ‘인천’은 인천 지역에서, 다른 검색어는 장소 이름으로 찾아요.
+          경기 북서부·고양·파주·양주·경기·강원·인천은 지역으로, 그 외에는 장소
+          이름으로 찾아요. 지역 결과는 유형별 최대 100건에서 골라 최대 100곳을
+          보여줘요.
         </p>
       )}
       {recommended && (
@@ -112,7 +162,7 @@ export function PlaceSearch({
           )}
           <h4>
             {mode === "live"
-              ? "인천에서 먼저 둘러볼 곳"
+              ? `${pilotRegion}에서 먼저 둘러볼 곳`
               : "가상 코스에서 둘러볼 곳"}
           </h4>
           <p className="field-caption">

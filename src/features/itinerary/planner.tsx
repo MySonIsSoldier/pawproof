@@ -2,6 +2,7 @@
 import { CloudTrips } from "../account/cloud-trips";
 import { ProfileEditor } from "./profile-editor";
 import { PlaceSearch } from "./place-search";
+import { FoodVisitGuide } from "./food-visit-guide";
 import { VisitCard } from "./visit-card";
 import { RouteBoard } from "./route-board";
 import { EvidenceDialog } from "../verification/evidence-dialog";
@@ -149,6 +150,11 @@ function PlannerScreen() {
                   먼저 가상 코스로 둘러보기 <Icon name="arrow" size={16} />
                 </Button>
               </div>
+            )}
+            {trip.mode === "live" && (
+              <FoodVisitGuide
+                places={trip.visits.map((visit) => placeFor(visit.placeId))}
+              />
             )}
             <PlaceSearch
               key={trip.mode}

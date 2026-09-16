@@ -44,3 +44,57 @@ test("KTO searches supported content types before truncating results", async () 
   await source.search("카페", "카페");
   assert.deepEqual(types, ["39"]);
 });
+test("pilot scope uses addresses, excludes Namyangju, and deduplicates content IDs", async () => {
+  const source = ktoSource("fake", async (input) => {
+    const url = new URL(String(input));
+    assert.ok(url.pathname.endsWith("areaBasedList2"));
+    assert.equal(url.searchParams.get("lDongRegnCd"), "41");
+    assert.equal(url.searchParams.get("numOfRows"), "100");
+    return Response.json(
+      envelope([
+        {
+          contentid: "1",
+          contenttypeid: "12",
+          title: "고양 공원",
+          addr1: "경기 고양시 덕양구",
+        },
+        {
+          contentid: "2",
+          contenttypeid: "12",
+          title: "파주 공원",
+          addr1: "경기도 파주시 탄현면",
+        },
+        {
+          contentid: "3",
+          contenttypeid: "12",
+          title: "양주 공원",
+          addr1: "경기도 양주시 장흥면",
+        },
+        {
+          contentid: "4",
+          contenttypeid: "12",
+          title: "남양주 공원",
+          addr1: "경기도 남양주시 조안면",
+        },
+        { contentid: "5", contenttypeid: "12", title: "주소 미상" },
+      ]),
+    );
+  });
+  assert.deepEqual(
+    (await source.search("경기 북서부")).map((p) => p.id),
+    ["1", "2", "3"],
+  );
+  assert.deepEqual(
+    (await source.search("양주시")).map((p) => p.id),
+    ["3"],
+  );
+});
+test("a venue name containing a region stays a keyword search", async () => {
+  const source = ktoSource("fake", async (input) => {
+    const url = new URL(String(input));
+    assert.ok(url.pathname.endsWith("searchKeyword2"));
+    assert.equal(url.searchParams.get("keyword"), "고양 카페");
+    return Response.json(envelope([]));
+  });
+  assert.deepEqual(await source.search("고양 카페", "카페"), []);
+});
