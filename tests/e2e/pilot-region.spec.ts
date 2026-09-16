@@ -22,7 +22,7 @@ test("region selection survives category changes and food guidance preserves unc
       },
     });
   });
-  await page.goto("plan");
+  await page.goto("plan?view=note");
   await expect(
     page.getByRole("button", { name: "합성 파주 카페 담기" }),
   ).toBeVisible();

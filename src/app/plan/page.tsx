@@ -7,9 +7,9 @@ export const metadata = { title: "우리의 여행 노트" };
 export default async function PlanPage({
   searchParams,
 }: {
-  searchParams: Promise<{ mode?: string }>;
+  searchParams: Promise<{ mode?: string; view?: string }>;
 }) {
-  const { mode } = await searchParams;
+  const { mode, view } = await searchParams;
   return (
     <>
       <SiteHeader compact />
@@ -20,7 +20,9 @@ export default async function PlanPage({
           koreaToday(new Date()),
         )}
       >
-        <Planner />
+        <Planner
+          initialView={view === "note" || mode === "demo" ? "note" : "map"}
+        />
       </PlannerProvider>
     </>
   );

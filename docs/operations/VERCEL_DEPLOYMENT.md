@@ -150,3 +150,7 @@ Deploy를 눌러 Ready가 되면 프로젝트의 **고정 Production 주소**를
 | Vercel 로그인 요구 | 해당 URL/환경의 Deployment Protection |
 
 실제 URL을 확보한 뒤 운영 환경의 인증·관광 API·저장 흐름을 검증한다. [호스팅·비용 기준](HOSTING_AND_COST.md)도 함께 참고한다.
+
+## 카카오 지도와 추가 운영 도메인 (2026-09-16)
+
+사용자가 `pawproof.kr` 연결 및 키 설정 완료를 알렸다. 지도 JavaScript 키는 Production `KAKAO_MAP_KEY`, 로컬 `NEXT_PUBLIC_KAKAO_MAP_KEY`를 지원한다. 둘 다 있으면 NEXT_PUBLIC 값을 우선한다. next.config.ts는 JavaScript 키만 공개 빌드 값으로 연결하며 `KAKAO_MOBILITY_REST_KEY`를 노출하지 않는다. 키 변경 후 재빌드가 필요하다. 카카오 앱의 지도 사용 설정과 JavaScript 키 허용 도메인에 `https://pawproof.kr`, `https://pawproof-rose.vercel.app`, 개발 접속 origin을 각각 등록한다. URL 경로는 등록 도메인에 넣지 않는다. 실제 허용 상태는 각 도메인 브라우저 검증과 구분한다.

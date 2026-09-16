@@ -25,7 +25,7 @@ try {
   const initial = page.waitForResponse(
     (response) => new URL(response.url()).pathname === "/api/places",
   );
-  const response = await page.goto(new URL("/plan", target).href);
+  const response = await page.goto(new URL("/plan?view=note", target).href);
   expect(response.status()).toBe(200);
   const initialResponse = await initial;
   expect(initialResponse.status()).toBe(200);

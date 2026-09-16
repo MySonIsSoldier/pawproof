@@ -53,7 +53,7 @@ export function inquiryText(
     )
     .join(", ");
   const questions = findings
-    .filter((f) => f.status === "confirm" || f.status === "prepare")
+    .filter((f) => f.status !== "available")
     .map((f) => f.message);
   return `${place.name} (${place.address}) 문의드립니다.\n${trip.date}에 반려견 ${trip.pets.length}마리(${pets})와 ${zone === "indoor" ? "실내" : "야외/테라스"}를 이용하려고 합니다.\n${questions.length ? questions.map((q) => `- ${q}`).join("\n") : "방문일 동반 이용 조건이 동일한지 확인 부탁드립니다."}\n위 조건의 이용 가능 여부와 필요한 준비사항을 알려주세요.`;
 }

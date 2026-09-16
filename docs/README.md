@@ -19,6 +19,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [제품 기획](product/PRODUCT_PLAN.md) | 사용자, 가치 제안, 핵심 경험, 화면 흐름, 차별성, 사업 확장 |
 | [판정·일정 복구 기준](product/RULES_AND_RECOVERY.md) | 네 가지 상태, 규정 해석, 불확실성, 대체 장소, 코스 재검증 |
 | [데이터 전략](data/DATA_STRATEGY.md) | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙 |
+| [지도 중심 탐색 작업](delivery/MAP_DISCOVERY_PLAN.md) | 카카오맵·위치·조건 필터·문의·노트 연결의 단계별 구현과 검증 |
 | [집중 지역 선정](data/REGION_SELECTION_2026-09-16.md) | 수요·KTO·식약처 비교, 경기 북서부 선정 이유와 구현 한계 |
 | [인천 데이터 보강](data/INCHEON_COVERAGE.md) | 확보 출처·지역 검색·장소 병합·충돌·갱신 기준 |
 | [사용자 앱 조사 안내](data/INCHEON_APP_RESEARCH_GUIDE.md) | 첫 4개 가게·앱별 조사 순서·캡처 항목·자료 전달 양식 |

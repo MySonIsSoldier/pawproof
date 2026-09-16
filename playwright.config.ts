@@ -62,6 +62,8 @@ export default defineConfig({
       PORT: String(port),
       NEXT_TELEMETRY_DISABLED: "1",
       LIVE_SERVICES_ENABLED: "false",
+      NEXT_PUBLIC_KAKAO_MAP_KEY: "test-map-key",
+      KAKAO_MAP_KEY: "",
       PWA_ENABLED: "true",
       NEXT_PUBLIC_FIREBASE_API_KEY: "",
       NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "",

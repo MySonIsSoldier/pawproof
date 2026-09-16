@@ -20,7 +20,7 @@ test("discovery appears before typing and recent search terms can be reused or r
   await page.route("**/api/places?*", (route) =>
     route.fulfill({ json: { places } }),
   );
-  await page.goto("plan");
+  await page.goto("plan?view=note");
   await expect(page.getByText("경기 북서부에서 먼저 둘러볼 곳")).toBeVisible();
   await expect(page.getByText(places[0].name, { exact: true })).toBeVisible();
   await page.getByLabel("장소 검색").fill("인천");
@@ -45,7 +45,7 @@ test("guest ignores old device notes and offers account saving at the top", asyn
       JSON.stringify({ version: 1, trip }),
     );
   }, createDemoTrip("2026-09-20"));
-  await page.goto("plan");
+  await page.goto("plan?view=note");
   await expect(page.locator(".visit-card")).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "이 기기에 저장", exact: true }),

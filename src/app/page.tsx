@@ -35,7 +35,7 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <Link href="/plan" className="button">
-                내 코스 검사하기
+                지도에서 갈 곳 찾기
                 <Icon name="arrow" />
               </Link>
               <Link href="/plan?mode=demo" className="text-button">

@@ -220,7 +220,7 @@ test("live setup errors are explicit, invalid requests rejected and network fail
   request,
   baseURL,
 }) => {
-  await page.goto("plan");
+  await page.goto("plan?view=note");
   await page.getByLabel("장소 검색", { exact: true }).fill("인천");
   await page.getByRole("button", { name: "검색", exact: true }).click();
   await expect(page.getByRole("main").getByRole("alert")).toContainText(
