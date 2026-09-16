@@ -15,6 +15,11 @@ export type PlaceDocument = {
   phone?: string | null;
 };
 export interface PlaceSource {
+  around?(
+    center: { lat: number; lng: number },
+    radius: number,
+    category?: Category,
+  ): Promise<Place[]>;
   search(query: string, category?: Category): Promise<Place[]>;
   get(id: string): Promise<PlaceDocument>;
   nearby(place: Place): Promise<Place[]>;

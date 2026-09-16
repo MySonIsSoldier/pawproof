@@ -89,6 +89,51 @@ export function ktoSource(
       )
       .map(placeFrom);
   return {
+    around: async (center, radius, category) => {
+      const types =
+        category === "카페" || category === "식당"
+          ? ["39"]
+          : category === "관광지"
+            ? ["12", "14", "28"]
+            : ["12", "14", "28", "39"];
+      const found: Place[] = [];
+      for (let i = 0; i < types.length; i += 2) {
+        const batches = await Promise.all(
+          types.slice(i, i + 2).map((contentTypeId) =>
+            request("locationBasedList2", {
+              mapX: String(center.lng),
+              mapY: String(center.lat),
+              radius: String(radius),
+              arrange: "E",
+              numOfRows: "30",
+              contentTypeId,
+            }),
+          ),
+        );
+        found.push(...batches.flatMap(supported));
+      }
+      return [...new Map(found.map((p) => [p.id, p])).values()]
+        .filter(
+          (p) =>
+            p.lat >= 32 &&
+            p.lat <= 39.5 &&
+            p.lng >= 124 &&
+            p.lng <= 132 &&
+            (!category || p.category === category),
+        )
+        .sort(
+          (a, b) =>
+            Math.hypot(
+              a.lat - center.lat,
+              (a.lng - center.lng) * Math.cos((center.lat * Math.PI) / 180),
+            ) -
+            Math.hypot(
+              b.lat - center.lat,
+              (b.lng - center.lng) * Math.cos((center.lat * Math.PI) / 180),
+            ),
+        )
+        .slice(0, 100);
+    },
     search: async (query, category) => {
       const region = findSearchRegion(query);
       // Excluded shops/accommodation must not consume the first page of results.
