@@ -139,7 +139,7 @@ export function RouteBoard({
             result.totalWalking === null && <span>이동시간 미확정</span>}
         </div>
       )}
-      {mode === "demo" && (
+      {mode === "demo" && result && !stale && (
         <p className="field-caption">
           실제 지도 대신 방문 순서를 보여드려요. 이동시간은 가상 예시예요.
         </p>
