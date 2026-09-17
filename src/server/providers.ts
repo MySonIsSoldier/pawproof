@@ -6,6 +6,8 @@ import { openRouterExtractor } from "../infrastructure/llm/extractor.ts";
 import { kakaoTravel } from "../infrastructure/kakao/travel.ts";
 import { enrichedExtractor } from "../application/use-cases/enrich-policy.ts";
 import { incheonSupplements } from "../infrastructure/incheon/supplements.ts";
+import { foodSafetySource } from "../infrastructure/food-safety/source.ts";
+import { mergedPlaceSource } from "../infrastructure/places/merged-source.ts";
 import {
   getKtoConfig,
   getOpenRouterConfig,
@@ -20,8 +22,9 @@ export function createProviders(
   try {
     const config = getLiveConfig();
     if (!config.enabled) throw new Error("disabled");
+    const kto = ktoSource(getKtoConfig().serviceKey);
     return {
-      places: ktoSource(getKtoConfig().serviceKey),
+      places: mergedPlaceSource(kto, foodSafetySource()),
       extractor: searchOnly
         ? {
             extract: async () => {

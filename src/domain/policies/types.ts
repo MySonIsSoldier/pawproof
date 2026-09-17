@@ -27,7 +27,7 @@ export type Place = {
   address: string;
   lat: number;
   lng: number;
-  source: "demo" | "kto";
+  source: "demo" | "kto" | "mfds";
 };
 export type Policy = {
   rules: Rule[];

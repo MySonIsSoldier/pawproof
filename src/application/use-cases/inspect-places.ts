@@ -2,6 +2,7 @@ import type { Providers } from "../ports/providers.ts";
 import type { Inspection } from "../contracts/discovery.ts";
 import { createPolicy } from "../contracts/policy.ts";
 import { addKtoFacts } from "../../domain/policies/kto-facts.ts";
+import { addMfdsFacts } from "../../domain/policies/mfds-facts.ts";
 
 export async function inspectPlaces(ids: string[], providers: Providers) {
   const pending = [...ids];
@@ -15,7 +16,10 @@ export async function inspectPlaces(ids: string[], providers: Providers) {
           let policy;
           try {
             if (!document.raw.trim()) throw new Error("No policy");
-            policy = await providers.extractor.extract(document);
+            policy =
+              document.place.source === "mfds"
+                ? createPolicy(document, { rules: [], unresolved: [] })
+                : await providers.extractor.extract(document);
           } catch {
             policy = createPolicy(document, {
               rules: [],
@@ -25,6 +29,18 @@ export async function inspectPlaces(ids: string[], providers: Providers) {
             });
           }
           if (document.place.source === "kto") policy = addKtoFacts(policy);
+          if (
+            document.place.source === "mfds" ||
+            document.supplementalSources?.some((source) =>
+              source.label.includes("식품안전나라"),
+            )
+          )
+            policy = addMfdsFacts(policy);
+          if (document.supplementalSources?.length)
+            policy.sources = [
+              ...(policy.sources || []),
+              ...document.supplementalSources,
+            ];
           checks.push({
             place: document.place,
             policy,

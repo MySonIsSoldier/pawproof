@@ -252,7 +252,7 @@ export function MapExplorer({
               <span>
                 {loadingPlaces
                   ? "주변 후보를 찾고 있어요"
-                  : `${visible.length}곳 · 한국관광공사 제공 후보`}
+                  : `${visible.length}곳 · 관광공사·식약처 공식 후보`}
               </span>
             </div>
           </div>

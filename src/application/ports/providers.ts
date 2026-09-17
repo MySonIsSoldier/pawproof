@@ -13,6 +13,7 @@ export type PlaceDocument = {
   sourceUrl: string | null;
   sourceLabel: string;
   phone?: string | null;
+  supplementalSources?: PolicySource[];
 };
 export interface PlaceSource {
   around?(

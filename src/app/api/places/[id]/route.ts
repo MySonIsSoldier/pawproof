@@ -8,7 +8,7 @@ export async function GET(
   try {
     const id = z
       .string()
-      .regex(/^\d{1,12}$/)
+      .regex(/^(?:\d{1,12}|mfds-\d+)$/)
       .parse((await context.params).id);
     return json((await createProviders("live", true).places.get(id)).place);
   } catch (error) {

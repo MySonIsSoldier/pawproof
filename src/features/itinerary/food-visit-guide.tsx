@@ -4,7 +4,7 @@ import { Disclosure } from "../../components/ui/accordion";
 /** General official guidance is kept separate from venue-specific rule evaluation. */
 export function FoodVisitGuide({ places }: { places: Place[] }) {
   const foodPlaces = places.filter(
-    (place) => place.source === "kto" && place.category !== "관광지",
+    (place) => place.source !== "demo" && place.category !== "관광지",
   );
   if (!foodPlaces.length) return null;
   return (

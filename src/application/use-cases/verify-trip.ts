@@ -8,6 +8,7 @@ import type {
 import { evaluatePolicy, summarize } from "../../domain/policies/evaluate.ts";
 import { toMinutes } from "../../domain/itinerary/time.ts";
 import { createPolicy } from "../contracts/policy.ts";
+import { addMfdsFacts } from "../../domain/policies/mfds-facts.ts";
 
 export async function verifyTrip(
   input: TripInput,
@@ -47,7 +48,10 @@ export async function verifyTrip(
         let policy: Policy;
         try {
           if (!document.raw) throw new Error("Missing source");
-          policy = await providers.extractor.extract(document);
+          policy =
+            document.place.source === "mfds"
+              ? createPolicy(document, { rules: [], unresolved: [] })
+              : await providers.extractor.extract(document);
         } catch {
           policy = createPolicy(document, {
             rules: [],
@@ -56,6 +60,18 @@ export async function verifyTrip(
             ],
           });
         }
+        if (
+          document.place.source === "mfds" ||
+          document.supplementalSources?.some((source) =>
+            source.label.includes("식품안전나라"),
+          )
+        )
+          policy = addMfdsFacts(policy);
+        if (document.supplementalSources?.length)
+          policy.sources = [
+            ...(policy.sources || []),
+            ...document.supplementalSources,
+          ];
         documents.set(visit.placeId, { document, policy });
       }
     }),

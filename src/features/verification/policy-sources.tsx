@@ -12,6 +12,8 @@ function sourceLink(url: string | null) {
         "korean.visitkorea.or.kr",
         "www.data.go.kr",
         "reserve.insiseol.or.kr",
+        "www.foodsafetykorea.go.kr",
+        "www.mfds.go.kr",
       ].includes(parsed.hostname)
       ? url
       : null;

@@ -8,7 +8,7 @@ export const placeSchema = z.object({
   address: z.string(),
   lat: z.number().finite(),
   lng: z.number().finite(),
-  source: z.enum(["demo", "kto"]),
+  source: z.enum(["demo", "kto", "mfds"]),
 });
 const status = z.enum(["available", "prepare", "confirm", "blocked"]);
 const minutes = z.number().finite().nonnegative().nullable();

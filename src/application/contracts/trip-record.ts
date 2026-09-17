@@ -75,7 +75,9 @@ export const tripRecordSchema = z
       places.every(
         (p) =>
           trip.visits.some((v) => v.placeId === p.id) &&
-          (trip.mode === "demo" ? p.source === "demo" : p.source === "kto"),
+          trip.mode === "demo"
+            ? p.source === "demo"
+            : p.source === "kto" || p.source === "mfds",
       ),
     "장소 표시 정보가 코스와 일치하지 않아요.",
   );

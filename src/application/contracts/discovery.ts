@@ -9,7 +9,7 @@ export const nearbyQuerySchema = z.object({
 export const inspectInputSchema = z
   .object({
     ids: z
-      .array(z.string().regex(/^\d{1,12}$/))
+      .array(z.string().regex(/^(?:\d{1,12}|mfds-\d+)$/))
       .min(1)
       .max(5),
   })
