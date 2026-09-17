@@ -69,7 +69,6 @@ export function MapExplorer({
   const shown = state.groupIds.length ? grouped : visible;
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
-  const unchecked = candidates.filter((p) => !p.check).slice(0, 5);
   const moved =
     Math.abs(state.center.lat - state.draftCenter.lat) +
       Math.abs(state.center.lng - state.draftCenter.lng) >
@@ -78,6 +77,10 @@ export function MapExplorer({
     search.error?.message ||
     inspect.error?.message ||
     destination.error?.message;
+  function selectPlace(id: string) {
+    state.patch({ selected: id, expanded: true });
+    if (!state.checks[id] && !inspect.isPending) inspect.mutate([id]);
+  }
   return (
     <section className="map-explorer" aria-label="지도에서 장소 찾기">
       <h1 className="sr-only">반려견과 갈 곳 찾기</h1>
@@ -202,7 +205,7 @@ export function MapExplorer({
               state.patch({ groupIds, selected: null, expanded: true })
             }
             selected={state.selected}
-            select={(selected) => state.patch({ selected, expanded: true })}
+            select={selectPlace}
             moved={(draftCenter) => state.patch({ draftCenter })}
           />
           {mobile && (
@@ -213,12 +216,6 @@ export function MapExplorer({
                 onClick={() => setMobileToolsOpen(true)}
               >
                 검색
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setMobileToolsOpen(true)}
-              >
-                필터
               </Button>
             </div>
           )}
@@ -278,10 +275,11 @@ export function MapExplorer({
                 trip={trip}
                 zone={state.zone}
                 inspecting={inspect.isPending}
+                inspectError={inspect.error?.message}
+                retryInspect={() => inspect.mutate([selected.place.id])}
                 added={trip.visits.some((v) => v.placeId === selected.place.id)}
                 full={trip.visits.length >= 5 || busy}
                 back={() => state.patch({ selected: null })}
-                inspect={() => inspect.mutate([selected.place.id])}
                 add={() => {
                   add(selected.place);
                   if (mobile) state.patch({ expanded: false, selected: null });
@@ -305,25 +303,9 @@ export function MapExplorer({
                   </div>
                 )}
                 <p className="field-caption">
-                  미확인 장소는 ‘확인 필요’로 보여요. 조건 확인 버튼으로 우리
-                  강아지와 맞는지 살펴보세요.
+                  미확인 장소는 ‘확인 필요’로 보여요. 장소를 선택하면 공식
+                  안내를 조회해 우리 강아지와 맞는지 살펴봐요.
                 </p>
-                <Button
-                  className="inspect-batch"
-                  variant="outline"
-                  disabled={inspect.isPending || !unchecked.length}
-                  onClick={() =>
-                    inspect.mutate(unchecked.map((c) => c.place.id))
-                  }
-                >
-                  {inspect.isPending
-                    ? "동반 조건 확인 중…"
-                    : unchecked.length
-                      ? `가까운 ${unchecked.length}곳 조건 확인`
-                      : candidates.length
-                        ? "현재 후보 조회 완료"
-                        : "주변 장소를 먼저 찾아주세요"}
-                </Button>
                 {!shown.length && !search.isFetching && !search.error && (
                   <p className="explore-empty">
                     {candidates.length
@@ -337,10 +319,7 @@ export function MapExplorer({
                       <button
                         className="explore-result"
                         onClick={() =>
-                          state.patch({
-                            selected: item.place.id,
-                            expanded: true,
-                          })
+                          selectPlace(item.place.id)
                         }
                       >
                         <span className={`result-number ${item.status}`}>

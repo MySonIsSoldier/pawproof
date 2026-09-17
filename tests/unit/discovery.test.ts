@@ -19,6 +19,16 @@ import {
   telephoneLink,
 } from "../../src/lib/urls/place-contact.ts";
 import { ktoSource } from "../../src/infrastructure/kto/source.ts";
+import { readableEvidence } from "../../src/domain/policies/presentation.ts";
+
+test("provider field names are hidden from user-facing evidence", () => {
+  assert.equal(
+    readableEvidence(
+      "etcAcmpyInfo: - 맹견의 경우, 입마개 착용 필수\nusetim: 상시 개방",
+    ),
+    "맹견의 경우, 입마개 착용 필수\n상시 개방",
+  );
+});
 
 test("map filters preserve missing weight, scope and equality boundaries", () => {
   const trip = createDemoTrip("2026-09-20");

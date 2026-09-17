@@ -1,5 +1,6 @@
 import type { Policy } from "../../domain/policies/types";
 import { Disclosure } from "../../components/ui/accordion";
+import { readableEvidence } from "../../domain/policies/presentation";
 
 function sourceLink(url: string | null) {
   if (!url) return null;
@@ -50,7 +51,7 @@ export function PolicySources({ policy }: { policy: Policy }) {
             </a>
           )}
           <Disclosure className="raw-source" title="이 출처의 원문">
-            <pre>{source.raw || "제공되지 않음"}</pre>
+            <pre>{readableEvidence(source.raw) || "제공되지 않음"}</pre>
           </Disclosure>
         </div>
       ))}
@@ -63,7 +64,7 @@ export function PolicySources({ policy }: { policy: Policy }) {
           <p>
             적용 기간: {notice.startDate} ~ {notice.endDate}
           </p>
-          <blockquote>{notice.quote}</blockquote>
+          <blockquote>{readableEvidence(notice.quote)}</blockquote>
           <p>공지 열람: {notice.checkedAt}</p>
           {sourceLink(notice.sourceUrl) && (
             <a href={notice.sourceUrl} target="_blank" rel="noreferrer">

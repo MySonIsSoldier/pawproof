@@ -6,6 +6,7 @@ import { StatusBadge } from "./status-badge";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { PolicySources } from "./policy-sources";
+import { readableEvidence } from "../../domain/policies/presentation";
 import {
   Dialog,
   DialogContent,
@@ -70,7 +71,7 @@ export function EvidenceDialog({
               <p>{finding.message}</p>
               {finding.quote ? (
                 <>
-                  <blockquote>{finding.quote}</blockquote>
+                  <blockquote>{readableEvidence(finding.quote)}</blockquote>
                   {result.policy.sources
                     ?.filter((source) => source.raw.includes(finding.quote!))
                     .map((source) => (
@@ -88,7 +89,9 @@ export function EvidenceDialog({
           ))}
         </div>
         <Disclosure className="raw-source" title="조회한 원문 전체">
-          <pre>{result.policy.raw || "원문을 불러오지 못했어요."}</pre>
+          <pre>
+            {readableEvidence(result.policy.raw) || "원문을 불러오지 못했어요."}
+          </pre>
         </Disclosure>
         <PolicySources policy={result.policy} />
         <div className="source-meta">

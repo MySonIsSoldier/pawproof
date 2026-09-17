@@ -7,6 +7,7 @@ import type {
 } from "../../domain/policies/types";
 import type { Inspection } from "../../application/contracts/discovery";
 import { inquiryText } from "../../domain/policies/discovery";
+import { readableEvidence } from "../../domain/policies/presentation";
 import { kakaoPlaceSearch, telephoneLink } from "../../lib/urls/place-contact";
 import { Button } from "../../components/ui/button";
 import { Disclosure } from "../../components/ui/accordion";
@@ -25,10 +26,11 @@ export function PlaceDetail({
   trip,
   zone,
   inspecting,
+  inspectError,
+  retryInspect,
   added,
   full,
   back,
-  inspect,
   add,
 }: {
   place: Place;
@@ -38,10 +40,11 @@ export function PlaceDetail({
   trip: TripInput;
   zone: Zone;
   inspecting: boolean;
+  inspectError?: string;
+  retryInspect?: () => void;
   added: boolean;
   full: boolean;
   back: () => void;
-  inspect: () => void;
   add: () => void;
 }) {
   const notify = useNotify();
@@ -77,14 +80,20 @@ export function PlaceDetail({
               ? "코스는 최대 5곳이에요"
               : "코스에 담기"}
         </Button>
-        <Button variant="outline" disabled={inspecting} onClick={inspect}>
-          {inspecting
-            ? "조건 확인 중…"
-            : check
-              ? "조건 다시 확인"
-              : "이곳 조건 확인"}
-        </Button>
       </div>
+      {inspecting && (
+        <p className="inspection-loading" role="status">
+          이 장소의 공식 안내에서 반려견 동반 조건을 확인하고 있어요…
+        </p>
+      )}
+      {!inspecting && inspectError && retryInspect && (
+        <div className="inspection-error" role="alert">
+          <p>{inspectError}</p>
+          <Button variant="outline" onClick={retryInspect}>
+            다시 조회
+          </Button>
+        </div>
+      )}
       <p className="field-caption">
         {zone === "indoor" ? "실내" : "야외/테라스"} 동반 조건 기준이에요.
         영업시간과 이동 일정은 여행 노트에서 검사해 주세요.
@@ -159,7 +168,7 @@ export function PlaceDetail({
           {findings
             .filter((f) => f.quote)
             .map((f, i) => (
-              <blockquote key={i}>{f.quote}</blockquote>
+              <blockquote key={i}>{readableEvidence(f.quote)}</blockquote>
             ))}
           {check.policy.sourceUrl &&
             /^https?:\/\//.test(check.policy.sourceUrl) && (

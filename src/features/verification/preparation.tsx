@@ -4,6 +4,7 @@ import { buildPreparation } from "../../domain/itinerary/preparation";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { Disclosure } from "../../components/ui/accordion";
+import { readableEvidence } from "../../domain/policies/presentation";
 export function Preparation({
   trip,
   result,
@@ -72,7 +73,7 @@ export function Preparation({
                     <p key={index}>
                       {source.place}
                       <br />
-                      <small>근거: {source.quote}</small>
+                      <small>근거: {readableEvidence(source.quote)}</small>
                     </p>
                   ))}
                 </li>

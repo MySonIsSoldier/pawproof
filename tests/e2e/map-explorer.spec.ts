@@ -33,9 +33,10 @@ test("map filters, precise uncertainty, inquiry and notebook share the same gues
       json: {
         checks: places
           .filter((p) => ids.includes(p.id))
-          .map((place, i) => {
-            const policy = demoPolicy(i === 0 ? "demo-table" : "demo-park");
-            if (i === 2)
+          .map((place) => {
+            const index = Number(place.id) - 9001;
+            const policy = demoPolicy(index === 0 ? "demo-table" : "demo-park");
+            if (index === 2)
               policy.rules = policy.rules.filter((r) => r.kind !== "weight");
             return { place, policy, phone: "031-123-4567" };
           }),
@@ -60,18 +61,15 @@ test("map filters, precise uncertainty, inquiry and notebook share the same gues
   await dialog.getByRole("button", { name: "조건 적용하고 지도 보기" }).click();
   if (info.project.name === "mobile")
     await page.getByRole("button", { name: "목록 3곳", exact: true }).click();
-  await explorer.getByRole("button", { name: "가까운 3곳 조건 확인" }).click();
-  await expect(
-    explorer.getByRole("button", { name: "현재 후보 조회 완료" }),
-  ).toBeVisible();
-  expect(inspections).toBe(1);
   await explorer
     .locator(".explore-result")
     .filter({ hasText: "지도 테스트 장소 3" })
     .click();
+  await expect(explorer.getByText("조건을 확인하고 있어요…")).toBeVisible();
   await expect(
     explorer.getByText("체중 제한 정보가 없어 확인이 필요해요."),
   ).toBeVisible();
+  expect(inspections).toBe(1);
   await expect(
     explorer.getByRole("heading", { name: "여기까지 확인했어요" }),
   ).toBeVisible();
