@@ -4,6 +4,7 @@ import { useAuth } from "../auth/auth-provider";
 import { useProfile } from "./use-profile";
 import type { Pet } from "../../domain/policies/types";
 import { Button } from "../../components/ui/button";
+import { samePet, toggleRegisteredPet } from "../../domain/itinerary/pets";
 export function RegisteredPets(props: {
   pets: Pet[];
   change: (pets: Pet[]) => void;
@@ -22,14 +23,6 @@ function Picker({
   busy: boolean;
 }) {
   const profile = useProfile();
-  const samePet = (a: Pet, b: Pet) =>
-    a.name.trim() === b.name.trim() &&
-    a.breed.trim() === b.breed.trim() &&
-    a.weight === b.weight;
-  const isBlankPet = (pet: Pet) =>
-    !pet.name.trim() &&
-    (!pet.breed.trim() || pet.breed.trim() === "모름") &&
-    (!Number.isFinite(pet.weight) || pet.weight === 5);
   return (
     <div className="registered-pets">
       <div className="search-heading">
@@ -53,30 +46,9 @@ function Picker({
                 data-selected={pets.some((current) => samePet(current, pet))}
                 aria-pressed={pets.some((current) => samePet(current, pet))}
                 disabled={busy}
-                onClick={() => {
-                  const active = pets.some((current) => samePet(current, pet));
-                  if (active) {
-                    const remaining = pets.filter(
-                      (current) => !samePet(current, pet),
-                    );
-                    change(
-                      remaining.length
-                        ? remaining
-                        : [{ name: "", breed: "모름", weight: 5 }],
-                    );
-                  } else if (pets.length < 5) {
-                    const selected = {
-                      name: pet.name,
-                      breed: pet.breed,
-                      weight: pet.weight,
-                    };
-                    change(
-                      pets[0] && isBlankPet(pets[0])
-                        ? [selected, ...pets.slice(1)]
-                        : [...pets, selected],
-                    );
-                  }
-                }}
+                onClick={() =>
+                  change(toggleRegisteredPet(pets, pet, profile.data.pets))
+                }
               >
                 {pet.name} · {pet.weight}kg
               </Button>
