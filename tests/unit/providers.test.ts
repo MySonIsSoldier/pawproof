@@ -153,8 +153,10 @@ test("upstream error cannot expose a key or return arbitrary HTML", async () => 
   );
 });
 test("driving and walking durations use seconds and unknown coordinates return null", async () => {
-  const travel = kakaoTravel("fake", async () =>
-    Response.json({ routes: [{ result_code: 0, summary: { duration: 601 } }] }),
+  const travel = kakaoTravel("fake", async (input) =>
+    String(input).includes("dapi.kakao.com")
+      ? Response.json({ status: "OK", route: { properties: { totalTime: 601 } } })
+      : Response.json({ routes: [{ result_code: 0, summary: { duration: 601 } }] }),
   );
   assert.equal(await travel.minutes(demoPlaces[0], demoPlaces[1]), 11);
   assert.equal(await travel.walkingMinutes?.(demoPlaces[0], demoPlaces[1]), 11);

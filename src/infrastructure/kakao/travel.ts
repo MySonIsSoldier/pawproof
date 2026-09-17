@@ -11,6 +11,16 @@ const responseSchema = z.object({
     }),
   ),
 });
+const walkingResponseSchema = z.object({
+  status: z.string(),
+  route: z
+    .object({
+      properties: z.object({
+        totalTime: z.number().finite().nonnegative().max(86400),
+      }),
+    })
+    .nullable(),
+});
 export function kakaoTravel(
   apiKey: string,
   fetcher: typeof fetch = fetch,
@@ -35,6 +45,16 @@ export function kakaoTravel(
     const route = data.routes.find((item) => item.result_code === 0);
     return route?.summary ? Math.ceil(route.summary.duration / 60) : null;
   }
+  async function walkingRouteMinutes(url: URL): Promise<number | null> {
+    const data = walkingResponseSchema.parse(
+      await fetchJson(
+        url,
+        { headers: { Authorization: `KakaoAK ${apiKey}` } },
+        fetcher,
+      ),
+    );
+    return data.route ? Math.ceil(data.route.properties.totalTime / 60) : null;
+  }
   return {
     basis: "kakao",
     minutes: async (from, to) => {
@@ -57,7 +77,7 @@ export function kakaoTravel(
         end_x: String(to.lng),
         end_y: String(to.lat),
       }).toString();
-      return routeMinutes(url);
+      return walkingRouteMinutes(url);
     },
   };
 }
