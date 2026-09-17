@@ -29,7 +29,7 @@ test("provider field names are hidden from user-facing evidence", () => {
     readableEvidence(
       "etcAcmpyInfo: - 맹견의 경우, 입마개 착용 필수\nusetim: 상시 개방",
     ),
-    "맹견의 경우, 입마개 착용 필수\n상시 개방",
+    "맹견이라면 입마개를 착용해 주세요.\n상시 개방",
   );
   assert.equal(
     readableMessage("etcAcmpyInfo: - 맹견의 경우, 입마개 착용 필수"),

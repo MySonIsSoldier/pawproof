@@ -1,6 +1,7 @@
 import type { Providers } from "../ports/providers.ts";
 import type { Inspection } from "../contracts/discovery.ts";
 import { createPolicy } from "../contracts/policy.ts";
+import { addKtoFacts } from "../../domain/policies/kto-facts.ts";
 
 export async function inspectPlaces(ids: string[], providers: Providers) {
   const pending = [...ids];
@@ -23,6 +24,7 @@ export async function inspectPlaces(ids: string[], providers: Providers) {
               ],
             });
           }
+          if (document.place.source === "kto") policy = addKtoFacts(policy);
           checks.push({
             place: document.place,
             policy,

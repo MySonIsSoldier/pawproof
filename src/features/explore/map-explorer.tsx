@@ -22,7 +22,7 @@ import { ResponsiveSheet } from "../../components/ui/responsive-sheet";
 import { useMobile } from "../../components/hooks/use-mobile";
 import { ProfileEditor } from "../itinerary/profile-editor";
 import { useExplorer } from "./use-explorer";
-import { PlaceDetail, mapStatusLabels } from "./place-detail";
+import { ConditionBadges, PlaceDetail } from "./place-detail";
 import "./explore.css";
 const Map = dynamic(() => import("./kakao-map").then((m) => m.KakaoMapView), {
   ssr: false,
@@ -331,9 +331,12 @@ export function MapExplorer({
                           <small>
                             {item.place.category} · {item.place.address}
                           </small>
-                          <span className={`map-status ${item.status}`}>
-                            {mapStatusLabels[item.status]}
-                            {item.check ? "" : " · 미조회"}
+                          <ConditionBadges
+                            status={item.status}
+                            findings={item.findings}
+                            unqueried={!item.check}
+                          />
+                          <span className="field-caption result-meta">
                             {trip.visits.some(
                               (v) => v.placeId === item.place.id,
                             )

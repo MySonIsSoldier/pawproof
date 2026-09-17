@@ -16,12 +16,41 @@ import { Button } from "../../components/ui/button";
 import { Disclosure } from "../../components/ui/accordion";
 import { useNotify } from "../../components/notifications/with-notifications";
 import { callApi } from "../itinerary/api";
+import { petFoodVenueGuidance } from "../../domain/policies/legal-guidance";
+import { seoulResearchReferences } from "../../domain/policies/references";
 export const mapStatusLabels: Record<Status, string> = {
   available: "조건 충족",
   prepare: "준비 필요",
   confirm: "확인 필요",
   blocked: "조건 불일치",
 };
+export function hasKnownEntry(findings: Finding[]) {
+  return findings.some(
+    (finding) => finding.kind === "entry" && finding.status === "available",
+  );
+}
+export function ConditionBadges({
+  status,
+  findings,
+  unqueried = false,
+}: {
+  status: Status;
+  findings: Finding[];
+  unqueried?: boolean;
+}) {
+  const entryKnown = hasKnownEntry(findings);
+  return (
+    <span className="status-badges">
+      {entryKnown && <span className="map-status available">반려견 출입 가능</span>}
+      {(!entryKnown || status !== "available") && (
+        <span className={`map-status ${status}`}>
+          {mapStatusLabels[status]}
+          {unqueried ? " · 미조회" : ""}
+        </span>
+      )}
+    </span>
+  );
+}
 export function PlaceDetail({
   place,
   check,
@@ -118,11 +147,54 @@ export function PlaceDetail({
       <Button variant="link" onClick={back}>
         ← 장소 목록
       </Button>
-      <p className={`map-status ${status}`}>{mapStatusLabels[status]}</p>
+      <ConditionBadges status={status} findings={findings} />
       <h2>{place.name}</h2>
       <p className="field-caption">
         {place.category} · {place.address}
       </p>
+      <p className="field-caption">
+        {check
+          ? `공식 안내 조회: ${new Date(check.policy.fetchedAt).toLocaleString("ko-KR", {
+              timeZone: "Asia/Seoul",
+            })}`
+          : "공식 동반 규정은 아직 조회하지 않았어요."}
+      </p>
+      {(place.category === "식당" || place.category === "카페") && (
+        <section className="legal-guidance" aria-label="음식점 반려동물 출입 기준">
+          <h3>음식점·카페 방문 전 알아둘 기준</h3>
+          <p>
+            {petFoodVenueGuidance.effectiveFrom.replace("-", ".").replace("-", ".")}부터 적용되는
+            공식 기준이에요. 이 장소가 실제로 반려동물 동반 영업장으로 신고·표시됐는지는
+            별도로 확인해야 해요.
+          </p>
+          <ul>
+            {petFoodVenueGuidance.items.slice(1).map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <a href={petFoodVenueGuidance.sourceUrl} target="_blank" rel="noreferrer">
+            법령 원문 확인 ↗
+          </a>
+        </section>
+      )}
+      {place.address.startsWith("서울") && (
+        <Disclosure title="서울 지역 참고 여행 자료">
+          <p className="field-caption">
+            아래 자료는 장소 후보와 동선을 넓히기 위한 비공식 참고 자료예요. 출입 가능
+            판정에는 사용하지 않으며, 방문 전 공식 안내를 다시 확인해 주세요.
+          </p>
+          <ul className="research-reference-list">
+            {seoulResearchReferences.map((reference) => (
+              <li key={reference.url}>
+                <a href={reference.url} target="_blank" rel="noreferrer">
+                  {reference.label} ↗
+                </a>
+                <span>{reference.note}</span>
+              </li>
+            ))}
+          </ul>
+        </Disclosure>
+      )}
       <div className="detail-actions">
         <Button variant="primary" disabled={added || full} onClick={add}>
           {added

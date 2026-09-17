@@ -106,6 +106,7 @@ export const statusLabels: Record<Status, string> = {
 };
 export const equipmentOptions = [
   "목줄",
+  "배변봉투",
   "이동장",
   "유모차",
   "입마개",

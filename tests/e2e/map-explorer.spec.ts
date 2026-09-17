@@ -52,20 +52,25 @@ test("map filters, precise uncertainty, inquiry and notebook share the same gues
       exact: true,
     }),
   ).toBeVisible();
-  await explorer.getByRole("button", { name: "반려견 조건 입력" }).click();
+  if (info.project.name === "mobile")
+    await explorer.getByRole("button", { name: "검색", exact: true }).click();
+  await explorer.getByRole("button", { name: /반려견 조건/ }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("반려견 1 이름").fill("두부");
   await dialog.getByLabel("반려견 1 견종").fill("푸들");
   await dialog.getByLabel("반려견 1 체중").fill("12");
   await dialog.getByRole("checkbox", { name: "목줄", exact: true }).check();
   await dialog.getByRole("button", { name: "조건 적용하고 지도 보기" }).click();
-  if (info.project.name === "mobile")
+  if (info.project.name === "mobile") {
+    await page.getByRole("button", { name: "패널 닫기" }).click();
     await page.getByRole("button", { name: "목록 3곳", exact: true }).click();
+  }
   await explorer
     .locator(".explore-result")
     .filter({ hasText: "지도 테스트 장소 3" })
     .click();
-  await expect(explorer.getByText("조건을 확인하고 있어요…")).toBeVisible();
+  if (info.project.name === "desktop")
+    await expect(explorer.getByText("조건을 확인하고 있어요…")).toBeVisible();
   await expect(
     explorer.getByText("체중 제한 정보가 없어 확인이 필요해요."),
   ).toBeVisible();
@@ -111,7 +116,10 @@ test("map filters, precise uncertainty, inquiry and notebook share the same gues
   ).toBeDisabled();
   await explorer.getByRole("button", { name: "← 장소 목록" }).click();
   if (info.project.name === "mobile")
-    await page.getByRole("button", { name: "패널 닫기" }).click();
+    await page
+      .getByRole("dialog", { name: "주변 장소 목록" })
+      .getByRole("button", { name: "패널 닫기" })
+      .click();
   const beforePan = searches;
   await page.getByRole("button", { name: "테스트 지도 이동" }).click();
   await expect(
@@ -165,14 +173,28 @@ test("SDK failure and location denial retain the list and destination search is 
   if (info.project.name === "mobile")
     await page.getByRole("button", { name: "목록 3곳", exact: true }).click();
   await expect(page.locator(".explore-result")).toHaveCount(3);
+  if (info.project.name === "mobile")
+    await page.getByRole("button", { name: "검색", exact: true }).click();
   await page.getByRole("button", { name: "◎ 내 주변" }).click();
-  await expect(page.getByText(/현재 위치를 가져오지 못했어요/)).toBeVisible();
+  await expect(
+    info.project.name === "mobile"
+      ? page.getByRole("dialog", { name: "지도 검색·필터" }).getByRole("status")
+      : page.getByText(/현재 위치를 가져오지 못했어요/),
+  ).toBeVisible();
   await page.unroute("https://dapi.kakao.com/**");
   await page.route("https://dapi.kakao.com/**", (route) =>
     route.fulfill({ contentType: "text/javascript", body: fakeKakaoSdk }),
   );
   if (info.project.name === "mobile")
-    await page.getByRole("button", { name: "패널 닫기" }).click();
+    await page
+      .getByRole("dialog", { name: "지도 검색·필터" })
+      .getByRole("button", { name: "패널 닫기" })
+      .click();
+  if (info.project.name === "mobile")
+    await page
+      .getByRole("dialog", { name: "주변 장소 목록" })
+      .getByRole("button", { name: "패널 닫기" })
+      .click();
   await page.getByRole("button", { name: "지도 다시 불러오기" }).click();
   await page.getByLabel("여행지 또는 주소 검색").fill("부산");
   await page.getByRole("button", { name: "찾기", exact: true }).click();
@@ -209,10 +231,12 @@ test("grouped places can all be inspected and added without leaving the map", as
   await expect(page.getByRole("link", { name: "PawProof 소개" })).toHaveCount(
     0,
   );
+  if (mobile) await page.getByRole("button", { name: "검색", exact: true }).click();
   const radius = page.getByRole("combobox", { name: "검색 반경" });
   await radius.click();
   await page.getByRole("option", { name: "10km", exact: true }).click();
   await expect(radius).toContainText("10km");
+  if (mobile) await page.getByRole("button", { name: "패널 닫기" }).click();
   const group = page.getByRole("button", { name: "겹친 장소 3곳 모두 보기" });
   await group.click();
   await expect(page.locator(".explore-result")).toHaveCount(3);
@@ -257,7 +281,7 @@ test("grouped places can all be inspected and added without leaving the map", as
     if (mobile) await expect(page.getByRole("dialog")).toHaveCount(0);
   }
   await expect(page.locator(".map-pin.in-route")).toHaveCount(3);
-  const line = page.locator("[data-test-route]");
+  const line = page.locator(".explore-map [data-test-route]");
   await expect(line).toHaveCount(1);
   expect(JSON.parse((await line.getAttribute("data-test-route"))!)).toEqual(
     nearby.map((p) => ({ lat: p.lat, lng: p.lng })),
@@ -292,6 +316,7 @@ test("grouped places can all be inspected and added without leaving the map", as
     [nearby[2], nearby[1]].map((p) => ({ lat: p.lat, lng: p.lng })),
   );
   // Filtering out candidates must not erase already selected route stops.
+  if (mobile) await page.getByRole("button", { name: "검색", exact: true }).click();
   await page
     .getByRole("group", { name: "지도 장소 유형" })
     .getByRole("button", { name: "식당", exact: true })
