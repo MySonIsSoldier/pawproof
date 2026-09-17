@@ -172,3 +172,7 @@ Cloudflare로 전환하면 일반 `next dev`와 별도로 OpenNext의 `workerd` 
 ## PWA 개발 검사
 
 워커는 개발 중 기본 비활성화하고, 필요할 때 PWA_ENABLED=true로 재시작한다. code-server의 정확한 앱 scope만 사용하며 다른 워커/캐시를 변경하지 않는다. 네이티브 URL은 appPath, Next Link는 논리 경로를 사용한다. 운영 빌드는 실행기가 새 PWA release를 생성한다. [PWA 환경·수명 계약](PWA.md)을 따른다.
+
+## macOS localhost 개발 (2026-09-17)
+
+사용자의 새 MacBook에서는 `pnpm dev:direct`로 `http://localhost:3000/plan`에 접속한다. code-server 프로필은 기존 지원 환경으로 유지하며 로컬 화면에 프록시 경로를 넣지 않는다. 새 환경의 브라우저 회귀 검사에는 `pnpm exec playwright install chromium`을 먼저 실행한다. 로컬 계정 연결과 실제 카카오 SDK 허용 여부는 모형 E2E와 별도로 점검한다.

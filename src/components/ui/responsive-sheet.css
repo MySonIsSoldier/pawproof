@@ -1,0 +1,50 @@
+.ui-bottom-sheet {
+  position: fixed;
+  inset: auto 0 calc(72px + env(safe-area-inset-bottom));
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  max-height: min(52dvh, 620px);
+  background: white;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -8px 36px #193d3026;
+  outline: none;
+  overflow: hidden;
+}
+.ui-bottom-sheet-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 0;
+}
+.ui-bottom-sheet-heading h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.ui-bottom-sheet[data-state="open"] {
+  animation: sheet-in 200ms ease-out;
+}
+.ui-bottom-sheet[data-state="closed"] {
+  animation: sheet-out 160ms ease-in;
+}
+@keyframes sheet-in {
+  from {
+    translate: 0 100%;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes sheet-out {
+  to {
+    translate: 0 100%;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-bottom-sheet[data-state] {
+    animation: none;
+  }
+}

@@ -7,6 +7,17 @@ export type KakaoMap = {
   getCenter(): LatLng;
   relayout(): void;
   setLevel(level: number): void;
+  getLevel(): number;
+  getProjection(): {
+    containerPointFromCoords(point: LatLng): { x: number; y: number };
+  };
+  setBounds(
+    bounds: { extend(point: LatLng): void },
+    paddingTop?: number,
+    paddingRight?: number,
+    paddingBottom?: number,
+    paddingLeft?: number,
+  ): void;
 };
 type Overlay = { setMap(map: KakaoMap | null): void };
 type SearchCallback = (data: unknown, status: string) => void;
@@ -17,6 +28,16 @@ export type KakaoMaps = {
     container: HTMLElement,
     options: { center: LatLng; level: number },
   ) => KakaoMap;
+  LatLngBounds: new () => { extend(point: LatLng): void };
+  Polyline: new (options: {
+    map: KakaoMap;
+    path: LatLng[];
+    strokeWeight: number;
+    strokeColor: string;
+    strokeOpacity: number;
+    strokeStyle: string;
+    endArrow: boolean;
+  }) => Overlay;
   CustomOverlay: new (options: {
     map: KakaoMap;
     position: LatLng;
@@ -124,14 +145,12 @@ export async function findDestinations(query: string): Promise<Destination[]> {
           new Error("여행지를 찾지 못했어요. 지역명이나 주소를 확인해 주세요."),
         );
       resolve(
-        parsed.data
-          .slice(0, 5)
-          .map((p) => ({
-            lat: p.y,
-            lng: p.x,
-            name: p.place_name || p.address_name,
-            address: p.address_name,
-          })),
+        parsed.data.slice(0, 5).map((p) => ({
+          lat: p.y,
+          lng: p.x,
+          name: p.place_name || p.address_name,
+          address: p.address_name,
+        })),
       );
     };
     new maps.services.Geocoder().addressSearch(query, (data, status) => {

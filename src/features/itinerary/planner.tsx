@@ -45,7 +45,10 @@ function PlannerScreen({
   } = model;
   const showMap = trip.mode === "live" && view === "map";
   return (
-    <main id="main" className={`planner wrap${showMap ? " exploring" : ""}`}>
+    <main
+      id="main"
+      className={`planner wrap${trip.mode === "live" ? " live-workspace" : ""}${showMap ? " exploring" : ""}`}
+    >
       {trip.mode === "live" && (
         <nav className="workspace-tabs" aria-label="여행 작업 화면">
           <Button
@@ -56,14 +59,14 @@ function PlannerScreen({
               setView("map");
             }}
           >
-            지도에서 찾기
+            <Icon name="pin" size={20} /> 지도에서 찾기
           </Button>
           <Button
             variant="plain"
             aria-pressed={!showMap}
             onClick={() => setView("note")}
           >
-            여행 노트 · {trip.visits.length}곳
+            <Icon name="bag" size={20} /> 여행 노트 · {trip.visits.length}곳
           </Button>
           <span>우리 강아지와 갈 곳, 가까이에서부터.</span>
         </nav>
@@ -72,6 +75,7 @@ function PlannerScreen({
         <div hidden={!showMap}>
           <MapExplorer
             trip={trip}
+            places={model.places}
             update={update}
             add={add}
             active={showMap}

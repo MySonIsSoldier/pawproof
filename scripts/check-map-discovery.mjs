@@ -4,8 +4,15 @@ import { mkdir } from "node:fs/promises";
 if (process.argv[3] !== "--live")
   throw new Error("Pass the app URL and --live");
 const target = new URL(process.argv[2]);
-if (target.protocol !== "https:" || target.username || target.password)
-  throw new Error("Pass a public HTTPS app URL");
+const local =
+  target.protocol === "http:" &&
+  ["localhost", "127.0.0.1"].includes(target.hostname);
+if (
+  (!local && target.protocol !== "https:") ||
+  target.username ||
+  target.password
+)
+  throw new Error("Pass a public HTTPS or localhost app URL");
 const browser = await chromium.launch({ headless: true });
 try {
   const context = await browser.newContext({
@@ -18,7 +25,7 @@ try {
   const page = await context.newPage();
   let searches = 0;
   await page.route("**/api/discovery/nearby?*", (route) =>
-    ++searches > 2 ? route.abort() : route.continue(),
+    ++searches > 3 ? route.abort() : route.continue(),
   );
   await page.route("**/api/discovery/inspect", (route) => route.abort());
   const nearby = page.waitForResponse((r) =>
@@ -46,16 +53,19 @@ try {
       { timeout: 25000 },
     )
     .toBeGreaterThan(0);
+  await page.getByRole("button", { name: /^목록 \d+곳$/ }).click();
   await page.locator(".explore-result").first().click();
   await expect(
     page.getByRole("link", { name: /카카오맵에서 상호/ }),
   ).toBeVisible();
   await page.getByRole("button", { name: "코스에 담기", exact: true }).click();
-  await page.getByRole("button", { name: "여행 노트 1곳 보기 →" }).click();
+  await page.getByRole("button", { name: "완료 · 1곳", exact: true }).click();
   await expect(page.locator(".visit-card")).toHaveCount(1);
   await page
     .getByRole("button", { name: "지도에서 찾기", exact: true })
     .click();
+  await page.getByRole("button", { name: /^목록 \d+곳$/ }).click();
+  await page.locator(".explore-result").first().click();
   await expect(
     page.getByRole("button", { name: "코스에 담았어요" }),
   ).toBeDisabled();

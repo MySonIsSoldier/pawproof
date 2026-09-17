@@ -20,3 +20,5 @@ Tailwind 클래스나 CLI 자동 덮어쓰기를 사용하지 않는다. shadcn 
 
 - `accordion.tsx` (2026-09-12): [shadcn Accordion 원본](https://ui.shadcn.com/r/styles/new-york-v4/accordion.json)의 Header/Trigger/Content 조합을 Radix Accordion 1.2.20·자체 Icon·CSS 토큰으로 조정. `Disclosure`는 한 항목을 독립적으로 여닫는 조합이다.
 - Dialog는 [shadcn Dialog 원본](https://ui.shadcn.com/r/styles/new-york-v4/dialog.json)의 불투명 표면·페이드·95% 확대 패턴을 공통 CSS로 적용한다. [Radix 애니메이션](https://www.radix-ui.com/primitives/docs/guides/animation)에 따라 닫힘 애니메이션 동안 콘텐츠 수명을 유지한다. Accordion은 `--radix-accordion-content-height`를 사용한다. 별도 모션 라이브러리나 Tailwind는 추가하지 않는다.
+
+- `responsive-sheet.tsx`: 기존 Radix Dialog 패턴을 재사용한 비모달 하단 패널. 데스크톱 aside, 모바일 Portal/Content/Title/Close와 Escape·지정 요소 포커스 복귀를 제공한다. 배경 조작을 막지 않고 명시적 닫기로 닫는다. 업무 내용·열림 상태는 호출 화면에서 전달한다.

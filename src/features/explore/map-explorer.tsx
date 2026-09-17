@@ -1,8 +1,15 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Place, TripInput } from "../../domain/policies/types";
 import { Button } from "../../components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../../components/ui/select";
 import { Input } from "../../components/ui/input";
 import { Checkbox } from "../../components/ui/checkbox";
 import {
@@ -12,6 +19,8 @@ import {
   DialogDescription,
   DialogClose,
 } from "../../components/ui/dialog";
+import { ResponsiveSheet } from "../../components/ui/responsive-sheet";
+import { useMobile } from "../../components/hooks/use-mobile";
 import { ProfileEditor } from "../itinerary/profile-editor";
 import { useExplorer } from "./use-explorer";
 import { PlaceDetail, mapStatusLabels } from "./place-detail";
@@ -28,6 +37,7 @@ export function MapExplorer({
   active,
   busy,
   note,
+  places,
 }: {
   trip: TripInput;
   update: (trip: TripInput) => void;
@@ -35,7 +45,16 @@ export function MapExplorer({
   active: boolean;
   busy: boolean;
   note: () => void;
+  places: Record<string, Place>;
 }) {
+  const mobile = useMobile();
+  const route = useMemo(
+    () =>
+      trip.visits.flatMap((v) =>
+        places[v.placeId] ? [places[v.placeId]] : [],
+      ),
+    [trip.visits, places],
+  );
   const {
     state,
     search,
@@ -44,9 +63,11 @@ export function MapExplorer({
     candidates,
     visible,
     selected,
+    grouped,
     setArea,
     locate,
-  } = useExplorer(trip, active);
+  } = useExplorer(trip, active, route);
+  const shown = state.groupIds.length ? grouped : visible;
   const [profileOpen, setProfileOpen] = useState(false);
   const unchecked = candidates.filter((p) => !p.check).slice(0, 5);
   const moved =
@@ -111,7 +132,9 @@ export function MapExplorer({
               variant="plain"
               key={c}
               aria-pressed={state.category === c}
-              onClick={() => state.patch({ category: c, selected: null })}
+              onClick={() =>
+                state.patch({ category: c, selected: null, groupIds: [] })
+              }
             >
               {c || "전체"}
             </Button>
@@ -131,27 +154,44 @@ export function MapExplorer({
         </div>
         <label className="map-radius">
           반경{" "}
-          <select
-            aria-label="검색 반경"
-            value={state.radius}
-            onChange={(e) =>
-              state.patch({ radius: Number(e.target.value), selected: null })
+          <Select
+            value={String(state.radius)}
+            onValueChange={(value) =>
+              state.patch({
+                radius: Number(value),
+                selected: null,
+                groupIds: [],
+              })
             }
           >
-            {[3000, 5000, 10000, 20000].map((r) => (
-              <option key={r} value={r}>
-                {r / 1000}km
-              </option>
-            ))}
-          </select>
+            <SelectTrigger aria-label="검색 반경">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[3000, 5000, 10000, 20000].map((r) => (
+                <SelectItem key={r} value={String(r)}>
+                  {r / 1000}km
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
       </div>
+      {mobile && !state.expanded && (error || state.message) && (
+        <p className="map-mobile-message" role="status">
+          {error || state.message}
+        </p>
+      )}
       <div className={`explore-body${state.expanded ? " expanded" : ""}`}>
         <div className="explore-map">
           <Map
             places={visible}
             center={state.center}
             radius={state.radius}
+            route={route}
+            group={(groupIds) =>
+              state.patch({ groupIds, selected: null, expanded: true })
+            }
             selected={state.selected}
             select={(selected) => state.patch({ selected, expanded: true })}
             moved={(draftCenter) => state.patch({ draftCenter })}
@@ -169,7 +209,19 @@ export function MapExplorer({
                 : `반경 ${state.radius / 1000}km 탐색 중`}
           </Button>
         </div>
-        <div className="explore-panel">
+        <ResponsiveSheet
+          className="explore-panel"
+          returnFocusId="map-place-list"
+          open={active && state.expanded}
+          onOpenChange={(expanded) => state.patch({ expanded })}
+          title={
+            selected
+              ? selected.place.name
+              : state.groupIds.length
+                ? `겹친 장소 ${grouped.length}곳`
+                : "주변 장소 목록"
+          }
+        >
           <div className="explore-panel-heading">
             <div>
               <strong>{state.area}</strong>
@@ -179,14 +231,6 @@ export function MapExplorer({
                   : `${visible.length}곳 · 한국관광공사 제공 후보`}
               </span>
             </div>
-            <Button
-              variant="link"
-              className="panel-expand"
-              aria-expanded={state.expanded}
-              onClick={() => state.patch({ expanded: !state.expanded })}
-            >
-              {state.expanded ? "지도 크게" : "목록 크게"}
-            </Button>
           </div>
           <div className="explore-scroll">
             {error && (
@@ -212,16 +256,33 @@ export function MapExplorer({
                 full={trip.visits.length >= 5 || busy}
                 back={() => state.patch({ selected: null })}
                 inspect={() => inspect.mutate([selected.place.id])}
-                add={() => add(selected.place)}
+                add={() => {
+                  add(selected.place);
+                  if (mobile) state.patch({ expanded: false, selected: null });
+                }}
               />
             ) : (
               <>
+                {!!state.groupIds.length && (
+                  <div className="map-group-summary">
+                    <p>
+                      겹쳐 보이는 장소 {grouped.length}곳이에요. 각각 선택해
+                      코스에 담을 수 있어요.
+                    </p>
+                    <Button
+                      variant="link"
+                      onClick={() => state.patch({ groupIds: [] })}
+                    >
+                      전체 장소 보기
+                    </Button>
+                  </div>
+                )}
                 <div className="map-condition-filters">
                   <label>
                     <Checkbox
                       checked={state.fitOnly}
                       onCheckedChange={(v) =>
-                        state.patch({ fitOnly: v === true })
+                        state.patch({ fitOnly: v === true, groupIds: [] })
                       }
                     />{" "}
                     우리 조건과 불일치하는 곳 제외
@@ -230,7 +291,7 @@ export function MapExplorer({
                     <Checkbox
                       checked={state.confirmedOnly}
                       onCheckedChange={(v) =>
-                        state.patch({ confirmedOnly: v === true })
+                        state.patch({ confirmedOnly: v === true, groupIds: [] })
                       }
                     />{" "}
                     조건이 확인된 곳만 보기
@@ -256,7 +317,7 @@ export function MapExplorer({
                         ? "현재 후보 조회 완료"
                         : "주변 장소를 먼저 찾아주세요"}
                 </Button>
-                {!visible.length && !search.isFetching && !search.error && (
+                {!shown.length && !search.isFetching && !search.error && (
                   <p className="explore-empty">
                     {candidates.length
                       ? "현재 필터에 맞는 장소가 없어요. 미확인 장소도 보거나 조건 확인을 진행해 주세요."
@@ -264,7 +325,7 @@ export function MapExplorer({
                   </p>
                 )}
                 <ol className="explore-results">
-                  {visible.map((item, i) => (
+                  {shown.map((item, i) => (
                     <li key={item.place.id}>
                       <button
                         className="explore-result"
@@ -286,6 +347,11 @@ export function MapExplorer({
                           <span className={`map-status ${item.status}`}>
                             {mapStatusLabels[item.status]}
                             {item.check ? "" : " · 미조회"}
+                            {trip.visits.some(
+                              (v) => v.placeId === item.place.id,
+                            )
+                              ? " · 코스에 담음"
+                              : ""}
                           </span>
                         </span>
                         <span aria-hidden="true">›</span>
@@ -305,10 +371,38 @@ export function MapExplorer({
             variant="primary"
             onClick={note}
           >
-            여행 노트 {trip.visits.length}곳 보기 →
+            완료 · 여행 노트 {trip.visits.length}곳 보기
+          </Button>
+        </ResponsiveSheet>
+        <div className="map-bottom-actions">
+          <Button
+            id="map-place-list"
+            variant="outline"
+            onClick={() =>
+              state.patch({ expanded: true, selected: null, groupIds: [] })
+            }
+          >
+            목록 {visible.length}곳
+          </Button>
+          <Button variant="primary" onClick={note}>
+            완료 · {trip.visits.length}곳
           </Button>
         </div>
       </div>
+      <div className="map-trip-summary" aria-label="지도에서 담은 코스">
+        <p>
+          {route.length
+            ? route.map((p, i) => `${i + 1}. ${p.name}`).join(" → ")
+            : "장소를 선택해 나만의 여행 코스를 담아보세요."}
+        </p>
+        <small>
+          점선은 실제 도로 경로가 아닌 방문 순서예요. 예상 이동시간은 여행
+          노트의 코스 검사에서 확인해 주세요.
+        </small>
+      </div>
+      <p className="map-attribution">
+        출처: ⓒ한국관광공사 · 지도에는 검색된 후보만 표시돼요.
+      </p>
       <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
         <DialogContent className="map-profile-dialog">
           <DialogTitle>우리 강아지의 여행 조건</DialogTitle>

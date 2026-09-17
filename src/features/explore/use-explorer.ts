@@ -3,7 +3,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createStore } from "zustand/vanilla";
 import { useStore } from "zustand";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { Category, TripInput, Zone } from "../../domain/policies/types";
+import type {
+  Category,
+  Place,
+  TripInput,
+  Zone,
+} from "../../domain/policies/types";
 import { assessDiscovery } from "../../domain/policies/discovery";
 import {
   inspectionsSchema,
@@ -23,6 +28,7 @@ type ExplorerState = {
   area: string;
   selected: string | null;
   expanded: boolean;
+  groupIds: string[];
   fitOnly: boolean;
   confirmedOnly: boolean;
   zone: Zone;
@@ -42,6 +48,7 @@ function createExplorerStore() {
     area: "고양 일산호수공원 주변",
     selected: null,
     expanded: false,
+    groupIds: [],
     fitOnly: false,
     confirmedOnly: false,
     zone: "outdoor",
@@ -52,7 +59,7 @@ function createExplorerStore() {
     patch: (next) => set(next),
   }));
 }
-export function useExplorer(trip: TripInput, active: boolean) {
+export function useExplorer(trip: TripInput, active: boolean, route: Place[]) {
   const [store] = useState(createExplorerStore);
   const state = useStore(store);
   const controller = useRef<AbortController | null>(null);
@@ -147,7 +154,21 @@ export function useExplorer(trip: TripInput, active: boolean) {
       ),
     [candidates, state.fitOnly, state.confirmedOnly],
   );
-  const selected = candidates.find((c) => c.place.id === state.selected);
+  const routeCandidates = route
+    .filter((p) => !candidates.some((c) => c.place.id === p.id))
+    .map((place) => {
+      const check = state.checks[place.id];
+      return {
+        place,
+        check,
+        ...assessDiscovery(check?.policy, trip, state.zone),
+      };
+    });
+  const allCandidates = [...candidates, ...routeCandidates];
+  const selected = allCandidates.find((c) => c.place.id === state.selected);
+  const grouped = allCandidates.filter((c) =>
+    state.groupIds.includes(c.place.id),
+  );
   function setArea(center: Point, area: string) {
     state.patch({
       center,
@@ -155,6 +176,7 @@ export function useExplorer(trip: TripInput, active: boolean) {
       area,
       targets: [],
       selected: null,
+      groupIds: [],
       message: "",
     });
   }
@@ -199,6 +221,7 @@ export function useExplorer(trip: TripInput, active: boolean) {
     candidates,
     visible,
     selected,
+    grouped,
     setArea,
     locate,
   };
