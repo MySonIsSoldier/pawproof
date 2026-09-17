@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import type { Place, TripResult } from "../../domain/policies/types";
 import { Icon } from "../../components/icon";
 import { RouteMap } from "./route-map";
@@ -12,6 +14,7 @@ export function RouteBoard({
   stale: boolean;
   mode: "demo" | "live";
 }) {
+  const [openLeg, setOpenLeg] = useState<number | null>(null);
   const positions = [
     [66, 200],
     [148, 111],
@@ -137,6 +140,52 @@ export function RouteBoard({
           {places.length > 1 &&
             result.totalTravel === null &&
             result.totalWalking === null && <span>이동시간 미확정</span>}
+        </div>
+      )}
+      {result && !stale && places.length >= 3 && (
+        <div className="route-legs" aria-label="구간별 이동시간">
+          <div className="route-legs-heading">
+            <strong>구간별 이동</strong>
+            <span>방문지 사이의 예상 시간</span>
+          </div>
+          {result.visits.slice(1).map((visit, index) => {
+            const from = result.visits[index].place;
+            const expanded = openLeg === index;
+            return (
+              <div className="route-leg" key={from.id + "-" + visit.place.id}>
+                <button
+                  type="button"
+                  className="route-leg-toggle"
+                  aria-expanded={expanded}
+                  onClick={() => setOpenLeg(expanded ? null : index)}
+                >
+                  <span>
+                    {index + 1} → {index + 2}
+                  </span>
+                  <strong>
+                    {from.name} → {visit.place.name}
+                  </strong>
+                  <span aria-hidden="true">{expanded ? "−" : "+"}</span>
+                </button>
+                {expanded && (
+                  <div className="route-leg-times">
+                    <span>
+                      차량{" "}
+                      {visit.travelMinutes === null
+                        ? "미확정"
+                        : visit.travelMinutes + "분"}
+                    </span>
+                    <span>
+                      도보{" "}
+                      {visit.walkingMinutes === null
+                        ? "미확정"
+                        : visit.walkingMinutes + "분"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
       {mode === "demo" && result && !stale && (

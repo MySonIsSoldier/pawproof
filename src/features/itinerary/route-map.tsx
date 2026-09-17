@@ -63,14 +63,22 @@ export function RouteMap({ places }: { places: Place[] }) {
     const points = drawablePlaces.map(
       (place) => new maps.LatLng(place.lat, place.lng),
     );
-    if (points.length === 1) {
-      map.setCenter(points[0]);
-      map.setLevel(7);
-    } else {
-      const bounds = new maps.LatLngBounds();
-      points.forEach((point) => bounds.extend(point));
-      map.setBounds(bounds, 70, 70, 70, 70);
-    }
+    const fit = () => {
+      if (!container.current?.clientWidth || !container.current.clientHeight)
+        return;
+      map.relayout();
+      if (points.length === 1) {
+        map.setCenter(points[0]);
+        map.setLevel(7);
+      } else {
+        const bounds = new maps.LatLngBounds();
+        points.forEach((point) => bounds.extend(point));
+        map.setBounds(bounds, 70, 70, 70, 70);
+      }
+    };
+    fit();
+    const resize = new ResizeObserver(fit);
+    if (container.current) resize.observe(container.current);
     const overlays = drawablePlaces.map((place, index) => {
       const marker = document.createElement("span");
       marker.className = "route-map-marker";
@@ -97,6 +105,7 @@ export function RouteMap({ places }: { places: Place[] }) {
           })
         : null;
     return () => {
+      resize.disconnect();
       overlays.forEach((overlay) => overlay.setMap(null));
       line?.setMap(null);
     };
