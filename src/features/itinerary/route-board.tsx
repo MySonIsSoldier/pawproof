@@ -119,27 +119,46 @@ export function RouteBoard({
         </svg>
         <span className="map-compass">N ↑</span>
       </div>}
-      <div className="board-footer">
-        <span>
-          <Icon name="car" size={16} />
-          자가용 당일 여행
-        </span>
-        <span>
-          {places.length}곳
-          {result && !stale
-            ? ` · ${result.totalTravel === null ? "이동 미확정" : `이동 ${result.totalTravel}분`}`
-            : ""}
-        </span>
-      </div>
+      {result && !stale && (
+        <div className="board-footer">
+          {result.totalTravel !== null && (
+            <span>
+              <Icon name="car" size={16} />
+              자가용 당일 여행
+            </span>
+          )}
+          <span>{places.length}곳</span>
+          {places.length > 1 && result.totalTravel !== null && (
+            <span>차량 이동 {result.totalTravel}분</span>
+          )}
+          {places.length > 1 && result.totalWalking !== null && (
+            <span>도보 산책 {result.totalWalking}분</span>
+          )}
+          {places.length > 1 &&
+            result.totalTravel === null &&
+            result.totalWalking === null && <span>이동시간 미확정</span>}
+        </div>
+      )}
       {mode === "demo" && (
         <p className="field-caption">
           실제 지도 대신 방문 순서를 보여드려요. 이동시간은 가상 예시예요.
         </p>
       )}
-      {mode === "live" && result?.travelBasis === "kakao" && (
+      {mode === "live" &&
+        result &&
+        !stale &&
+        result.travelBasis === "kakao" &&
+        result.totalTravel !== null && (
         <p className="field-caption">
           이동시간은 조회 시점 교통 기준이며 방문일 예측은 아니에요.
         </p>
+      )}
+      {mode === "live" &&
+        result &&
+        !stale &&
+        places.length > 1 &&
+        result.totalWalking !== null && (
+        <p className="field-caption">도보 시간은 카카오 보행 경로 기준이에요.</p>
       )}
     </section>
   );

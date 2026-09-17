@@ -133,6 +133,8 @@ test("fabricated evidence and malformed semantic values rejected", () => {
 test("complete demo produces four states then safely repairs a restaurant", async () => {
   const trip = createDemoTrip();
   const result = await verifyTrip(trip, demoProviders());
+  assert.ok(result.totalWalking !== null && result.totalWalking > 0);
+  assert.ok(result.visits.slice(1).every((visit) => visit.walkingMinutes !== null));
   assert.deepEqual(
     result.visits.map((v) => v.status),
     ["available", "blocked", "prepare", "confirm"],

@@ -86,6 +86,8 @@ export function demoProviders(): Providers {
       basis: "demo",
       minutes: async (a, b) =>
         Math.max(5, Math.round(Math.hypot(a.lat - b.lat, a.lng - b.lng) * 400)),
+      walkingMinutes: async (a, b) =>
+        Math.max(1, Math.round(Math.hypot(a.lat - b.lat, a.lng - b.lng) * 1200)),
     },
   };
 }

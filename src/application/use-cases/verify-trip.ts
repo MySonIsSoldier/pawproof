@@ -63,16 +63,20 @@ export async function verifyTrip(
   const visits: VisitResult[] = [];
   let cursor: number | null = toMinutes(input.startTime);
   let totalTravel: number | null = 0;
+  let totalWalking: number | null = 0;
   for (const visit of input.visits) {
     const { document, policy } = documents.get(visit.placeId)!;
     const previous = visits.at(-1);
-    const travelMinutes = previous
+    const [travelMinutes, walkingMinutes] = previous
       ? !previous.place.lat || !document.place.lat
-        ? null
-        : await providers.travel
-            .minutes(previous.place, document.place)
-            .catch(() => null)
-      : 0;
+        ? [null, null]
+        : await Promise.all([
+            providers.travel.minutes(previous.place, document.place).catch(() => null),
+            providers.travel.walkingMinutes
+              ? providers.travel.walkingMinutes(previous.place, document.place).catch(() => null)
+              : Promise.resolve(null),
+          ])
+      : [0, 0];
     if (travelMinutes === null) {
       cursor = null;
       totalTravel = null;
@@ -80,6 +84,8 @@ export async function verifyTrip(
       if (cursor !== null) cursor += travelMinutes;
       if (totalTravel !== null) totalTravel += travelMinutes;
     }
+    if (walkingMinutes === null) totalWalking = null;
+    else if (totalWalking !== null) totalWalking += walkingMinutes;
     const findings = evaluatePolicy(policy, {
       ...input,
       zone: visit.zone,
@@ -106,6 +112,7 @@ export async function verifyTrip(
       arrival: cursor,
       departure,
       travelMinutes,
+      walkingMinutes,
     });
     cursor = departure;
   }
@@ -115,6 +122,7 @@ export async function verifyTrip(
     rulesVersion: "2026-09-11.2",
     visits,
     totalTravel,
+    totalWalking,
     travelBasis: providers.travel.basis,
   };
 }

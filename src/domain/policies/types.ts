@@ -87,6 +87,7 @@ export type VisitResult = {
   arrival: number | null;
   departure: number | null;
   travelMinutes: number | null;
+  walkingMinutes: number | null;
 };
 export type TripResult = {
   mode: TripInput["mode"];
@@ -94,6 +95,7 @@ export type TripResult = {
   rulesVersion: string;
   visits: VisitResult[];
   totalTravel: number | null;
+  totalWalking: number | null;
   travelBasis: "demo" | "kakao" | "unavailable";
 };
 export const statusLabels: Record<Status, string> = {

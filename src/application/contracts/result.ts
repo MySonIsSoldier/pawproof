@@ -17,6 +17,7 @@ export const resultSchema = z.object({
   verifiedAt: z.string(),
   rulesVersion: z.string(),
   totalTravel: minutes,
+  totalWalking: minutes.default(null),
   travelBasis: z.enum(["demo", "kakao", "unavailable"]),
   visits: z
     .array(
@@ -27,6 +28,7 @@ export const resultSchema = z.object({
         arrival: minutes,
         departure: minutes,
         travelMinutes: minutes,
+        walkingMinutes: minutes.default(null),
         policy: extractionSchema.extend({
           rules: z
             .array(ruleSchema.extend({ conflict: z.boolean().optional() }))

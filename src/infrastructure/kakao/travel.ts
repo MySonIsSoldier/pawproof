@@ -15,6 +15,26 @@ export function kakaoTravel(
   apiKey: string,
   fetcher: typeof fetch = fetch,
 ): RouteTimeProvider {
+  async function routeMinutes(
+    url: URL,
+    fetchOptions: RequestInit = {},
+  ): Promise<number | null> {
+    const data = responseSchema.parse(
+      await fetchJson(
+        url,
+        {
+          ...fetchOptions,
+          headers: {
+            Authorization: `KakaoAK ${apiKey}`,
+            ...(fetchOptions.headers || {}),
+          },
+        },
+        fetcher,
+      ),
+    );
+    const route = data.routes.find((item) => item.result_code === 0);
+    return route?.summary ? Math.ceil(route.summary.duration / 60) : null;
+  }
   return {
     basis: "kakao",
     minutes: async (from, to) => {
@@ -26,15 +46,18 @@ export function kakaoTravel(
         summary: "true",
         priority: "RECOMMEND",
       }).toString();
-      const data = responseSchema.parse(
-        await fetchJson(
-          url,
-          { headers: { Authorization: `KakaoAK ${apiKey}` } },
-          fetcher,
-        ),
-      );
-      const route = data.routes.find((r) => r.result_code === 0);
-      return route?.summary ? Math.ceil(route.summary.duration / 60) : null;
+      return routeMinutes(url);
+    },
+    walkingMinutes: async (from, to) => {
+      if (!from.lat || !from.lng || !to.lat || !to.lng) return null;
+      const url = new URL("https://dapi.kakao.com/v2/routing/walk");
+      url.search = new URLSearchParams({
+        start_x: String(from.lng),
+        start_y: String(from.lat),
+        end_x: String(to.lng),
+        end_y: String(to.lat),
+      }).toString();
+      return routeMinutes(url);
     },
   };
 }

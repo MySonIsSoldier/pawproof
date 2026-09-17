@@ -24,6 +24,7 @@ export async function recoverTrip(
     ReturnType<Providers["extractor"]["extract"]>
   >();
   const routes = new Map<string, Promise<number | null>>();
+  const walkingRoutes = new Map<string, Promise<number | null>>();
   const scoped: Providers = {
     ...providers,
     places: {
@@ -48,6 +49,14 @@ export async function recoverTrip(
         if (!routes.has(key)) routes.set(key, providers.travel.minutes(a, b));
         return routes.get(key)!;
       },
+      walkingMinutes: providers.travel.walkingMinutes
+        ? (a, b) => {
+            const key = `${a.id}:${b.id}`;
+            if (!walkingRoutes.has(key))
+              walkingRoutes.set(key, providers.travel.walkingMinutes!(a, b));
+            return walkingRoutes.get(key)!;
+          }
+        : undefined,
     },
   };
   const baseline = await verifyTrip(input, scoped);

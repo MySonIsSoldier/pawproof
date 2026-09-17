@@ -38,6 +38,8 @@ export interface PolicySupplementSource {
 export interface RouteTimeProvider {
   basis: "demo" | "kakao" | "unavailable";
   minutes(from: Place, to: Place): Promise<number | null>;
+  /** Optional pedestrian route duration. It is informational and does not set arrival times. */
+  walkingMinutes?(from: Place, to: Place): Promise<number | null>;
 }
 export type Providers = {
   places: PlaceSource;
