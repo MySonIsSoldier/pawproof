@@ -11,6 +11,7 @@ import type {
 } from "../../domain/policies/types";
 import { assessDiscovery } from "../../domain/policies/discovery";
 import {
+  densityResultSchema,
   inspectionsSchema,
   type Inspection,
 } from "../../application/contracts/discovery";
@@ -34,6 +35,7 @@ type ExplorerState = {
   targets: Destination[];
   message: string;
   locating: boolean;
+  initialized: boolean;
   patch: (next: Partial<Omit<ExplorerState, "patch">>) => void;
 };
 function createExplorerStore() {
@@ -43,7 +45,7 @@ function createExplorerStore() {
     radius: 5000,
     category: "",
     term: "",
-    area: "파주 주변 후보가 많은 지역",
+    area: "장소가 많은 지역을 찾는 중",
     selected: null,
     expanded: false,
     groupIds: [],
@@ -52,6 +54,7 @@ function createExplorerStore() {
     targets: [],
     message: "",
     locating: false,
+    initialized: false,
     patch: (next) => set(next),
   }));
 }
@@ -67,9 +70,38 @@ export function useExplorer(trip: TripInput, active: boolean, route: Place[]) {
       controller.current?.abort();
     };
   }, []);
+  const density = useQuery({
+    queryKey: ["map-density", state.radius],
+    enabled: active && !state.initialized,
+    queryFn: ({ signal }) =>
+      callApi(
+        `/api/discovery/density?radius=${state.radius}`,
+        densityResultSchema,
+        undefined,
+        signal,
+      ),
+  });
+  useEffect(() => {
+    if (!active || state.initialized) return;
+    if (density.data) {
+      store.getState().patch({
+        center: density.data.center,
+        draftCenter: density.data.center,
+        area: density.data.area,
+        initialized: true,
+        message: `${density.data.area}에서 ${density.data.count}곳을 찾았어요.`,
+      });
+    } else if (density.isError) {
+      store.getState().patch({
+        initialized: true,
+        area: "주변 후보를 찾는 지역",
+        message: "장소가 많은 지역을 찾지 못해 기본 지역에서 검색해요.",
+      });
+    }
+  }, [active, density.data, density.isError, state.initialized, store]);
   const search = useQuery({
     queryKey: ["map-places", state.center, state.radius, state.category],
-    enabled: active,
+    enabled: active && state.initialized,
     queryFn: ({ signal }) => {
       const params = new URLSearchParams({
         lat: String(state.center.lat),
@@ -203,6 +235,7 @@ export function useExplorer(trip: TripInput, active: boolean, route: Place[]) {
   }
   return {
     state,
+    density,
     search,
     inspect,
     destination,

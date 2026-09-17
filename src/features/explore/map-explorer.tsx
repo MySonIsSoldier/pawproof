@@ -56,6 +56,7 @@ export function MapExplorer({
   );
   const {
     state,
+    density,
     search,
     inspect,
     destination,
@@ -74,9 +75,11 @@ export function MapExplorer({
       Math.abs(state.center.lng - state.draftCenter.lng) >
     0.0005;
   const error =
+    density.error?.message ||
     search.error?.message ||
     inspect.error?.message ||
     destination.error?.message;
+  const loadingPlaces = density.isFetching || search.isFetching;
   function selectPlace(id: string) {
     state.patch({ selected: id, expanded: true });
     if (!state.checks[id] && !inspect.isPending) inspect.mutate([id]);
@@ -222,10 +225,10 @@ export function MapExplorer({
           <Button
             className="search-this-area"
             variant="primary"
-            disabled={!moved || search.isFetching}
+            disabled={!moved || loadingPlaces}
             onClick={() => setArea(state.draftCenter, "선택한 지도 위치 주변")}
           >
-            {search.isFetching
+            {loadingPlaces
               ? "주변 찾는 중…"
               : moved
                 ? "이 지역 다시 검색"
@@ -249,7 +252,7 @@ export function MapExplorer({
             <div>
               <strong>{state.area}</strong>
               <span>
-                {search.isFetching
+                {loadingPlaces
                   ? "주변 후보를 찾고 있어요"
                   : `${visible.length}곳 · 한국관광공사 제공 후보`}
               </span>
@@ -347,8 +350,9 @@ export function MapExplorer({
                 </ol>
                 <p className="field-caption">
                   최대 100곳을 보여요. 목록에 없다고 동반 불가인 것은 아니에요.
-                  지도 숫자는 가맹점 개수이며, 숫자를 누르면 해당 장소를 모두
-                  확인할 수 있어요. ‘조건 충족’은 확인한 동반 조건 기준이며
+                  지도 숫자는 같은 위치에 겹친 장소 후보의 개수이며, 숫자를
+                  누르면 해당 장소를 모두 확인할 수 있어요. ‘조건 충족’은
+                  확인한 동반 조건 기준이며
                   입장 보장이 아니에요.
                 </p>
               </>

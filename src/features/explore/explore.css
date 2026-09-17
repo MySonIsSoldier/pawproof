@@ -555,10 +555,10 @@
 }
 @media (max-width: 720px) {
   .live-workspace {
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    padding-bottom: calc(86px + env(safe-area-inset-bottom));
   }
   .planner.exploring {
-    padding: 6px 10px calc(90px + env(safe-area-inset-bottom));
+    padding: 6px 10px calc(78px + env(safe-area-inset-bottom));
   }
   .workspace-tabs {
     position: fixed;
@@ -643,7 +643,7 @@
     margin-inline: 6px;
   }
   .live-workspace .mobile-check-bar {
-    bottom: calc(72px + env(safe-area-inset-bottom));
+    bottom: calc(64px + env(safe-area-inset-bottom));
   }
 }
 @media print {

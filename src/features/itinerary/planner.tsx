@@ -146,7 +146,7 @@ function PlannerScreen({
                 </span>
                 <div>
                   <h2>어디로 떠날까요?</h2>
-                  <p>방문할 곳을 3~5곳 담아주세요.</p>
+                  <p>방문할 곳을 1~5곳 담아주세요.</p>
                 </div>
                 <span className="counter">{trip.visits.length}곳</span>
               </div>
@@ -225,6 +225,7 @@ function PlannerScreen({
                 places={trip.visits.map((v) => placeFor(v.placeId))}
                 result={result}
                 stale={stale}
+                mode={trip.mode}
               />
               <VerificationPanel {...model} />
               <AlternativesPanel {...model} />

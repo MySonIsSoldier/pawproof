@@ -7,6 +7,8 @@ export type KakaoMap = {
   getCenter(): LatLng;
   relayout(): void;
   setLevel(level: number): void;
+  setDraggable?(draggable: boolean): void;
+  setZoomable?(zoomable: boolean): void;
   getLevel(): number;
   getProjection(): {
     containerPointFromCoords(point: LatLng): { x: number; y: number };
@@ -26,7 +28,14 @@ export type KakaoMaps = {
   LatLng: new (lat: number, lng: number) => LatLng;
   Map: new (
     container: HTMLElement,
-    options: { center: LatLng; level: number },
+    options: {
+      center: LatLng;
+      level: number;
+      draggable?: boolean;
+      scrollwheel?: boolean;
+      disableDoubleClickZoom?: boolean;
+      keyboardShortcuts?: boolean;
+    },
   ) => KakaoMap;
   LatLngBounds: new () => { extend(point: LatLng): void };
   Polyline: new (options: {

@@ -1,13 +1,16 @@
 import type { Place, TripResult } from "../../domain/policies/types";
 import { Icon } from "../../components/icon";
+import { RouteMap } from "./route-map";
 export function RouteBoard({
   places,
   result,
   stale,
+  mode,
 }: {
   places: Place[];
   result: TripResult | null;
   stale: boolean;
+  mode: "demo" | "live";
 }) {
   const positions = [
     [66, 200],
@@ -24,7 +27,14 @@ export function RouteBoard({
         </span>
         <span>방문 순서</span>
       </div>
-      <div className="route-illustration">
+      {mode === "live" && places.length ? (
+        <>
+          <RouteMap places={places} />
+          <p className="field-caption route-map-caption">
+            실제 카카오 지도에 방문 순서와 이동 경로를 표시해요. 이 지도는 보기 전용입니다.
+          </p>
+        </>
+      ) : <div className="route-illustration">
         <svg
           viewBox="0 0 480 280"
           role="img"
@@ -108,7 +118,7 @@ export function RouteBoard({
           )}
         </svg>
         <span className="map-compass">N ↑</span>
-      </div>
+      </div>}
       <div className="board-footer">
         <span>
           <Icon name="car" size={16} />
@@ -121,12 +131,16 @@ export function RouteBoard({
             : ""}
         </span>
       </div>
-      <p className="field-caption">
-        실제 지도 대신 방문 순서를 보여드려요.
-        {result?.travelBasis === "demo" && " 이동시간은 가상 예시예요."}
-        {result?.travelBasis === "kakao" &&
-          " 이동시간은 조회 시점 교통 기준이며 방문일 예측은 아니에요."}
-      </p>
+      {mode === "demo" && (
+        <p className="field-caption">
+          실제 지도 대신 방문 순서를 보여드려요. 이동시간은 가상 예시예요.
+        </p>
+      )}
+      {mode === "live" && result?.travelBasis === "kakao" && (
+        <p className="field-caption">
+          이동시간은 조회 시점 교통 기준이며 방문일 예측은 아니에요.
+        </p>
+      )}
     </section>
   );
 }

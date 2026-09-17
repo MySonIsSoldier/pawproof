@@ -6,7 +6,7 @@ import { StatusBadge } from "./status-badge";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { PolicySources } from "./policy-sources";
-import { readableEvidence } from "../../domain/policies/presentation";
+import { readableEvidence, readableMessage } from "../../domain/policies/presentation";
 import {
   Dialog,
   DialogContent,
@@ -68,7 +68,7 @@ export function EvidenceDialog({
           {result.findings.map((finding, index) => (
             <section key={index} className={`finding ${finding.status}`}>
               <StatusBadge status={finding.status} />
-              <p>{finding.message}</p>
+              <p>{readableMessage(finding.message)}</p>
               {finding.quote ? (
                 <>
                   <blockquote>{readableEvidence(finding.quote)}</blockquote>

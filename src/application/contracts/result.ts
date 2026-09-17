@@ -87,7 +87,7 @@ export const resultSchema = z.object({
         ),
       }),
     )
-    .min(3)
+    .min(1)
     .max(5),
 });
 export const searchResultSchema = z.object({

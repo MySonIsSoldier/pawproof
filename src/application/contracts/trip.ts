@@ -37,7 +37,7 @@ export const tripSchema = z
     equipment: z
       .array(z.enum(["목줄", "이동장", "유모차", "입마개", "예약", "추가요금"]))
       .max(6),
-    visits: z.array(visitSchema).min(3).max(5),
+    visits: z.array(visitSchema).min(1).max(5),
   })
   .strict()
   .superRefine((trip, ctx) => {

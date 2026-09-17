@@ -71,7 +71,7 @@ export function useTripOperations() {
     const parsed = tripSchema.safeParse(state.trip);
     if (!parsed.success) {
       state.fail(
-        "반려견의 이름·견종·체중, 날짜와 방문지 3~5곳을 확인해 주세요.",
+        "반려견의 이름·견종·체중, 날짜와 방문지 1~5곳을 확인해 주세요.",
       );
       return null;
     }

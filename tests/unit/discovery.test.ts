@@ -19,7 +19,11 @@ import {
   telephoneLink,
 } from "../../src/lib/urls/place-contact.ts";
 import { ktoSource } from "../../src/infrastructure/kto/source.ts";
-import { readableEvidence } from "../../src/domain/policies/presentation.ts";
+import {
+  readableEvidence,
+  readableMessage,
+} from "../../src/domain/policies/presentation.ts";
+import { densestCenter } from "../../src/application/places/density.ts";
 
 test("provider field names are hidden from user-facing evidence", () => {
   assert.equal(
@@ -28,6 +32,22 @@ test("provider field names are hidden from user-facing evidence", () => {
     ),
     "맹견의 경우, 입마개 착용 필수\n상시 개방",
   );
+  assert.equal(
+    readableMessage("etcAcmpyInfo: - 맹견의 경우, 입마개 착용 필수"),
+    "맹견이라면 입마개를 착용해 주세요.",
+  );
+});
+
+test("density selection centers the map on the largest nearby place cluster", () => {
+  const places = [
+    { ...demoPlaces[0], lat: 37.6, lng: 126.8 },
+    { ...demoPlaces[1], lat: 37.601, lng: 126.801 },
+    { ...demoPlaces[2], lat: 37.602, lng: 126.802 },
+    { ...demoPlaces[0], id: "far", lat: 37.9, lng: 127.3 },
+  ];
+  const result = densestCenter(places, 1_000);
+  assert.equal(result?.count, 3);
+  assert.deepEqual(result?.center, { lat: 37.6, lng: 126.8 });
 });
 
 test("map filters preserve missing weight, scope and equality boundaries", () => {

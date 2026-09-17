@@ -4,7 +4,7 @@ import { buildPreparation } from "../../domain/itinerary/preparation";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { Disclosure } from "../../components/ui/accordion";
-import { readableEvidence } from "../../domain/policies/presentation";
+import { readableEvidence, readableMessage } from "../../domain/policies/presentation";
 export function Preparation({
   trip,
   result,
@@ -99,7 +99,7 @@ export function Preparation({
               ...new Set(
                 v.findings
                   .filter((f) => f.status === "confirm")
-                  .map((f) => f.message),
+                  .map((f) => readableMessage(f.message)),
               ),
             ];
             const text = `${trip.date} ${formatTime(v.arrival)}에 ${trip.pets.map((p) => `${p.breed} ${p.weight}kg`).join(", ")} 총 ${trip.pets.length}마리와 ${v.visit.zone === "indoor" ? "실내" : "실외"} 방문을 계획하고 있어요. 다음 내용을 확인 부탁드립니다.\n${topics.join("\n")}`;

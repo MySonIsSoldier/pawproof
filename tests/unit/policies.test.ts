@@ -102,6 +102,10 @@ test("stay through closing, unknown travel and Korean weekday", () => {
 test("schema rejects invalid date, duplicate IDs and mixed data modes", () => {
   const trip = createDemoTrip();
   assert.equal(
+    tripSchema.safeParse({ ...trip, visits: [trip.visits[0]] }).success,
+    true,
+  );
+  assert.equal(
     tripSchema.safeParse({ ...trip, date: "2026-02-30" }).success,
     false,
   );

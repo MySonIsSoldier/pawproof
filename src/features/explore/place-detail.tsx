@@ -5,13 +5,17 @@ import type {
   Finding,
   Status,
 } from "../../domain/policies/types";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { inquiryResultSchema } from "../../application/contracts/discovery";
 import type { Inspection } from "../../application/contracts/discovery";
 import { inquiryText } from "../../domain/policies/discovery";
-import { readableEvidence } from "../../domain/policies/presentation";
+import { readableEvidence, readableMessage } from "../../domain/policies/presentation";
 import { kakaoPlaceSearch, telephoneLink } from "../../lib/urls/place-contact";
 import { Button } from "../../components/ui/button";
 import { Disclosure } from "../../components/ui/accordion";
 import { useNotify } from "../../components/notifications/with-notifications";
+import { callApi } from "../itinerary/api";
 export const mapStatusLabels: Record<Status, string> = {
   available: "조건 충족",
   prepare: "준비 필요",
@@ -53,7 +57,54 @@ export function PlaceDetail({
   const remaining = findings.filter((f) => f.status !== "available");
   const vaccination = remaining.find((f) => f.kind === "vaccination");
   const otherRemaining = remaining.filter((f) => f.kind !== "vaccination");
-  const inquiry = inquiryText(place, trip, zone, findings);
+  const fallbackInquiry = inquiryText(place, trip, zone, findings);
+  const inquiryMutation = useMutation({
+    mutationFn: (request: { body: unknown; signal: AbortSignal }) =>
+      callApi("/api/discovery/inquiry", inquiryResultSchema, request.body, request.signal),
+  });
+  const inquiry = inquiryMutation.data?.text ?? fallbackInquiry;
+  const inquiryLoading = inquiryMutation.isPending;
+  const petSignature = trip.pets
+    .map((pet) => `${pet.breed}:${pet.weight}`)
+    .join("|");
+  const findingSignature = findings
+    .map((finding) => `${finding.status}:${finding.kind}:${readableMessage(finding.message)}`)
+    .join("|");
+  useEffect(() => {
+    const controller = new AbortController();
+    inquiryMutation.mutate({
+      signal: controller.signal,
+      body: {
+        place: {
+          id: place.id,
+          name: place.name,
+          category: place.category,
+          address: place.address,
+        },
+        date: trip.date,
+        zone,
+        pets: trip.pets.map(({ breed, weight }) => ({ breed, weight })),
+        findings: findings.map(({ status, kind, message, needs }) => ({
+          status,
+          kind,
+          message: readableMessage(message),
+          needs,
+        })),
+      },
+    });
+    return () => controller.abort();
+    // The signatures keep this request focused on the selected place and the
+    // conditions that shape its questions, without refetching on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    inquiryMutation.mutate,
+    place.id,
+    check?.policy.fetchedAt,
+    trip.date,
+    zone,
+    petSignature,
+    findingSignature,
+  ]);
   async function copy() {
     try {
       await navigator.clipboard.writeText(inquiry);
@@ -103,7 +154,7 @@ export function PlaceDetail({
           <h3>여기까지 확인했어요</h3>
           <ul>
             {confirmed.map((f, i) => (
-              <li key={i}>{f.message}</li>
+              <li key={i}>{readableMessage(f.message)}</li>
             ))}
           </ul>
         </div>
@@ -111,7 +162,7 @@ export function PlaceDetail({
       {vaccination && (
         <div className="vaccination-notice">
           <h3>예방접종 제한을 확인해 주세요</h3>
-          <p>{vaccination.message}</p>
+          <p>{readableMessage(vaccination.message)}</p>
         </div>
       )}
       {!!otherRemaining.length && (
@@ -123,7 +174,7 @@ export function PlaceDetail({
           </h3>
           <ul>
             {otherRemaining.map((f, i) => (
-              <li key={i}>{f.message}</li>
+            <li key={i}>{readableMessage(f.message)}</li>
             ))}
           </ul>
         </div>
@@ -150,9 +201,14 @@ export function PlaceDetail({
         </a>
       </div>
       <Disclosure title="이렇게 문의해 보세요">
+        {inquiryLoading && (
+          <p className="field-caption" role="status">
+            실제로 보낼 수 있는 말투로 문의 문구를 정리하고 있어요…
+          </p>
+        )}
         <p className="inquiry-copy">{inquiry}</p>
-        <Button variant="outline" onClick={() => void copy()}>
-          문의 문구 복사
+        <Button variant="outline" disabled={inquiryLoading} onClick={() => void copy()}>
+          {inquiryLoading ? "문구 만드는 중…" : "문의 문구 복사"}
         </Button>
       </Disclosure>
       {check && (

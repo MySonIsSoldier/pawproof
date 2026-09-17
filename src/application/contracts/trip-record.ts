@@ -41,7 +41,7 @@ const summarySchema = resultSchema
           })
           .strict(),
       )
-      .min(3)
+      .min(1)
       .max(5),
   })
   .strict();

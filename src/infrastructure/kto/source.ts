@@ -203,8 +203,22 @@ export function ktoSource(
         "relaPosesFclty",
         "relaFrnshPrdlst",
       ];
+      const fieldLabels: Record<string, string> = {
+        acmpyTypeCd: "동반 가능 구역",
+        acmpyPsblCpam: "동반 가능한 반려동물",
+        acmpyNeedMtr: "방문객 준비사항",
+        relaAcdntRiskMtr: "안전 안내",
+        etcAcmpyInfo: "추가 동반 안내",
+        acmpyZone: "동반 구역",
+        relaPosesFclty: "현장에서 제공하는 시설",
+        relaFrnshPrdlst: "현장에서 제공하는 물품",
+      };
       const regulations = fields
-        .map((key) => (pets[0]?.[key] ? `${key}: ${plain(pets[0][key])}` : ""))
+        .map((key) =>
+          pets[0]?.[key]
+            ? `${fieldLabels[key] ?? "추가 안내"}: ${plain(pets[0][key])}`
+            : "",
+        )
         .filter(Boolean);
       const hours = Object.entries(intro[0] || {})
         .filter(([key]) =>
@@ -212,7 +226,18 @@ export function ktoSource(
             key,
           ),
         )
-        .map(([key, value]) => `${key}: ${plain(value)}`);
+        .map(([key, value]) => {
+          const label = /opentime|usetime/i.test(key)
+            ? "이용 시간 안내"
+            : /restdate|resttime/i.test(key)
+              ? "휴무 안내"
+              : /chkpet/i.test(key)
+                ? "반려견 동반 안내"
+                : /reservation/i.test(key)
+                  ? "예약 안내"
+                  : "문의 연락처";
+          return `${label}: ${plain(value)}`;
+        });
       const raw = [...new Set([...regulations, ...hours])].join("\n");
       return {
         place,

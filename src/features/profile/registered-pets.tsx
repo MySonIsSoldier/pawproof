@@ -26,6 +26,10 @@ function Picker({
     a.name.trim() === b.name.trim() &&
     a.breed.trim() === b.breed.trim() &&
     a.weight === b.weight;
+  const isBlankPet = (pet: Pet) =>
+    !pet.name.trim() &&
+    (!pet.breed.trim() || pet.breed.trim() === "모름") &&
+    (!Number.isFinite(pet.weight) || pet.weight === 5);
   return (
     <div className="registered-pets">
       <div className="search-heading">
@@ -61,10 +65,16 @@ function Picker({
                         : [{ name: "", breed: "모름", weight: 5 }],
                     );
                   } else if (pets.length < 5) {
-                    change([
-                      ...pets,
-                      { name: pet.name, breed: pet.breed, weight: pet.weight },
-                    ]);
+                    const selected = {
+                      name: pet.name,
+                      breed: pet.breed,
+                      weight: pet.weight,
+                    };
+                    change(
+                      pets[0] && isBlankPet(pets[0])
+                        ? [selected, ...pets.slice(1)]
+                        : [...pets, selected],
+                    );
                   }
                 }}
               >

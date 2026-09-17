@@ -1,5 +1,6 @@
 import type { Place, Policy, TripInput, Zone, Finding } from "./types.ts";
 import { evaluatePolicy, summarize } from "./evaluate.ts";
+import { readableMessage } from "./presentation.ts";
 
 export function assessDiscovery(
   policy: Policy | undefined,
@@ -54,6 +55,6 @@ export function inquiryText(
     .join(", ");
   const questions = findings
     .filter((f) => f.status !== "available")
-    .map((f) => f.message);
-  return `안녕하세요. ${place.name} 이용 조건을 문의드려요.\n\n${trip.date}에 ${zone === "indoor" ? "실내" : "야외/테라스"}로 반려견 ${trip.pets.length}마리(${pets})와 방문하려고 합니다. 이용 가능한지 확인 부탁드립니다.\n\n확인하고 싶은 내용:\n${questions.length ? questions.map((q) => `- ${q}`).join("\n") : "- 방문일 동반 이용 조건과 필요한 준비사항"}\n\n가능 여부와 방문 전에 준비할 사항을 알려주시면 감사하겠습니다.`;
+    .map((f) => readableMessage(f.message));
+  return `안녕하세요. 방문 가능 여부를 문의드려요.\n\n${trip.date}에 ${place.name}에 ${zone === "indoor" ? "실내" : "야외/테라스"}로 반려견 ${trip.pets.length}마리(${pets})와 방문하려고 합니다.\n방문 전에 아래 내용을 확인 부탁드립니다.\n${questions.length ? questions.map((q) => `- ${q}`).join("\n") : "- 반려견 동반 가능 여부와 필요한 준비사항"}\n\n가능 여부와 준비할 사항을 알려주시면 감사하겠습니다.`;
 }

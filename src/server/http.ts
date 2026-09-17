@@ -32,7 +32,7 @@ export function errorResponse(error: unknown): Response {
     return json(
       {
         error:
-          "입력값을 확인해 주세요. 반려견 정보와 서로 다른 방문지 3~5곳이 필요해요.",
+          "입력값을 확인해 주세요. 반려견 정보와 서로 다른 방문지 1~5곳이 필요해요.",
         code: "INVALID_INPUT",
       },
       400,
