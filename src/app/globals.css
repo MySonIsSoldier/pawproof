@@ -982,7 +982,6 @@ select {
     display: block !important;
   }
   .summary-column,
-  .place-search,
   .profile-panel,
   .visit-actions,
   .visit-fields {
@@ -1033,11 +1032,8 @@ select {
 .registered-pets .search-heading a { font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
 .registered-pet-chip[data-selected="true"] { border: 2px solid var(--forest); box-shadow: 0 0 0 2px rgb(47 107 80 / 12%); color: var(--forest); font-weight: 700; }
 .registered-pets-hint { margin-top: 8px; }
-.search-suggestions { padding-top: 18px; }
-.search-suggestions h4 { margin: 16px 0 6px; font-size: 14px; }
-.region-discovery { margin-block: 16px 20px; }
-.region-discovery .ui-accordion-body, .food-visit-guide .ui-accordion-body { font-size: 13px; line-height: 1.7; }
-.region-discovery a, .food-visit-guide a { text-decoration: underline; text-underline-offset: 3px; }
+.food-visit-guide .ui-accordion-body { font-size: 13px; line-height: 1.7; }
+.food-visit-guide a { text-decoration: underline; text-underline-offset: 3px; }
 .food-visit-guide { padding: 12px 16px; margin-block: 18px; border-radius: 16px; background: var(--sage); }
 .food-visit-guide h4 { margin-block: 18px 6px; }
 .food-visit-guide li { margin-block: 8px; overflow-wrap: anywhere; }

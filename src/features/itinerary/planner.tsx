@@ -3,7 +3,6 @@ import { useState } from "react";
 import { MapExplorer } from "../explore/map-explorer";
 import { CloudTrips } from "../account/cloud-trips";
 import { ProfileEditor } from "./profile-editor";
-import { PlaceSearch } from "./place-search";
 import { FoodVisitGuide } from "./food-visit-guide";
 import { VisitCard } from "./visit-card";
 import { RouteBoard } from "./route-board";
@@ -206,15 +205,6 @@ function PlannerScreen({
               {trip.mode === "live" && (
                 <FoodVisitGuide
                   places={trip.visits.map((visit) => placeFor(visit.placeId))}
-                />
-              )}
-              {!showMap && (
-                <PlaceSearch
-                  key={trip.mode}
-                  mode={trip.mode}
-                  selected={trip.visits.map((v) => v.placeId)}
-                  busy={!!busy}
-                  add={add}
                 />
               )}
             </section>

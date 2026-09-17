@@ -246,8 +246,7 @@
   border-color: #9eb7a5;
 }
 .ui-control:focus-visible,
-.pet-fields .ui-input:focus-visible,
-.search-input .ui-input:focus-visible {
+.pet-fields .ui-input:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 1px;
   border-color: var(--focus-ring);
