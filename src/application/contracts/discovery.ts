@@ -6,14 +6,6 @@ export const nearbyQuerySchema = z.object({
   radius: z.coerce.number().int().min(1000).max(20000).default(5000),
   category: z.enum(["관광지", "식당", "카페"]).optional(),
 });
-export const densityQuerySchema = z.object({
-  radius: z.coerce.number().int().min(1000).max(20000).default(5000),
-});
-export const densityResultSchema = z.object({
-  center: z.object({ lat: z.number().finite(), lng: z.number().finite() }),
-  area: z.string().min(1).max(80),
-  count: z.number().int().nonnegative(),
-});
 export const inspectInputSchema = z
   .object({
     ids: z

@@ -56,7 +56,6 @@ export function MapExplorer({
   );
   const {
     state,
-    density,
     search,
     inspect,
     destination,
@@ -75,11 +74,10 @@ export function MapExplorer({
       Math.abs(state.center.lng - state.draftCenter.lng) >
     0.0005;
   const error =
-    density.error?.message ||
     search.error?.message ||
     inspect.error?.message ||
     destination.error?.message;
-  const loadingPlaces = density.isFetching || search.isFetching;
+  const loadingPlaces = search.isFetching;
   function selectPlace(id: string) {
     state.patch({ selected: id, expanded: true });
     if (!state.checks[id] && !inspect.isPending) inspect.mutate([id]);
