@@ -231,6 +231,7 @@
   background: #fff1d6;
   color: #805813;
   margin: 0;
+  margin-left: 8px;
 }
 .map-status.available {
   background: #e1efe5;
