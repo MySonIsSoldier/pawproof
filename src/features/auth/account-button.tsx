@@ -18,6 +18,7 @@ export function AccountButton() {
               src={auth.user.photoURL || undefined}
               alt=""
               referrerPolicy="no-referrer"
+              style={{ borderRadius: "100%", border: "1px solid var(--line)" }}
             />
             <AvatarFallback>
               {Array.from(
