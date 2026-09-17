@@ -10,7 +10,10 @@ import { useMutation } from "@tanstack/react-query";
 import { inquiryResultSchema } from "../../application/contracts/discovery";
 import type { Inspection } from "../../application/contracts/discovery";
 import { inquiryText } from "../../domain/policies/discovery";
-import { readableEvidence, readableMessage } from "../../domain/policies/presentation";
+import {
+  readableEvidence,
+  readableMessage,
+} from "../../domain/policies/presentation";
 import { kakaoPlaceSearch, telephoneLink } from "../../lib/urls/place-contact";
 import { Button } from "../../components/ui/button";
 import { Disclosure } from "../../components/ui/accordion";
@@ -41,7 +44,9 @@ export function ConditionBadges({
   const entryKnown = hasKnownEntry(findings);
   return (
     <span className="status-badges">
-      {entryKnown && <span className="map-status available">반려견 출입 가능</span>}
+      {entryKnown && (
+        <span className="map-status available">반려견 출입 가능</span>
+      )}
       {(!entryKnown || status !== "available") && (
         <span className={`map-status ${status}`}>
           {mapStatusLabels[status]}
@@ -89,7 +94,12 @@ export function PlaceDetail({
   const fallbackInquiry = inquiryText(place, trip, zone, findings);
   const inquiryMutation = useMutation({
     mutationFn: (request: { body: unknown; signal: AbortSignal }) =>
-      callApi("/api/discovery/inquiry", inquiryResultSchema, request.body, request.signal),
+      callApi(
+        "/api/discovery/inquiry",
+        inquiryResultSchema,
+        request.body,
+        request.signal,
+      ),
   });
   const inquiry = inquiryMutation.data?.text ?? fallbackInquiry;
   const inquiryLoading = inquiryMutation.isPending;
@@ -97,7 +107,10 @@ export function PlaceDetail({
     .map((pet) => `${pet.breed}:${pet.weight}`)
     .join("|");
   const findingSignature = findings
-    .map((finding) => `${finding.status}:${finding.kind}:${readableMessage(finding.message)}`)
+    .map(
+      (finding) =>
+        `${finding.status}:${finding.kind}:${readableMessage(finding.message)}`,
+    )
     .join("|");
   useEffect(() => {
     const controller = new AbortController();
@@ -144,7 +157,7 @@ export function PlaceDetail({
   }
   return (
     <article className="explore-detail" aria-label={`${place.name} 상세`}>
-      <Button variant="link" onClick={back}>
+      <Button variant="link" onClick={back} style={{ marginRight: "8px" }}>
         ← 장소 목록
       </Button>
       <ConditionBadges status={status} findings={findings} />
@@ -154,25 +167,37 @@ export function PlaceDetail({
       </p>
       <p className="field-caption">
         {check
-          ? `공식 안내 조회: ${new Date(check.policy.fetchedAt).toLocaleString("ko-KR", {
-              timeZone: "Asia/Seoul",
-            })}`
+          ? `공식 안내 조회: ${new Date(check.policy.fetchedAt).toLocaleString(
+              "ko-KR",
+              {
+                timeZone: "Asia/Seoul",
+              },
+            )}`
           : "공식 동반 규정은 아직 조회하지 않았어요."}
       </p>
       {(place.category === "식당" || place.category === "카페") && (
-        <section className="legal-guidance" aria-label="음식점 반려동물 출입 기준">
+        <section
+          className="legal-guidance"
+          aria-label="음식점 반려동물 출입 기준"
+        >
           <h3>음식점·카페 방문 전 알아둘 기준</h3>
           <p>
-            {petFoodVenueGuidance.effectiveFrom.replace("-", ".").replace("-", ".")}부터 적용되는
-            공식 기준이에요. 이 장소가 실제로 반려동물 동반 영업장으로 신고·표시됐는지는
-            별도로 확인해야 해요.
+            {petFoodVenueGuidance.effectiveFrom
+              .replace("-", ".")
+              .replace("-", ".")}
+            부터 적용되는 공식 기준이에요. 이 장소가 실제로 반려동물 동반
+            영업장으로 신고·표시됐는지는 별도로 확인해야 해요.
           </p>
           <ul>
             {petFoodVenueGuidance.items.slice(1).map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <a href={petFoodVenueGuidance.sourceUrl} target="_blank" rel="noreferrer">
+          <a
+            href={petFoodVenueGuidance.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
             법령 원문 확인 ↗
           </a>
         </section>
@@ -180,8 +205,9 @@ export function PlaceDetail({
       {place.address.startsWith("서울") && (
         <Disclosure title="서울 지역 참고 여행 자료">
           <p className="field-caption">
-            아래 자료는 장소 후보와 동선을 넓히기 위한 비공식 참고 자료예요. 출입 가능
-            판정에는 사용하지 않으며, 방문 전 공식 안내를 다시 확인해 주세요.
+            아래 자료는 장소 후보와 동선을 넓히기 위한 비공식 참고 자료예요.
+            출입 가능 판정에는 사용하지 않으며, 방문 전 공식 안내를 다시 확인해
+            주세요.
           </p>
           <ul className="research-reference-list">
             {seoulResearchReferences.map((reference) => (
@@ -246,7 +272,7 @@ export function PlaceDetail({
           </h3>
           <ul>
             {otherRemaining.map((f, i) => (
-            <li key={i}>{readableMessage(f.message)}</li>
+              <li key={i}>{readableMessage(f.message)}</li>
             ))}
           </ul>
         </div>
@@ -279,7 +305,11 @@ export function PlaceDetail({
           </p>
         )}
         <p className="inquiry-copy">{inquiry}</p>
-        <Button variant="outline" disabled={inquiryLoading} onClick={() => void copy()}>
+        <Button
+          variant="outline"
+          disabled={inquiryLoading}
+          onClick={() => void copy()}
+        >
           {inquiryLoading ? "문구 만드는 중…" : "문의 문구 복사"}
         </Button>
       </Disclosure>
