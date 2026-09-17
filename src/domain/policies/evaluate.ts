@@ -15,6 +15,7 @@ const labels: Record<RuleKind, string> = {
   count: "동반 마릿수",
   breed: "견종 제한",
   equipment: "준비사항",
+  vaccination: "예방접종 증빙",
   hours: "운영시간",
   closedDays: "방문일 휴무 여부",
 };
@@ -59,6 +60,15 @@ function checkRule(rule: Rule, context: Context): Finding {
         ? "선택한 구역은 반려견 출입이 제한돼요."
         : "선택한 구역에 반려견 동반이 가능해요.",
     );
+  if (rule.kind === "vaccination") {
+    if (rule.operator === "allow")
+      return result("available", "예방접종 증빙이 필수라는 제한은 확인되지 않았어요.");
+    return result(
+      "confirm",
+      "예방접종 증빙을 확인해 주세요. 예방접종 증명서·수첩 원본/사진·건강앱 등 업체가 인정하는 방법을 문의해 주세요.",
+      rule.items,
+    );
+  }
   if (rule.kind === "weight" || rule.kind === "count") {
     if (rule.operator === "allow")
       return result(
@@ -177,7 +187,9 @@ export function evaluatePolicy(policy: Policy, context: Context): Finding[] {
         needs: [],
       });
   }
-  for (const kind of Object.keys(labels) as RuleKind[]) {
+  for (const kind of (Object.keys(labels) as RuleKind[]).filter(
+    (kind) => kind !== "vaccination",
+  )) {
     if (!applicable.some((r) => r.kind === kind))
       findings.push({
         status: "confirm",

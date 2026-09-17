@@ -64,18 +64,7 @@ test("map filters, precise uncertainty, inquiry and notebook share the same gues
   await expect(
     explorer.getByRole("button", { name: "현재 후보 조회 완료" }),
   ).toBeVisible();
-  await explorer
-    .getByRole("checkbox", { name: "우리 조건과 불일치하는 곳 제외" })
-    .check();
-  await expect(explorer.locator(".explore-result")).toHaveCount(2);
-  await explorer
-    .getByRole("checkbox", { name: "조건이 확인된 곳만 보기" })
-    .check();
-  await expect(explorer.locator(".explore-result")).toHaveCount(1);
   expect(inspections).toBe(1);
-  await explorer
-    .getByRole("checkbox", { name: "조건이 확인된 곳만 보기" })
-    .uncheck();
   await explorer
     .locator(".explore-result")
     .filter({ hasText: "지도 테스트 장소 3" })

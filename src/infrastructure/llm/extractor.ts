@@ -22,6 +22,8 @@ KTO source field semantics: acmpyTypeCd describes permitted areas; acmpyPsblCpam
 A limit with an alternative or exception that depends on age or any unsupported condition MUST use operator unknown and explain the whole condition in unresolved. Example: 17kg 이하 또는 6개월 미만 대형견 means weight/unknown, NOT unconditional weight/lte/17. Never drop an alternative or quote only the restrictive part of its sentence. Do not turn that exception into a blanket allowance either.
 Municipal CSV fields: 동행시 이용 가능 공간 describes areas, 제한사항 describes entry constraints, 이용시간 and 휴무 describe schedules. General 반려동물 입장 가능 or 제한 없음 does NOT explicitly establish unlimited party size; count/allow requires explicit 마릿수 제한 없음. Fields are independent: missing hours or requirements stay absent. An outdoor-only allowed area does not prove all indoor areas are prohibited. Do not extract non-pet admission fees as mandatory pet surcharges. Preserve break times, seasonal schedules and special services as unresolved without replacing them with a continuous schedule.
 EVIDENCE SPANS: Every quote must be ONE contiguous exact substring, never concatenate sentences from different fields or remove field labels between them. Emit separate equipment/all rules for independently quoted requirements; never merge their quotes. For example acmpyNeedMtr: 목줄 착용 and etcAcmpyInfo: 배변봉투 지참 produce TWO rules, each with its own exact quote. Conditional requirements such as 맹견의 경우 입마개, 마킹시 매너벨트, or 관리자 판단 have unsupported predicates: keep the whole conditional sentence in unresolved, do NOT demand that equipment from every dog. Do not infer an unconditional entry denial from a partial-zone restriction or a ban on an activity such as riding a luge.`;
+const vaccinationGuidance = `Vaccination rules: emit kind vaccination only when the source explicitly mentions vaccination, an immunization record, or proof of vaccination. Use operator all when proof or confirmation is required and put the requested evidence in items; use allow only when the source explicitly says proof is not required; use unknown when the requirement is ambiguous. Never infer this rule from generic pet-entry language.`;
+
 export function openRouterExtractor(
   config: { apiKey: string; model: string },
   fetcher: typeof fetch = fetch,
@@ -49,7 +51,7 @@ export function openRouterExtractor(
               max_price: { prompt: 1, completion: 3 },
             },
             messages: [
-              { role: "system", content: system },
+              { role: "system", content: `${system}\n${vaccinationGuidance}` },
               {
                 role: "user",
                 content: JSON.stringify({ source: document.raw }),

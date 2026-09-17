@@ -48,6 +48,8 @@ export function PlaceDetail({
   const telephone = telephoneLink(check?.phone ?? null);
   const confirmed = findings.filter((f) => f.status === "available");
   const remaining = findings.filter((f) => f.status !== "available");
+  const vaccination = remaining.find((f) => f.kind === "vaccination");
+  const otherRemaining = remaining.filter((f) => f.kind !== "vaccination");
   const inquiry = inquiryText(place, trip, zone, findings);
   async function copy() {
     try {
@@ -97,7 +99,13 @@ export function PlaceDetail({
           </ul>
         </div>
       )}
-      {!!remaining.length && (
+      {vaccination && (
+        <div className="vaccination-notice">
+          <h3>예방접종 제한을 확인해 주세요</h3>
+          <p>{vaccination.message}</p>
+        </div>
+      )}
+      {!!otherRemaining.length && (
         <div className="condition-missing">
           <h3>
             {status === "blocked"
@@ -105,7 +113,7 @@ export function PlaceDetail({
               : "방문 전 확인할 부분"}
           </h3>
           <ul>
-            {remaining.map((f, i) => (
+            {otherRemaining.map((f, i) => (
               <li key={i}>{f.message}</li>
             ))}
           </ul>

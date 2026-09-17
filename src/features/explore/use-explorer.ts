@@ -29,8 +29,6 @@ type ExplorerState = {
   selected: string | null;
   expanded: boolean;
   groupIds: string[];
-  fitOnly: boolean;
-  confirmedOnly: boolean;
   zone: Zone;
   checks: Record<string, Inspection>;
   targets: Destination[];
@@ -45,12 +43,10 @@ function createExplorerStore() {
     radius: 5000,
     category: "",
     term: "",
-    area: "고양 일산호수공원 주변",
+    area: "파주 주변 후보가 많은 지역",
     selected: null,
     expanded: false,
     groupIds: [],
-    fitOnly: false,
-    confirmedOnly: false,
     zone: "outdoor",
     checks: {},
     targets: [],
@@ -145,15 +141,7 @@ export function useExplorer(trip: TripInput, active: boolean, route: Place[]) {
       }),
     [search.data, state.checks, trip, state.zone],
   );
-  const visible = useMemo(
-    () =>
-      candidates.filter(
-        (c) =>
-          (!state.fitOnly || c.status !== "blocked") &&
-          (!state.confirmedOnly || ["available", "prepare"].includes(c.status)),
-      ),
-    [candidates, state.fitOnly, state.confirmedOnly],
-  );
+  const visible = candidates;
   const routeCandidates = route
     .filter((p) => !candidates.some((c) => c.place.id === p.id))
     .map((place) => {

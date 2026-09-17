@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
 import { useAuth } from "../auth/auth-provider";
 import { useProfile } from "./use-profile";
 import type { Pet } from "../../domain/policies/types";
@@ -14,6 +13,7 @@ export function RegisteredPets(props: {
   return auth.user ? <Picker key={auth.user.uid} {...props} /> : null;
 }
 function Picker({
+  pets,
   change,
   busy,
 }: {
@@ -22,7 +22,10 @@ function Picker({
   busy: boolean;
 }) {
   const profile = useProfile();
-  const [selected, setSelected] = useState<string[]>([]);
+  const samePet = (a: Pet, b: Pet) =>
+    a.name.trim() === b.name.trim() &&
+    a.breed.trim() === b.breed.trim() &&
+    a.weight === b.weight;
   return (
     <div className="registered-pets">
       <div className="search-heading">
@@ -42,33 +45,36 @@ function Picker({
               <Button
                 key={pet.id}
                 variant="outline"
-                aria-pressed={selected.includes(pet.id)}
+                className="registered-pet-chip"
+                data-selected={pets.some((current) => samePet(current, pet))}
+                aria-pressed={pets.some((current) => samePet(current, pet))}
                 disabled={busy}
-                onClick={() =>
-                  setSelected(
-                    selected.includes(pet.id)
-                      ? selected.filter((id) => id !== pet.id)
-                      : [...selected, pet.id],
-                  )
-                }
+                onClick={() => {
+                  const active = pets.some((current) => samePet(current, pet));
+                  if (active) {
+                    const remaining = pets.filter(
+                      (current) => !samePet(current, pet),
+                    );
+                    change(
+                      remaining.length
+                        ? remaining
+                        : [{ name: "", breed: "모름", weight: 5 }],
+                    );
+                  } else if (pets.length < 5) {
+                    change([
+                      ...pets,
+                      { name: pet.name, breed: pet.breed, weight: pet.weight },
+                    ]);
+                  }
+                }}
               >
                 {pet.name} · {pet.weight}kg
               </Button>
             ))}
           </div>
-          <Button
-            variant="link"
-            disabled={busy || !selected.length}
-            onClick={() =>
-              change(
-                profile
-                  .data!.pets.filter((p) => selected.includes(p.id))
-                  .map(({ name, breed, weight }) => ({ name, breed, weight })),
-              )
-            }
-          >
-            선택한 반려견으로 입력 바꾸기
-          </Button>
+          <p className="field-caption registered-pets-hint">
+            눌러서 함께 갈 반려견을 추가하고, 다시 누르면 목록에서 빼요.
+          </p>
         </>
       ) : (
         <p className="field-caption">

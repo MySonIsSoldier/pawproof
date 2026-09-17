@@ -11,7 +11,6 @@ import {
   SelectItem,
 } from "../../components/ui/select";
 import { Input } from "../../components/ui/input";
-import { Checkbox } from "../../components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -69,6 +68,7 @@ export function MapExplorer({
   } = useExplorer(trip, active, route);
   const shown = state.groupIds.length ? grouped : visible;
   const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
   const unchecked = candidates.filter((p) => !p.check).slice(0, 5);
   const moved =
     Math.abs(state.center.lat - state.draftCenter.lat) +
@@ -81,7 +81,7 @@ export function MapExplorer({
   return (
     <section className="map-explorer" aria-label="지도에서 장소 찾기">
       <h1 className="sr-only">반려견과 갈 곳 찾기</h1>
-      <div className="explore-toolbar">
+      <div className="explore-toolbar desktop-map-tools">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -114,10 +114,19 @@ export function MapExplorer({
         </Button>
       </div>
       {!!state.targets.length && (
-        <ul className="destination-results" aria-label="여행지 검색 결과">
+        <ul
+          className="destination-results desktop-map-tools"
+          aria-label="여행지 검색 결과"
+        >
           {state.targets.map((p, i) => (
             <li key={i}>
-              <Button variant="plain" onClick={() => setArea(p, p.name)}>
+              <Button
+                variant="plain"
+                onClick={() => {
+                  setArea(p, p.name);
+                  setMobileToolsOpen(false);
+                }}
+              >
                 <strong>{p.name}</strong>
                 <span>{p.address}</span>
               </Button>
@@ -125,7 +134,7 @@ export function MapExplorer({
           ))}
         </ul>
       )}
-      <div className="explore-filters">
+      <div className="explore-filters desktop-map-tools">
         <div className="filter-chips" role="group" aria-label="지도 장소 유형">
           {(["", "관광지", "식당", "카페"] as const).map((c) => (
             <Button
@@ -196,6 +205,23 @@ export function MapExplorer({
             select={(selected) => state.patch({ selected, expanded: true })}
             moved={(draftCenter) => state.patch({ draftCenter })}
           />
+          {mobile && (
+            <div className="map-mobile-controls" aria-label="지도 도구">
+              <Button
+                id="map-search-button"
+                variant="primary"
+                onClick={() => setMobileToolsOpen(true)}
+              >
+                검색
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setMobileToolsOpen(true)}
+              >
+                필터
+              </Button>
+            </div>
+          )}
           <Button
             className="search-this-area"
             variant="primary"
@@ -266,8 +292,9 @@ export function MapExplorer({
                 {!!state.groupIds.length && (
                   <div className="map-group-summary">
                     <p>
-                      겹쳐 보이는 장소 {grouped.length}곳이에요. 각각 선택해
-                      코스에 담을 수 있어요.
+                      지도에 보이는 숫자는 같은 위치에 겹친 장소의 개수예요.
+                      {grouped.length}곳을 모두 펼쳐 각각 선택해 코스에 담을 수
+                      있어요.
                     </p>
                     <Button
                       variant="link"
@@ -277,26 +304,6 @@ export function MapExplorer({
                     </Button>
                   </div>
                 )}
-                <div className="map-condition-filters">
-                  <label>
-                    <Checkbox
-                      checked={state.fitOnly}
-                      onCheckedChange={(v) =>
-                        state.patch({ fitOnly: v === true, groupIds: [] })
-                      }
-                    />{" "}
-                    우리 조건과 불일치하는 곳 제외
-                  </label>
-                  <label>
-                    <Checkbox
-                      checked={state.confirmedOnly}
-                      onCheckedChange={(v) =>
-                        state.patch({ confirmedOnly: v === true, groupIds: [] })
-                      }
-                    />{" "}
-                    조건이 확인된 곳만 보기
-                  </label>
-                </div>
                 <p className="field-caption">
                   미확인 장소는 ‘확인 필요’로 보여요. 조건 확인 버튼으로 우리
                   강아지와 맞는지 살펴보세요.
@@ -361,7 +368,9 @@ export function MapExplorer({
                 </ol>
                 <p className="field-caption">
                   최대 100곳을 보여요. 목록에 없다고 동반 불가인 것은 아니에요.
-                  ‘조건 충족’은 확인한 동반 조건 기준이며 입장 보장이 아니에요.
+                  지도 숫자는 가맹점 개수이며, 숫자를 누르면 해당 장소를 모두
+                  확인할 수 있어요. ‘조건 충족’은 확인한 동반 조건 기준이며
+                  입장 보장이 아니에요.
                 </p>
               </>
             )}
@@ -374,6 +383,125 @@ export function MapExplorer({
             완료 · 여행 노트 {trip.visits.length}곳 보기
           </Button>
         </ResponsiveSheet>
+        {mobile && (
+          <ResponsiveSheet
+            className="mobile-map-tools"
+            returnFocusId="map-search-button"
+            open={mobileToolsOpen}
+            onOpenChange={setMobileToolsOpen}
+            title="지도 검색·필터"
+          >
+            <div className="mobile-map-tools-content">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (state.term.trim()) destination.mutate(state.term.trim());
+                }}
+              >
+                <Input
+                  aria-label="여행지 또는 주소 검색"
+                  placeholder="어디로 떠날까요? 지역·주소 검색"
+                  value={state.term}
+                  maxLength={60}
+                  onChange={(e) =>
+                    state.patch({ term: e.target.value, targets: [] })
+                  }
+                  disabled={destination.isPending}
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={destination.isPending || !state.term.trim()}
+                >
+                  {destination.isPending ? "찾는 중…" : "찾기"}
+                </Button>
+              </form>
+              <div className="mobile-map-tool-actions">
+                <Button variant="outline" disabled={state.locating} onClick={locate}>
+                  {state.locating ? "위치 확인 중…" : "◎ 내 주변"}
+                </Button>
+                <Button variant="outline" onClick={() => setProfileOpen(true)}>
+                  반려견 조건
+                </Button>
+              </div>
+              {!!state.targets.length && (
+                <ul className="destination-results" aria-label="여행지 검색 결과">
+                  {state.targets.map((p, i) => (
+                    <li key={i}>
+                      <Button
+                        variant="plain"
+                        onClick={() => {
+                          setArea(p, p.name);
+                          setMobileToolsOpen(false);
+                        }}
+                      >
+                        <strong>{p.name}</strong>
+                        <span>{p.address}</span>
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="explore-filters mobile-map-filter-controls">
+                <div className="filter-chips" role="group" aria-label="지도 장소 유형">
+                  {(["", "관광지", "식당", "카페"] as const).map((c) => (
+                    <Button
+                      variant="plain"
+                      key={c}
+                      aria-pressed={state.category === c}
+                      onClick={() =>
+                        state.patch({ category: c, selected: null, groupIds: [] })
+                      }
+                    >
+                      {c || "전체"}
+                    </Button>
+                  ))}
+                </div>
+                <div className="filter-chips" role="group" aria-label="동반 구역">
+                  {(["outdoor", "indoor"] as const).map((zone) => (
+                    <Button
+                      variant="plain"
+                      key={zone}
+                      aria-pressed={state.zone === zone}
+                      onClick={() => state.patch({ zone })}
+                    >
+                      {zone === "indoor" ? "실내" : "야외·테라스"}
+                    </Button>
+                  ))}
+                </div>
+                <label className="map-radius">
+                  반경
+                  <Select
+                    value={String(state.radius)}
+                    onValueChange={(value) =>
+                      state.patch({
+                        radius: Number(value),
+                        selected: null,
+                        groupIds: [],
+                      })
+                    }
+                  >
+                    <SelectTrigger aria-label="검색 반경">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[3000, 5000, 10000, 20000].map((r) => (
+                        <SelectItem key={r} value={String(r)}>
+                          {r / 1000}km
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </label>
+              </div>
+              {(error || state.message) && (
+                <p className="map-mobile-message" role="status">
+                  {error || state.message}
+                </p>
+              )}
+            </div>
+          </ResponsiveSheet>
+        )}
         <div className="map-bottom-actions">
           <Button
             id="map-place-list"

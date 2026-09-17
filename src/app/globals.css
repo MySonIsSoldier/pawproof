@@ -1031,6 +1031,8 @@ select {
 
 .registered-pets { padding: 16px; border-radius: 16px; background: var(--sage); margin-bottom: 20px; }
 .registered-pets .search-heading a { font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.registered-pet-chip[data-selected="true"] { border: 2px solid var(--forest); box-shadow: 0 0 0 2px rgb(47 107 80 / 12%); color: var(--forest); font-weight: 700; }
+.registered-pets-hint { margin-top: 8px; }
 .search-suggestions { padding-top: 18px; }
 .search-suggestions h4 { margin: 16px 0 6px; font-size: 14px; }
 .region-discovery { margin-block: 16px 20px; }

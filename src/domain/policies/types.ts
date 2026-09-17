@@ -2,7 +2,14 @@ export type Status = "available" | "prepare" | "confirm" | "blocked";
 export type Zone = "indoor" | "outdoor";
 export type Category = "관광지" | "식당" | "카페";
 export type RuleKind =
-  "entry" | "weight" | "count" | "breed" | "equipment" | "hours" | "closedDays";
+  | "entry"
+  | "weight"
+  | "count"
+  | "breed"
+  | "equipment"
+  | "vaccination"
+  | "hours"
+  | "closedDays";
 export type Rule = {
   kind: RuleKind;
   scope: "all" | Zone;

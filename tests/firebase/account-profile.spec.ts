@@ -103,13 +103,10 @@ test("signup redirects to planner; profile verification and registered pets are 
   await page.setViewportSize(viewport);
   await page.getByRole("link", { name: "여행 노트로 가기" }).click();
   await page.getByRole("button", { name: "콩이 · 7.5kg" }).click();
-  await page
-    .getByRole("button", { name: "선택한 반려견으로 입력 바꾸기" })
-    .click();
-  await expect(page.getByLabel("반려견 1 이름", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("반려견 2 이름", { exact: true })).toHaveValue(
     "콩이",
   );
-  await expect(page.getByLabel("반려견 1 체중", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("반려견 2 체중", { exact: true })).toHaveValue(
     "7.5",
   );
   await expect(page.getByText("자동 저장됨", { exact: true })).toBeVisible();

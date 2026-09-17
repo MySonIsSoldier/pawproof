@@ -35,7 +35,7 @@ export function assessDiscovery(
     for (const f of findings)
       if (f.kind === "weight") {
         f.status = "confirm";
-        f.message = "반려견 체중을 입력해 주세요.";
+        f.message = "반려견 체중 제한 정보가 없어 확인이 필요해요.";
       }
   }
   return { status: summarize(findings), findings };
@@ -55,5 +55,5 @@ export function inquiryText(
   const questions = findings
     .filter((f) => f.status !== "available")
     .map((f) => f.message);
-  return `${place.name} (${place.address}) 문의드립니다.\n${trip.date}에 반려견 ${trip.pets.length}마리(${pets})와 ${zone === "indoor" ? "실내" : "야외/테라스"}를 이용하려고 합니다.\n${questions.length ? questions.map((q) => `- ${q}`).join("\n") : "방문일 동반 이용 조건이 동일한지 확인 부탁드립니다."}\n위 조건의 이용 가능 여부와 필요한 준비사항을 알려주세요.`;
+  return `안녕하세요. ${place.name} 이용 조건을 문의드려요.\n\n${trip.date}에 ${zone === "indoor" ? "실내" : "야외/테라스"}로 반려견 ${trip.pets.length}마리(${pets})와 방문하려고 합니다. 이용 가능한지 확인 부탁드립니다.\n\n확인하고 싶은 내용:\n${questions.length ? questions.map((q) => `- ${q}`).join("\n") : "- 방문일 동반 이용 조건과 필요한 준비사항"}\n\n가능 여부와 방문 전에 준비할 사항을 알려주시면 감사하겠습니다.`;
 }

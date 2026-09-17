@@ -45,6 +45,26 @@ test("missing count cannot be promoted to unrestricted", () =>
     summarize(evaluatePolicy(demoPolicy("demo-lake"), context)),
     "confirm",
   ));
+test("explicit vaccination requirements remain visible as confirmation", () => {
+  const policy = {
+    ...demoPolicy("demo-lake"),
+    rules: [
+      {
+        kind: "vaccination" as const,
+        scope: "all" as const,
+        operator: "all" as const,
+        value: null,
+        items: ["접종 증명서"],
+        quote: "예방접종 증명서를 지참해 주세요.",
+      },
+    ],
+  };
+  const finding = evaluatePolicy(policy, context).find(
+    (item) => item.kind === "vaccination",
+  );
+  assert.equal(finding?.status, "confirm");
+  assert.match(finding?.message ?? "", /예방접종 증빙/);
+});
 test("AND and OR equipment rules differ", () => {
   const policy = demoPolicy("demo-cafe");
   const ready = { ...context, equipment: ["목줄", "유모차"] };

@@ -8,6 +8,7 @@ export const ruleSchema = z
       "count",
       "breed",
       "equipment",
+      "vaccination",
       "hours",
       "closedDays",
     ]),
@@ -53,6 +54,7 @@ export function validateExtraction(value: unknown, raw: string): Extraction {
       count: ["allow", "lte", "lt"],
       breed: ["allow", "deny"],
       equipment: ["allow", "all", "any"],
+      vaccination: ["allow", "all"],
       hours: ["all"],
       closedDays: ["all"],
     };

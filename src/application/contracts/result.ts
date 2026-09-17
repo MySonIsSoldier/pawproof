@@ -74,6 +74,7 @@ export const resultSchema = z.object({
               "count",
               "breed",
               "equipment",
+              "vaccination",
               "hours",
               "closedDays",
               "source",
