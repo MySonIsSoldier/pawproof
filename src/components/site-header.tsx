@@ -13,7 +13,6 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
       </Link>
       <nav aria-label="주 메뉴">
         <InstallButton />
-        <Link href="/about">PawProof 소개</Link>
         {!compact && <Link href="/#how-it-works">이용 방법</Link>}
         <Link href={compact ? "/" : "/plan"} className="button small">
           {compact ? "처음으로" : "지도에서 찾기"}
