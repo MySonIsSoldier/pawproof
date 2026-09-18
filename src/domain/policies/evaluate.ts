@@ -8,6 +8,7 @@ import type {
   Zone,
 } from "./types.ts";
 import { toMinutes, weekday } from "../itinerary/time.ts";
+import { readableMessage } from "./presentation.ts";
 
 const labels: Record<RuleKind, string> = {
   entry: "선택한 구역의 동반 가능 여부",
@@ -34,6 +35,14 @@ type Context = {
 };
 const normalizeBreed = (value: string) =>
   value.replace(/\s/g, "").toLowerCase();
+function hasFinalConsonant(value: string) {
+  const last = value.codePointAt(value.length - 1);
+  if (last === undefined || last < 0xac00 || last > 0xd7a3) return false;
+  return (last - 0xac00) % 28 !== 0;
+}
+function objectParticle(value: string) {
+  return hasFinalConsonant(value) ? "을" : "를";
+}
 function checkRule(rule: Rule, context: Context): Finding {
   const result = (
     status: Status,
@@ -130,7 +139,9 @@ function checkRule(rule: Rule, context: Context): Finding {
       ready ? "available" : "prepare",
       ready
         ? "요구한 준비사항을 충족했어요. 준비 체크는 사용자 확인 기준이에요."
-        : `${missing.join(rule.operator === "any" ? " 또는 " : ", ")}${rule.operator === "any" ? " 중 하나를" : "을(를)"} 준비해 주세요.`,
+        : rule.operator === "any"
+          ? `${missing.join(" 또는 ")} 중 하나를 준비해 주세요.`
+          : `${missing.map((item) => `${item}${objectParticle(item)}`).join(", ")} 준비해 주세요.`,
       ready ? [] : missing,
     );
   }
@@ -207,5 +218,20 @@ export function evaluatePolicy(policy: Policy, context: Context): Finding[] {
       quote: null,
       needs: [],
     });
-  return findings;
+  const seen = new Set<string>();
+  return findings.filter((finding) => {
+    // A KTO rule may be emitted once by the LLM and once by the deterministic
+    // field parser. Keep the first evidence, but show one user-facing fact.
+    // readableMessage also collapses equivalent Korean source phrasings such
+    // as the conditional muzzle notice before the signature is calculated.
+    const key = [
+      finding.status,
+      finding.kind,
+      readableMessage(finding.message),
+      finding.needs.join("\u001f"),
+    ].join("\u001e");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }

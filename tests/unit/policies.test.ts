@@ -45,6 +45,64 @@ test("missing count cannot be promoted to unrestricted", () =>
     summarize(evaluatePolicy(demoPolicy("demo-lake"), context)),
     "confirm",
   ));
+test("duplicate KTO facts collapse by user-facing meaning", () => {
+  const policy = {
+    ...demoPolicy("demo-table"),
+    rules: [
+      {
+        kind: "entry" as const,
+        scope: "all" as const,
+        operator: "allow" as const,
+        value: null,
+        items: [],
+        quote: "LLM: 반려견 동반 가능",
+      },
+      {
+        kind: "entry" as const,
+        scope: "all" as const,
+        operator: "allow" as const,
+        value: null,
+        items: [],
+        quote: "KTO: 전 구역 동반 가능",
+      },
+    ],
+    unresolved: [
+      "맹견의 경우, 입마개 착용 필수",
+      "맹견이라면 입마개를 착용해 주세요.",
+    ],
+  };
+  const findings = evaluatePolicy(policy, context);
+  assert.equal(
+    findings.filter(
+      (finding) =>
+        finding.kind === "entry" && finding.status === "available",
+    ).length,
+    1,
+  );
+  assert.equal(
+    findings.filter((finding) => finding.message.includes("맹견")).length,
+    1,
+  );
+});
+test("equipment findings use natural Korean particles", () => {
+  const policy = {
+    ...demoPolicy("demo-table"),
+    rules: [
+      {
+        kind: "equipment" as const,
+        scope: "all" as const,
+        operator: "all" as const,
+        value: null,
+        items: ["목줄", "배변봉투"],
+        quote: "방문객 준비사항: 목줄, 배변봉투",
+      },
+    ],
+  };
+  const finding = evaluatePolicy(policy, { ...context, equipment: [] }).find(
+    (item) => item.kind === "equipment",
+  );
+  assert.equal(finding?.message, "목줄을, 배변봉투를 준비해 주세요.");
+});
 test("explicit vaccination requirements remain visible as confirmation", () => {
   const policy = {
     ...demoPolicy("demo-lake"),
