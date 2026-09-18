@@ -1,6 +1,19 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
+export const metadata: Metadata = {
+  title: "PawProof 소개",
+  description:
+    "PawProof가 공식 관광 데이터와 AI 규정 구조화로 반려견 동반여행의 확인사항을 정리하는 방법을 소개합니다.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "PawProof 소개 | 반려견 동반여행 코스 사전검증",
+    description:
+      "공식 근거와 반려견 조건을 바탕으로 여행 코스를 출발 전에 확인하는 PawProof를 소개합니다.",
+    url: "/about",
+  },
+};
 export default function About() {
   return (
     <>

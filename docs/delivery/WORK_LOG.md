@@ -230,3 +230,12 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 
 - 제출 해시태그 목록의 `#규정검증`을 `#LLM규정구조화`로 구체화해, LLM이 공식 원문을 조건·예외·근거로 바꾸는 핵심 기여를 드러냈다.
 - 해당 해시태그의 상세 설명·흐름도·실제 화면 캡처 문구를 함께 갱신했다. 최종 판정은 결정론적 규칙 엔진이 한다는 설명은 유지했다.
+
+## 2026-09-18 · SEO·favicon 설정
+
+- 루트 메타데이터에 PawProof의 한국어 검색어, canonical URL, Open Graph·Twitter 공유 정보, 앱 이름·작성자 정보를 추가했다.
+- `/about`은 검색 대상 콘텐츠로 canonical을 분리하고, 여행 노트·프로필은 개인화 화면이므로 `noindex`로 설정했다.
+- `robots.txt`와 `sitemap.xml`을 생성해 홈·소개 페이지만 검색 크롤링 대상으로 안내하고 API·개인화 경로를 제외했다.
+- 기존 발바닥 로고 SVG를 원본으로 16·32·48px PNG가 포함된 `public/favicon.ico`를 생성하고 PWA·Apple 아이콘과 함께 metadata에 연결했다.
+
+검증: `pnpm assets:pwa`, typecheck, lint, production build, 생성된 canonical/robots/sitemap 출력과 favicon ICO 형식을 확인했다.

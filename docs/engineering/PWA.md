@@ -6,7 +6,7 @@
 
 - 헤더 ‘앱 설치’에서 설치·사용 범위를 안내한다. 브라우저가 beforeinstallprompt를 제공하면 명시적 버튼으로 호출하고, 취소/요청/설치 완료를 구분한다.
 - 설치 UI가 없는 브라우저에는 수동 안내를 제공한다. iPhone/iPad는 Safari의 공유 → 홈 화면에 추가 경로를 안내한다. 실제 설치 허용과 메뉴 명칭은 브라우저/OS가 결정한다.
-- manifest는 한국어, standalone, start_url=/plan, 안정적인 앱 ID와 scope, 192/512 아이콘·maskable·가상 체험 shortcut을 제공한다. Apple touch icon은 180px다. 기존 발바닥 SVG를 원본으로 `pnpm assets:pwa`에서 PNG를 재생성한다.
+- manifest는 한국어, standalone, start_url=/plan, 안정적인 앱 ID와 scope, 192/512 아이콘·maskable·가상 체험 shortcut을 제공한다. Apple touch icon은 180px이며, 브라우저용 `favicon.ico`도 같은 발바닥 SVG에서 생성한다. 기존 발바닥 SVG를 원본으로 `pnpm assets:pwa`에서 아이콘을 재생성한다.
 - 독립 창에서는 설치 버튼을 숨긴다. 노치/하단 안전 영역과 기존 모바일 입력 화면을 유지한다.
 - 연결이 끊겨도 이미 열린 편집 입력을 초기화하거나 강제 이동하지 않는다. 상단 띠가 오프라인 상태와 기존 검사 결과의 한계를 설명한다. API 호출은 한국어 안내와 함께 차단한다. 비회원 기기 저장은 제공하지 않으며 회원 미전송 초안은 계정별 sessionStorage에 남긴다.
 - 워커가 준비된 이후 오프라인에서 새로 열거나 새로고침하면 전용 안내 화면을 표시한다. 실제 웹앱 전체를 오프라인으로 실행하는 기능은 아니다. 연결 후 로그인한 계정의 노트를 다시 연다. 비회원의 새로고침 전 작업은 복원하지 않는다.
@@ -22,7 +22,7 @@
 | src/app/offline/route.ts, offline-document.ts | 외부 스크립트·폰트 없이 동작하는 한국어 정적 안내 |
 | src/features/pwa | 설치 이벤트, 워커 수명, 브라우저 지원, 업데이트/설치 모달 |
 | src/hooks/use-online.ts | SSR 초기값을 유지하는 공통 연결 상태 구독 |
-| scripts/generate-pwa-icons.mjs | 기존 SVG에서 일반·maskable·Apple 아이콘 생성 |
+| scripts/generate-pwa-icons.mjs | 기존 SVG에서 favicon·일반·maskable·Apple 아이콘 생성 |
 
 도메인·판정·여행 저장 계약에는 워커와 설치 상태가 들어가지 않는다. root PwaProvider는 브라우저 이벤트와 안내를 관리하고, 설치/업데이트 모달은 공통 shadcn/Radix Dialog와 Button을 사용한다. 플랫폼 상태는 useSyncExternalStore의 서버 snapshot으로 초기 hydration을 맞춘다.
 
