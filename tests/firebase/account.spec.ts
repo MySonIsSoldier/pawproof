@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { db, createUser, login } from "./helpers";
-import { createDemoTrip } from "../../src/fixtures/demo-trip";
+import { createDemoTrip, demoPlaces } from "../../src/fixtures/demo-trip";
 import { demoProviders } from "../../src/infrastructure/demo/catalog";
 import { verifyTrip } from "../../src/application/use-cases/verify-trip";
+import { randomUUID } from "node:crypto";
 
 test("live places and verification summary survive autosave, a new note and reload", async ({
   page,
@@ -204,4 +205,58 @@ test("autosave retains concurrent edits and reports network failure without losi
       .getByRole("dialog", { name: "내 여행 노트", exact: true })
       .getByText("첫 여행을 기다리고 있어요"),
   ).toBeVisible();
+});
+
+test("deleting a note frees a slot before saving a draft at the account limit", async ({
+  page,
+}) => {
+  const user = await createUser();
+  const trip = createDemoTrip("2026-09-20");
+  const now = new Date().toISOString();
+  const batch = db.batch();
+  for (let index = 0; index < 20; index += 1) {
+    const ref = db.doc(`accounts/${user.uid}/trips/${randomUUID()}`);
+    batch.set(ref, {
+      title: `한도 노트 ${index + 1}`,
+      trip,
+      places: demoPlaces.slice(0, 4),
+      verification: null,
+      revision: 1,
+      createdAt: now,
+      updatedAt: new Date(Date.now() + index).toISOString(),
+    });
+  }
+  batch.set(db.doc(`accounts/${user.uid}`), { tripCount: 20 }, { merge: true });
+  await batch.commit();
+
+  await page.goto("./plan?mode=demo");
+  await login(page, user.email);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const panel = page.getByRole("region", { name: "계정 여행 노트" });
+  await panel.getByLabel("노트 제목").fill("삭제 후 저장할 새 초안");
+  await expect(
+    panel.getByText("저장하지 못했어요", { exact: true }),
+  ).toBeVisible();
+
+  await panel
+    .getByRole("button", { name: "내 여행 노트", exact: true })
+    .click();
+  const library = page.getByRole("dialog", {
+    name: "내 여행 노트",
+    exact: true,
+  });
+  const target = library
+    .getByRole("article")
+    .filter({
+      has: page.getByRole("heading", { name: "한도 노트 1", exact: true }),
+    });
+  await target.getByRole("button", { name: "삭제", exact: true }).click();
+  await page.getByRole("button", { name: "삭제 확인" }).click();
+  await expect(target).toHaveCount(0);
+  await expect(
+    library.getByText("저장하지 못했어요", { exact: true }),
+  ).toHaveCount(0);
+  expect((await db.collection(`accounts/${user.uid}/trips`).get()).size).toBe(
+    20,
+  );
 });

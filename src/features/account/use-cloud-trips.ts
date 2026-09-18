@@ -284,19 +284,44 @@ export function useCloudTrips(
         }),
       remove: (note) =>
         transition(async () => {
-          await flush();
           clearTimeout(timer);
-          if (inFlight) await inFlight;
+          const removingCurrent = note.id === id;
+          const pending = inFlight;
+
+          // Removing a different note must happen before flushing a new draft.
+          // When the account already has 20 notes, flushing that draft first
+          // can hit the account limit and make a successful deletion look like
+          // a failed action. An already-saved active note still flushes first
+          // so its latest revision is used when that same note is deleted.
+          if (removingCurrent) {
+            if (pending) await pending;
+            if (dirty && !blocked) await flush();
+          }
           await accountRequest(
             `/api/account/trips/${note.id}`,
             z.object({ deleted: z.literal(true) }),
             await token(uid),
             "DELETE",
-            { expectedRevision: note.id === id ? revision : note.revision },
+            { expectedRevision: removingCurrent ? revision : note.revision },
             controller.signal,
           );
           if (!alive) return;
-          if (note.id === id) {
+          if (!removingCurrent && pending) {
+            try {
+              await pending;
+            } catch {
+              // A draft PUT may have failed only because the account was at
+              // the limit. The deletion above has now freed its slot, so the
+              // draft can be retried below.
+            }
+          }
+          if (!removingCurrent && dirty) {
+            // The deletion freed a slot. Retry a pending/new draft now that a
+            // 20-note LIMIT response cannot block it anymore.
+            blocked = false;
+            await flush();
+          }
+          if (removingCurrent) {
             paused = true;
             dirty = false;
             blocked = false;
