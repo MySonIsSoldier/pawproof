@@ -1,5 +1,6 @@
 import type { usePlanner } from "./hooks/use-planner";
 import { statusLabels } from "../../domain/policies/types";
+import { hasKnownEntry } from "../../domain/policies/presentation";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 type Props = Pick<
@@ -27,6 +28,16 @@ export function VerificationPanel({
   verify,
   undo,
 }: Props) {
+  const entryPossible =
+    !!result &&
+    result.visits.length > 0 &&
+    result.visits.every(
+      (visit) => visit.status !== "blocked" && hasKnownEntry(visit.findings),
+    );
+  const confirmCount =
+    result?.visits.filter((visit) => visit.status === "confirm").length || 0;
+  const prepareCount =
+    result?.visits.filter((visit) => visit.status === "prepare").length || 0;
   return (
     <section className="verification-panel">
       <div className="panel-title">
@@ -56,6 +67,21 @@ export function VerificationPanel({
           ),
         )}
       </div>
+      {entryPossible && !stale && (
+        <div className="course-entry-callout" role="status">
+          <Icon name="check" size={18} />
+          <div>
+            <strong>모든 방문지에서 반려견 출입이 가능해요!</strong>
+            {confirmCount > 0 ? (
+              <p>{confirmCount}곳은 방문 전 확인할 조건이 남아 있어요.</p>
+            ) : prepareCount > 0 ? (
+              <p>{prepareCount}곳은 필요한 준비물을 챙겨 주세요.</p>
+            ) : (
+              <p>방문 시간과 준비사항을 한 번 더 확인하고 출발해요.</p>
+            )}
+          </div>
+        </div>
+      )}
       {historical && result && (
         <p className="stale-notice" role="status">
           저장 당시 검사 결과 ·{" "}

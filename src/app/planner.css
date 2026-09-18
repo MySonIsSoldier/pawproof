@@ -665,6 +665,32 @@
 .status-counts .blocked strong {
   color: #a45448;
 }
+.course-entry-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: -3px 0 18px;
+  padding: 13px 14px;
+  border: 1px solid #b9d8bf;
+  border-radius: 11px;
+  background: #edf8ef;
+  color: #24613b;
+}
+.course-entry-callout > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+.course-entry-callout strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.course-entry-callout p {
+  margin-top: 3px;
+  color: #477454;
+  font-size: 11px;
+  line-height: 1.6;
+}
 .verify-button {
   width: 100%;
   font-size: 13px;
