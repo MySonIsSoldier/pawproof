@@ -6,7 +6,7 @@ PawProof는 `umami.hothyun.com`에 설치된 Umami를 선택적으로 사용한�
 
 1. [umami.hothyun.com](https://umami.hothyun.com)에 로그인한다.
 2. **Websites → Add website**를 선택하고 이름을 `PawProof`로 입력한다.
-3. 기본 도메인에는 `pawproof.kr`을 입력한다. Vercel 미리보기까지 집계하려면 `pawproof-rose.vercel.app`도 허용 도메인에 추가하거나 아래 `NEXT_PUBLIC_UMAMI_DOMAINS`에 쉼표로 적는다.
+3. 기본 도메인에는 실제 접속 호스트인 `www.pawproof.kr`을 입력한다. apex 도메인에서 리디렉션되는 요청까지 포함하려면 `pawproof.kr`도 함께 넣고, Vercel 미리보기까지 집계하려면 `pawproof-rose.vercel.app`도 허용 도메인에 추가하거나 아래 `NEXT_PUBLIC_UMAMI_DOMAINS`에 쉼표로 적는다.
 4. 저장 후 표시되는 **Website ID**를 복사한다. 이 값은 Umami가 어느 사이트의 데이터인지 구분하는 공개 식별자이며, 로그인 비밀번호나 API 키가 아니다.
 
 ## Vercel에 연결하기
@@ -16,7 +16,7 @@ Vercel 프로젝트의 **Settings → Environment Variables**에서 Production(�
 ```text
 NEXT_PUBLIC_UMAMI_WEBSITE_ID=<Umami에서 복사한 Website ID>
 NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://umami.hothyun.com/script.js
-NEXT_PUBLIC_UMAMI_DOMAINS=pawproof.kr,pawproof-rose.vercel.app
+NEXT_PUBLIC_UMAMI_DOMAINS=pawproof.kr,www.pawproof.kr,pawproof-rose.vercel.app
 ```
 
 그 다음 새 배포를 실행한다. 운영 페이지의 소스에 `script.js`가 로드되고, Umami 대시보드의 **Websites → PawProof**에서 방문·페이지뷰를 확인할 수 있다. 로컬에서도 확인하려면 같은 Website ID를 `.env.local`에 넣고 개발 서버를 다시 시작한다. 로컬 방문을 운영 통계와 섞고 싶지 않다면 `NEXT_PUBLIC_UMAMI_DOMAINS`에 `localhost`를 넣지 않는다.
