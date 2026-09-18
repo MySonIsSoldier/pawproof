@@ -2,7 +2,7 @@
 import { useRef, useState } from "react";
 import { Disclosure } from "../../components/ui/accordion";
 import type { VisitResult } from "../../domain/policies/types";
-import { StatusBadge } from "./status-badge";
+import { ResultStatusBadges, StatusBadge } from "./status-badge";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { PolicySources } from "./policy-sources";
@@ -59,7 +59,10 @@ export function EvidenceDialog({
             </Button>
           </DialogClose>
         </div>
-        <StatusBadge status={result.status} />
+        <ResultStatusBadges
+          status={result.status}
+          findings={result.findings}
+        />
         <DialogDescription className="field-caption">
           {result.visit.zone === "indoor" ? "실내" : "실외"} 이용 기준 · 명시된
           조건과 입력한 준비 상태를 대조했어요.

@@ -1,3 +1,5 @@
+import type { Finding } from "./types";
+
 const fieldPrefix =
   /^\s*(?:[A-Za-z][A-Za-z0-9_]*|동반 가능 구역|동반 가능한 반려동물|방문객 준비사항|안전 안내|추가 동반 안내|동반 구역|현장에서 제공하는 시설|현장에서 제공하는 물품|이용 시간 안내|휴무 안내|반려견 동반 안내|예약 안내|문의 연락처)\s*:\s*/;
 function cleanLine(line: string) {
@@ -17,6 +19,12 @@ function normalizeLine(line: string) {
     .replace(/^일부구역\s*동반가능$/i, "반려견은 일부 구역에서만 동반할 수 있어요.")
     .replace(/^전\s*견종\s*동반\s*가능$/i, "모든 견종이 동반할 수 있다고 안내되어 있어요.")
     .trim();
+}
+/** An explicit available entry rule can coexist with other conditions to confirm. */
+export function hasKnownEntry(findings: Finding[]) {
+  return findings.some(
+    (finding) => finding.kind === "entry" && finding.status === "available",
+  );
 }
 /** Convert provider field-prefixed evidence into copy users can understand. */
 export function readableEvidence(value: string | null | undefined): string {

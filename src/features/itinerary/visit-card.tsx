@@ -1,6 +1,6 @@
 import type { Place, Visit, VisitResult } from "../../domain/policies/types";
 import { formatTime } from "../../domain/itinerary/time";
-import { StatusBadge } from "../verification/status-badge";
+import { ResultStatusBadges } from "../verification/status-badge";
 import { Button } from "../../components/ui/button";
 import { Icon } from "../../components/icon";
 import { Checkbox } from "../../components/ui/checkbox";
@@ -153,7 +153,10 @@ export function VisitCard({
       {result && (
         <div className={`visit-verdict ${stale ? "stale" : ""}`}>
           <div className="verdict-top">
-            <StatusBadge status={result.status} />
+            <ResultStatusBadges
+              status={result.status}
+              findings={result.findings}
+            />
             <span>
               <Icon name="clock" size={13} />
               {formatTime(result.arrival)}–{formatTime(result.departure)}

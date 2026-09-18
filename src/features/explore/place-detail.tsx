@@ -11,6 +11,7 @@ import { inquiryResultSchema } from "../../application/contracts/discovery";
 import type { Inspection } from "../../application/contracts/discovery";
 import { inquiryText } from "../../domain/policies/discovery";
 import {
+  hasKnownEntry,
   readableEvidence,
   readableMessage,
 } from "../../domain/policies/presentation";
@@ -27,11 +28,6 @@ export const mapStatusLabels: Record<Status, string> = {
   confirm: "확인 필요",
   blocked: "조건 불일치",
 };
-export function hasKnownEntry(findings: Finding[]) {
-  return findings.some(
-    (finding) => finding.kind === "entry" && finding.status === "available",
-  );
-}
 export function ConditionBadges({
   status,
   findings,
