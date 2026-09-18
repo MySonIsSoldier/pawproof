@@ -60,6 +60,8 @@ export async function recoverTrip(
     },
   };
   const baseline = await verifyTrip(input, scoped);
+  if (baseline.visits[index].status !== "blocked")
+    return { alternatives: [], inspected: 0 };
   const candidates = (
     await providers.places.nearby(baseline.visits[index].place)
   )
@@ -80,7 +82,9 @@ export async function recoverTrip(
     try {
       const result = await verifyTrip(changed, scoped);
       if (
-        !["available", "prepare"].includes(result.visits[index].status) ||
+        !["available", "prepare", "confirm"].includes(
+          result.visits[index].status,
+        ) ||
         result.totalTravel === null ||
         baseline.totalTravel === null
       )

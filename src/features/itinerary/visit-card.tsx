@@ -24,7 +24,6 @@ export function VisitCard({
   remove,
   evidence,
   recover,
-  recoverLabel = "대체 장소 찾기",
 }: {
   place: Place;
   visit: Visit;
@@ -38,7 +37,6 @@ export function VisitCard({
   remove: () => void;
   evidence: () => void;
   recover: () => void;
-  recoverLabel?: string;
 }) {
   const problem = result?.findings.find((f) => f.status === result.status);
   return (
@@ -178,14 +176,14 @@ export function VisitCard({
             >
               근거 보기 <Icon name="arrow" size={14} />
             </Button>
-            {result.status !== "available" && (
+            {result.status === "blocked" && (
               <Button
                 variant="link"
                 type="button"
                 onClick={recover}
                 disabled={busy || stale || visit.locked}
               >
-                {recoverLabel} <Icon name="swap" size={15} />
+                대체 장소 찾기 <Icon name="swap" size={15} />
               </Button>
             )}
           </div>

@@ -180,19 +180,7 @@ function PlannerScreen({
                           ) || null,
                         )
                       }
-                      recoverLabel={
-                        trip.mode === "live"
-                          ? "지도에서 다른 장소 찾기"
-                          : "대체 장소 찾기"
-                      }
-                      recover={() => {
-                        if (trip.mode === "live") {
-                          setMapVisited(true);
-                          setView("map");
-                          return;
-                        }
-                        void recover(index);
-                      }}
+                      recover={() => void recover(index)}
                     />
                   ))}
                 </div>

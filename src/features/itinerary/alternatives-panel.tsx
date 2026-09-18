@@ -34,9 +34,12 @@ export function AlternativesPanel({
               </p>
               <p className="field-caption">
                 {alternative.result.visits[alternatives.index].status ===
-                "prepare"
-                  ? "준비사항이 있어요. 적용 후 해당 규정을 확인해 주세요."
-                  : "확인된 동반 조건을 충족해요."}
+                "available"
+                  ? "확인된 동반 조건을 충족해요."
+                  : alternative.result.visits[alternatives.index].status ===
+                      "prepare"
+                    ? "준비사항이 있어요. 적용 후 해당 규정을 확인해 주세요."
+                    : "방문 전 확인할 조건이 있어요. 적용 후 근거를 살펴봐 주세요."}
               </p>
             </div>
             <Button

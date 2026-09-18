@@ -255,3 +255,23 @@ test("live setup errors are explicit, invalid requests rejected and network fail
     page.getByRole("heading", { name: "코스 확인 결과" }),
   ).toBeVisible();
 });
+
+test("replacement action is limited to blocked demo visits", async ({ page }) => {
+  await page.goto("plan?mode=demo");
+  await page.getByRole("button", { name: "이 코스 검사하기", exact: true }).click();
+  await expect(
+    page
+      .getByRole("article", { name: "2번 방문지 소담한 식탁" })
+      .getByRole("button", { name: "대체 장소 찾기" }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByRole("article", { name: "3번 방문지 느린 오후" })
+      .getByRole("button", { name: "대체 장소 찾기" }),
+  ).toHaveCount(0);
+  await expect(
+    page
+      .getByRole("article", { name: "4번 방문지 물빛 호수공원" })
+      .getByRole("button", { name: "대체 장소 찾기" }),
+  ).toHaveCount(0);
+});

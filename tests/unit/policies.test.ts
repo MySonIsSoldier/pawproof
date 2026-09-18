@@ -156,6 +156,33 @@ test("complete demo produces four states then safely repairs a restaurant", asyn
   assert.equal(alternatives[0].result.visits[1].status, "available");
   assert.equal(alternatives[0].result.visits[3].status, "confirm");
 });
+test("replacement starts only for blocked visits and keeps confirm candidates", async () => {
+  const trip = createDemoTrip();
+  const providers = demoProviders();
+  const extract = providers.extractor.extract;
+  providers.extractor.extract = async (document) => {
+    const policy = await extract(document);
+    if (document.place.id !== "demo-garden") return policy;
+    return {
+      ...policy,
+      rules: policy.rules.map((rule) =>
+        rule.kind === "entry" ? { ...rule, operator: "unknown" as const } : rule,
+      ),
+    };
+  };
+  assert.deepEqual(await recoverTrip(trip, 2, providers), {
+    alternatives: [],
+    inspected: 0,
+  });
+  const { alternatives } = await recoverTrip(trip, 1, providers);
+  assert.ok(
+    alternatives.some(
+      (alternative) =>
+        alternative.place.id === "demo-garden" &&
+        alternative.result.visits[1].status === "confirm",
+    ),
+  );
+});
 test("locked place cannot be replaced and subsequent appointment is preserved", async () => {
   const trip = createDemoTrip();
   trip.visits[1].locked = true;
