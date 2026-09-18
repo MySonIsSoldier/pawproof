@@ -1,6 +1,18 @@
 import { z } from "zod";
 import { apiPath } from "../../config/public";
 import { withRequestSignal } from "../../lib/http/request-signal";
+
+export class AccountRequestError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly code?: string,
+  ) {
+    super(message);
+    this.name = "AccountRequestError";
+  }
+}
+
 export async function accountRequest<T>(
   path: string,
   schema: z.ZodType<T>,
@@ -26,11 +38,15 @@ export async function accountRequest<T>(
     });
     const result: unknown = await response.json().catch(() => null);
     if (!response.ok) {
-      const parsed = z.object({ error: z.string() }).safeParse(result);
-      throw new Error(
+      const parsed = z
+        .object({ error: z.string(), code: z.string().optional() })
+        .safeParse(result);
+      throw new AccountRequestError(
         parsed.success
           ? parsed.data.error
           : "계정 노트를 처리하지 못했어요. 잠시 후 다시 시도해 주세요.",
+        response.status,
+        parsed.success ? parsed.data.code : undefined,
       );
     }
     const parsed = schema.safeParse(result);

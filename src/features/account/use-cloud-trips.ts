@@ -6,6 +6,7 @@ import { useAuth } from "../auth/auth-provider";
 import { useTripStoreApi } from "../itinerary/state/planner-provider";
 import { tripRecord } from "../itinerary/state/trip-store";
 import { initialTrip } from "../itinerary/state/initial-trip";
+import { AccountRequestError, accountRequest } from "./api";
 import {
   savedTripListSchema,
   savedTripSchema,
@@ -13,7 +14,6 @@ import {
   tripIdSchema,
   type SavedTrip,
 } from "../../application/contracts/saved-trip";
-import { accountRequest } from "./api";
 import {
   draftTripSchema,
   type TripRecord,
@@ -234,8 +234,26 @@ export function useCloudTrips(
         }),
       fresh: (mode) =>
         transition(async () => {
-          await flush();
+          let conflict = blocked;
+          if (!blocked) {
+            try {
+              await flush();
+            } catch (error) {
+              if (!(error instanceof AccountRequestError) || error.status !== 409)
+                throw error;
+              // The user explicitly chose a new note. Keep the remote note
+              // untouched and discard this unsaved local draft before the
+              // next note gets its own id and revision sequence.
+              conflict = true;
+            }
+          }
           if (!alive) return;
+          clearTimeout(timer);
+          if (conflict) {
+            try {
+              sessionStorage.removeItem(outbox);
+            } catch {}
+          }
           paused = true;
           const current = store.getState().trip;
           restoreRef.current({
@@ -256,6 +274,13 @@ export function useCloudTrips(
           url(null);
           patch({ title: "", selected: null, status: "saved", error: "" });
           paused = false;
+          if (conflict)
+            store
+              .getState()
+              .notify(
+                "기존 노트가 다른 기기에서 바뀌어 저장하지 못한 변경사항은 새 노트에 옮기지 않았어요.",
+                "새 여행 노트를 열었어요",
+              );
         }),
       remove: (note) =>
         transition(async () => {
