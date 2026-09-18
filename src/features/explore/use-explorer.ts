@@ -18,6 +18,7 @@ import { searchResultSchema } from "../../application/contracts/result";
 import { callApi } from "../itinerary/api";
 import { initialMapCenter } from "../../config/maps";
 import { findDestinations, type Point, type Destination } from "./kakao-sdk";
+import { trackUmami } from "../../lib/analytics/umami";
 
 type ExplorerState = {
   center: Point;
@@ -103,6 +104,11 @@ export function useExplorer(trip: TripInput, active: boolean, route: Place[]) {
     },
     onSuccess: ({ checks, failedIds }) => {
       if (!alive.current) return;
+      trackUmami("place_inspection_result", {
+        requested_count: checks.length + failedIds.length,
+        checked_count: checks.length,
+        failed_count: failedIds.length,
+      });
       const previous = store.getState().checks;
       store.getState().patch({
         checks: Object.fromEntries(
@@ -120,6 +126,11 @@ export function useExplorer(trip: TripInput, active: boolean, route: Place[]) {
   const destination = useMutation({
     mutationFn: findDestinations,
     onSuccess: (targets) => {
+      if (alive.current)
+        trackUmami("map_destination_search", {
+          result_count: targets.length,
+          has_results: targets.length > 0,
+        });
       if (alive.current)
         store.getState().patch({
           targets,

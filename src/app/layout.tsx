@@ -7,6 +7,7 @@ import { QueryProvider } from "../components/providers/query-provider";
 import { AuthProvider } from "../features/auth/auth-provider";
 import { AuthDialog } from "../features/auth/auth-dialog";
 import { PwaProvider } from "../features/pwa/pwa-provider";
+import { UmamiScript } from "../components/analytics/umami-script";
 const pretendard = localFont({
   src: "../assets/fonts/PretendardVariable.woff2",
   display: "swap",
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={pretendard.variable}
     >
       <body>
+        <UmamiScript />
         <a className="skip-link" href="#main">
           본문으로 바로가기
         </a>

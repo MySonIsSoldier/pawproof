@@ -11,6 +11,7 @@ import type { TripInput } from "../../../domain/policies/types";
 import { isTripStale } from "../state/trip-store";
 import { useTripStoreApi } from "../state/planner-provider";
 import { callApi } from "../api";
+import { trackUmami } from "../../../lib/analytics/umami";
 
 type Request = { trip: TripInput; revision: number; signal: AbortSignal };
 export function useTripOperations() {
@@ -34,8 +35,16 @@ export function useTripOperations() {
       callApi("/api/verify", resultSchema, request.trip, request.signal),
     ...callbacks,
     onSuccess: (result, request) => {
-      if (!request.signal.aborted)
+      if (!request.signal.aborted) {
+        trackUmami("course_verify_result", {
+          mode: result.mode,
+          visit_count: result.visits.length,
+          available_count: result.visits.filter((visit) => visit.status === "available").length,
+          confirm_count: result.visits.filter((visit) => visit.status === "confirm").length,
+          blocked_count: result.visits.filter((visit) => visit.status === "blocked").length,
+        });
         store.getState().acceptVerification(request.revision, result);
+      }
     },
   });
   const recovery = useMutation({
@@ -92,7 +101,13 @@ export function useTripOperations() {
         : null,
     verify: () => {
       const request = begin();
-      if (request) verification.mutate(request);
+      if (request) {
+        trackUmami("course_verify_start", {
+          mode: request.trip.mode,
+          visit_count: request.trip.visits.length,
+        });
+        verification.mutate(request);
+      }
     },
     recover: (index: number) => {
       const state = store.getState();

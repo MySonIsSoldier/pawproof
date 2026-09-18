@@ -34,11 +34,19 @@ export default function Home() {
               <br className="desktop-break" />더 나은 대안까지 함께 살펴드려요.
             </p>
             <div className="hero-actions">
-              <Link href="/plan" className="button">
+              <Link
+                href="/plan"
+                className="button"
+                data-umami-event="home_map_cta"
+              >
                 지도에서 갈 곳 찾기
                 <Icon name="arrow" />
               </Link>
-              <Link href="/plan?mode=demo" className="text-button">
+              <Link
+                href="/plan?mode=demo"
+                className="text-button"
+                data-umami-event="home_demo_cta"
+              >
                 가상 코스로 체험하기 <span>↗</span>
               </Link>
             </div>

@@ -18,6 +18,7 @@ import {
 import { useAuth } from "./auth-provider";
 import { authErrorMessage } from "./errors";
 import { useGoogleSignIn } from "./use-google-sign-in";
+import { trackUmami } from "../../lib/analytics/umami";
 import styles from "./auth.module.css";
 
 function AuthDialogScreen() {
@@ -45,6 +46,9 @@ function AuthDialogScreen() {
     setMessage("");
     try {
       await auth.run(action);
+      trackUmami("auth_action_success", {
+        action: mode === "signup" ? "signup" : mode === "reset" ? "reset" : "login",
+      });
       setMessage(success);
       if (navigate) {
         auth.completeLogin(success);

@@ -5,6 +5,7 @@ import { flushSync } from "react-dom";
 import { useNotify } from "../../components/notifications/with-notifications";
 import { useAuth } from "./auth-provider";
 import { authErrorMessage } from "./errors";
+import { trackUmami } from "../../lib/analytics/umami";
 
 /** Release the app modal before handing input focus to the external OAuth window. */
 export function useGoogleSignIn() {
@@ -31,6 +32,7 @@ export function useGoogleSignIn() {
         provider.setCustomParameters({ prompt: "select_account" });
         await sdk.signInWithPopup(instance, provider);
       });
+      trackUmami("auth_google_success");
       if (inFlight.current === attempt)
         auth.completeLogin("Google 계정으로 로그인했어요.");
     } catch (cause) {

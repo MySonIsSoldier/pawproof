@@ -22,6 +22,7 @@ import { ResponsiveSheet } from "../../components/ui/responsive-sheet";
 import { useMobile } from "../../components/hooks/use-mobile";
 import { ProfileEditor } from "../itinerary/profile-editor";
 import { useExplorer } from "./use-explorer";
+import { trackUmami } from "../../lib/analytics/umami";
 import { ConditionBadges, PlaceDetail } from "./place-detail";
 import "./explore.css";
 const Map = dynamic(() => import("./kakao-map").then((m) => m.KakaoMapView), {
@@ -79,6 +80,12 @@ export function MapExplorer({
     destination.error?.message;
   const loadingPlaces = search.isFetching;
   function selectPlace(id: string) {
+    const selectedCandidate = candidates.find((item) => item.place.id === id);
+    trackUmami("map_place_select", {
+      category: selectedCandidate?.place.category || "unknown",
+      source: selectedCandidate?.place.source || "unknown",
+      already_in_course: trip.visits.some((visit) => visit.placeId === id),
+    });
     state.patch({ selected: id, expanded: true });
     if (!state.checks[id] && !inspect.isPending) inspect.mutate([id]);
   }
@@ -145,9 +152,13 @@ export function MapExplorer({
               variant="plain"
               key={c}
               aria-pressed={state.category === c}
-              onClick={() =>
-                state.patch({ category: c, selected: null, groupIds: [] })
-              }
+              onClick={() => {
+                trackUmami("map_filter_change", {
+                  filter: "category",
+                  value: c || "all",
+                });
+                state.patch({ category: c, selected: null, groupIds: [] });
+              }}
             >
               {c || "전체"}
             </Button>
@@ -159,7 +170,13 @@ export function MapExplorer({
               variant="plain"
               key={zone}
               aria-pressed={state.zone === zone}
-              onClick={() => state.patch({ zone })}
+              onClick={() => {
+                trackUmami("map_filter_change", {
+                  filter: "zone",
+                  value: zone,
+                });
+                state.patch({ zone });
+              }}
             >
               {zone === "indoor" ? "실내" : "야외·테라스"}
             </Button>
@@ -169,13 +186,16 @@ export function MapExplorer({
           반경{" "}
           <Select
             value={String(state.radius)}
-            onValueChange={(value) =>
+            onValueChange={(value) => {
+              trackUmami("map_radius_change", {
+                radius_meters: Number(value),
+              });
               state.patch({
                 radius: Number(value),
                 selected: null,
                 groupIds: [],
-              })
-            }
+              });
+            }}
           >
             <SelectTrigger aria-label="검색 반경">
               <SelectValue />
@@ -224,7 +244,10 @@ export function MapExplorer({
             className="search-this-area"
             variant="primary"
             disabled={!moved || loadingPlaces}
-            onClick={() => setArea(state.draftCenter, "선택한 지도 위치 주변")}
+            onClick={() => {
+              trackUmami("map_search_area", { radius_meters: state.radius });
+              setArea(state.draftCenter, "선택한 지도 위치 주변");
+            }}
           >
             {loadingPlaces
               ? "주변 찾는 중…"
@@ -362,7 +385,10 @@ export function MapExplorer({
           <Button
             className="explore-note-button"
             variant="primary"
-            onClick={note}
+            onClick={() => {
+              trackUmami("map_note_open", { course_size: trip.visits.length });
+              note();
+            }}
           >
             완료 · 여행 노트 {trip.visits.length}곳 보기
           </Button>
@@ -433,9 +459,13 @@ export function MapExplorer({
                       variant="plain"
                       key={c}
                       aria-pressed={state.category === c}
-                      onClick={() =>
-                        state.patch({ category: c, selected: null, groupIds: [] })
-                      }
+                      onClick={() => {
+                        trackUmami("map_filter_change", {
+                          filter: "category",
+                          value: c || "all",
+                        });
+                        state.patch({ category: c, selected: null, groupIds: [] });
+                      }}
                     >
                       {c || "전체"}
                     </Button>
@@ -447,7 +477,10 @@ export function MapExplorer({
                       variant="plain"
                       key={zone}
                       aria-pressed={state.zone === zone}
-                      onClick={() => state.patch({ zone })}
+                      onClick={() => {
+                        trackUmami("map_filter_change", { filter: "zone", value: zone });
+                        state.patch({ zone });
+                      }}
                     >
                       {zone === "indoor" ? "실내" : "야외·테라스"}
                     </Button>
@@ -457,13 +490,16 @@ export function MapExplorer({
                   반경
                   <Select
                     value={String(state.radius)}
-                    onValueChange={(value) =>
+                    onValueChange={(value) => {
+                      trackUmami("map_radius_change", {
+                        radius_meters: Number(value),
+                      });
                       state.patch({
                         radius: Number(value),
                         selected: null,
                         groupIds: [],
-                      })
-                    }
+                      });
+                    }}
                   >
                     <SelectTrigger aria-label="검색 반경">
                       <SelectValue />

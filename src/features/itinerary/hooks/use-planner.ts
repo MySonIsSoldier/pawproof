@@ -16,6 +16,7 @@ import { useResolvePlaces } from "./use-resolve-places";
 import { useTripOperations } from "./use-trip-operations";
 import { usePlannerNotifications } from "./use-planner-notifications";
 import { useGuestLeaveWarning } from "./use-guest-leave-warning";
+import { trackUmami } from "../../../lib/analytics/umami";
 
 /** Compose UI operations; business policy evaluation remains on the server. */
 export function usePlanner() {
@@ -57,12 +58,15 @@ export function usePlanner() {
       operations.clearAlternatives();
       setDetail(null);
     },
-    copied: (message: string) =>
-      store.getState().succeed(message, "문의 문구를 복사했어요"),
+    copied: (message: string) => {
+      trackUmami("inquiry_copy");
+      store.getState().succeed(message, "문의 문구를 복사했어요");
+    },
     fail: store.getState().fail,
     placeFor: (id: string) => findTripPlace(state.places, id),
     switchMode: (mode: TripInput["mode"]) => {
       if (operations.busy || mode === state.trip.mode) return;
+      trackUmami("trip_mode_change", { mode });
       const start = store.getState().startNote;
       if (start) {
         void start(mode).catch((error: Error) =>
@@ -87,6 +91,11 @@ export function usePlanner() {
         trip.visits.some((v) => v.placeId === place.id)
       )
         return;
+      trackUmami("course_place_add", {
+        category: place.category,
+        source: place.source,
+        course_size: trip.visits.length + 1,
+      });
       store.getState().remember([place]);
       update({
         ...trip,
