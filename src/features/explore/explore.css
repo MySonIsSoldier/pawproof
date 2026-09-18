@@ -396,20 +396,32 @@
 .destination-results {
   list-style: none;
   margin: 0 0 12px;
-  padding: 8px;
-  border: 1px solid var(--line);
+  padding: 0;
+  border: 0;
   border-radius: 14px;
   background: white;
   max-height: 240px;
   overflow-y: auto;
 }
-.destination-results button {
+.destination-results li + li {
+  border-top: 1px solid var(--line);
+}
+.destination-results .ui-button {
   text-align: left;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 2px;
+  min-height: 52px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: white;
+  color: var(--ink);
+}
+.destination-results .ui-button:hover:not(:disabled) {
+  background: #f8faf7;
 }
 .destination-results span {
   font-size: 12px;
