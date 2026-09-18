@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import type { Place, TripInput } from "../../domain/policies/types";
 import { Button } from "../../components/ui/button";
+import { Icon } from "../../components/icon";
 import {
   Select,
   SelectTrigger,
@@ -34,6 +35,8 @@ export function MapExplorer({
   trip,
   update,
   add,
+  remove,
+  newNote,
   active,
   busy,
   note,
@@ -42,6 +45,8 @@ export function MapExplorer({
   trip: TripInput;
   update: (trip: TripInput) => void;
   add: (place: Place) => void;
+  remove: (index: number) => void;
+  newNote: () => void;
   active: boolean;
   busy: boolean;
   note: () => void;
@@ -53,6 +58,15 @@ export function MapExplorer({
       trip.visits.flatMap((v) =>
         places[v.placeId] ? [places[v.placeId]] : [],
       ),
+    [trip.visits, places],
+  );
+  const routeEntries = useMemo(
+    () =>
+      trip.visits
+        .map((visit, index) => ({ index, place: places[visit.placeId] }))
+        .filter(
+          (entry): entry is { index: number; place: Place } => !!entry.place,
+        ),
     [trip.visits, places],
   );
   const {
@@ -89,6 +103,10 @@ export function MapExplorer({
     state.patch({ selected: id, expanded: true });
     if (!state.checks[id] && !inspect.isPending) inspect.mutate([id]);
   }
+  function createNewNote() {
+    state.patch({ selected: null, groupIds: [], expanded: false });
+    newNote();
+  }
   return (
     <section className="map-explorer" aria-label="지도에서 장소 찾기">
       <h1 className="sr-only">반려견과 갈 곳 찾기</h1>
@@ -122,6 +140,9 @@ export function MapExplorer({
           {trip.pets.every((p) => p.weight > 0)
             ? `${trip.pets.length}마리 · ${trip.pets.map((p) => `${p.weight}kg`).join(" / ")}`
             : "반려견 조건 입력"}
+        </Button>
+        <Button variant="outline" disabled={busy} onClick={createNewNote}>
+          <Icon name="plus" size={16} />새 여행 노트
         </Button>
       </div>
       {!!state.targets.length && (
@@ -532,17 +553,39 @@ export function MapExplorer({
           >
             목록 {visible.length}곳
           </Button>
+          <Button variant="outline" disabled={busy} onClick={createNewNote}>
+            <Icon name="plus" size={15} />새 노트
+          </Button>
           <Button variant="primary" onClick={note}>
             완료 · {trip.visits.length}곳
           </Button>
         </div>
       </div>
       <div className="map-trip-summary" aria-label="지도에서 담은 코스">
-        <p>
-          {route.length
-            ? route.map((p, i) => `${i + 1}. ${p.name}`).join(" → ")
-            : "장소를 선택해 나만의 여행 코스를 담아보세요."}
-        </p>
+        {routeEntries.length ? (
+          <ol className="map-route-list">
+            {routeEntries.map(({ index, place }, routeIndex) => (
+              <li key={place.id}>
+                <span className="map-route-stop">
+                  <strong>{routeIndex + 1}</strong>
+                  <span>{place.name}</span>
+                </span>
+                <Button
+                  variant="icon"
+                  className="map-route-remove"
+                  aria-label={`${place.name} 코스에서 빼기`}
+                  title={`${place.name} 코스에서 빼기`}
+                  disabled={busy || trip.visits[index].locked}
+                  onClick={() => remove(index)}
+                >
+                  <Icon name="close" size={14} />
+                </Button>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p>장소를 선택해 나만의 여행 코스를 담아보세요.</p>
+        )}
         <small>
           점선은 실제 도로 경로가 아닌 방문 순서예요. 예상 이동시간은 여행
           노트의 코스 검사에서 확인해 주세요.

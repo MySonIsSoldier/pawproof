@@ -196,7 +196,15 @@ test("SDK failure and location denial retain the list and destination search is 
       .getByRole("button", { name: "패널 닫기" })
       .click();
   await page.getByRole("button", { name: "지도 다시 불러오기" }).click();
-  await page.getByLabel("여행지 또는 주소 검색").fill("부산");
+  if (info.project.name === "mobile")
+    await page.getByRole("button", { name: "검색", exact: true }).click();
+  const destinationSearch =
+    info.project.name === "mobile"
+      ? page
+          .getByRole("dialog", { name: "지도 검색·필터" })
+          .getByLabel("여행지 또는 주소 검색")
+      : page.getByLabel("여행지 또는 주소 검색");
+  await destinationSearch.fill("부산");
   await page.getByRole("button", { name: "찾기", exact: true }).click();
   await page
     .getByRole("list", { name: "여행지 검색 결과" })
@@ -327,6 +335,54 @@ test("grouped places can all be inspected and added without leaving the map", as
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+});
+
+test("map route removes a middle stop and starts a new note", async ({
+  page,
+}, info) => {
+  const nearby = places.map((p, i) => ({ ...p, lat: 37.65 + i * 0.001 }));
+  await page.route("https://dapi.kakao.com/**", (route) =>
+    route.fulfill({ contentType: "text/javascript", body: fakeKakaoSdk }),
+  );
+  await page.route("**/api/discovery/nearby?*", (route) =>
+    route.fulfill({ json: { places: nearby } }),
+  );
+  await page.goto("plan");
+  const mobile = info.project.name === "mobile";
+  for (let i = 0; i < 4; i++)
+    await page.getByRole("button", { name: "지도 확대", exact: true }).click();
+  for (const place of places) {
+    await page
+      .getByRole("button", { name: `${place.name} 지도에서 선택`, exact: true })
+      .click();
+    await page.getByRole("button", { name: "코스에 담기", exact: true }).click();
+  }
+  await expect(page.locator(".map-route-list li")).toHaveCount(3);
+  await page
+    .getByRole("button", {
+      name: `${places[1].name} 코스에서 빼기`,
+      exact: true,
+    })
+    .click();
+  await expect(page.locator(".map-route-list li")).toHaveCount(2);
+  const stops = page.locator(".map-route-stop");
+  await expect(stops).toHaveCount(2);
+  await expect(stops.nth(0)).toContainText(places[0].name);
+  await expect(stops.nth(1)).toContainText(places[2].name);
+  const line = page.locator(".explore-map [data-test-route]");
+  expect(JSON.parse((await line.getAttribute("data-test-route"))!)).toEqual(
+    [nearby[0], nearby[2]].map((p) => ({ lat: p.lat, lng: p.lng })),
+  );
+  await page
+    .getByRole("button", { name: mobile ? "새 노트" : "새 여행 노트", exact: true })
+    .click();
+  await expect(page.locator(".map-route-list")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", {
+      name: mobile ? "완료 · 0곳" : "완료 · 여행 노트 0곳 보기",
+      exact: true,
+    }),
+  ).toBeVisible();
 });
 
 test("identical coordinates keep every place accessible at maximum zoom", async ({

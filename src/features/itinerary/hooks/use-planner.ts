@@ -64,6 +64,28 @@ export function usePlanner() {
     },
     fail: store.getState().fail,
     placeFor: (id: string) => findTripPlace(state.places, id),
+    newNote: () => {
+      if (operations.busy) return;
+      const current = store.getState().trip;
+      trackUmami("trip_note_new", { mode: current.mode });
+      const start = store.getState().startNote;
+      if (start) {
+        void start(current.mode).catch((error: Error) =>
+          store.getState().fail(error.message),
+        );
+        return;
+      }
+      const next = initialTrip(current.mode, current.date);
+      store.getState().reset(
+        {
+          ...next,
+          pets: current.pets,
+        },
+        "새 여행 노트를 열었어요.",
+      );
+      operations.clearAlternatives();
+      setDetail(null);
+    },
     switchMode: (mode: TripInput["mode"]) => {
       if (operations.busy || mode === state.trip.mode) return;
       trackUmami("trip_mode_change", { mode });

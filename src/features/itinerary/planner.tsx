@@ -38,6 +38,7 @@ function PlannerScreen({
     recover,
     move,
     add,
+    newNote,
     copied,
     fail,
     remove,
@@ -77,6 +78,8 @@ function PlannerScreen({
             places={model.places}
             update={update}
             add={add}
+            remove={remove}
+            newNote={newNote}
             active={showMap}
             busy={!!busy}
             note={() => setView("note")}

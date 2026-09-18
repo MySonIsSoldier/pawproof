@@ -434,11 +434,13 @@
   z-index: 4;
   display: flex;
   gap: 6px;
+  pointer-events: none;
 }
 .map-mobile-controls .ui-button {
   min-height: 38px;
   padding: 7px 13px;
   box-shadow: 0 3px 14px #193d3026;
+  pointer-events: auto;
 }
 .mobile-map-tools {
   display: none;
@@ -512,6 +514,10 @@
     min-height: 36px;
     font-size: 12px;
     padding: 5px 12px;
+  }
+  .map-mobile-controls {
+    left: auto;
+    right: 12px;
   }
   .explore-note-button {
     min-height: 42px;
@@ -595,6 +601,57 @@
 .map-trip-summary p {
   margin: 0 0 4px;
   font-weight: 700;
+}
+.map-route-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+}
+.map-route-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 3px 4px 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: white;
+}
+.map-route-stop {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+.map-route-stop strong {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--forest);
+  color: white;
+  font-size: 11px;
+}
+.map-route-stop span {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.map-route-remove {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 3px;
+  color: var(--muted);
+}
+.map-route-remove:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--sage);
 }
 .map-trip-summary small,
 .map-attribution {
@@ -702,6 +759,14 @@
   .map-trip-summary p {
     overflow-x: auto;
     white-space: nowrap;
+  }
+  .map-route-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .map-route-list li {
+    flex-shrink: 0;
   }
   .map-controls {
     top: 62px;
