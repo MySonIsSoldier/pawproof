@@ -11,7 +11,7 @@ const date = z
   }, "올바른 날짜를 입력해 주세요.");
 export const visitSchema = z
   .object({
-    placeId: z.string().regex(/^(demo-[a-z-]+|\d{1,12})$/),
+    placeId: z.string().regex(/^(demo-[a-z-]+|mfds-\d+|\d{1,12})$/),
     duration: z.number().int().min(15).max(240),
     zone: z.enum(["indoor", "outdoor"]),
     locked: z.boolean(),

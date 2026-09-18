@@ -118,6 +118,17 @@ test("schema rejects invalid date, duplicate IDs and mixed data modes", () => {
     false,
   );
 });
+test("schema accepts official Food Safety Korea place IDs in live courses", () => {
+  const trip = createDemoTrip();
+  assert.equal(
+    tripSchema.safeParse({
+      ...trip,
+      mode: "live",
+      visits: [{ ...trip.visits[0], placeId: "mfds-123" }],
+    }).success,
+    true,
+  );
+});
 test("fabricated evidence and malformed semantic values rejected", () => {
   const policy = demoPolicy("demo-table");
   const value = { rules: policy.rules, unresolved: [] };
