@@ -97,8 +97,12 @@ export function PlaceDetail({
         request.signal,
       ),
   });
-  const inquiry = inquiryMutation.data?.text ?? fallbackInquiry;
   const inquiryLoading = inquiryMutation.isPending;
+  const inquiryFallback =
+    inquiryMutation.isError || inquiryMutation.data?.generatedBy === "fallback";
+  const inquiry =
+    inquiryMutation.data?.text ??
+    (inquiryFallback ? fallbackInquiry : "문의 문구를 준비하고 있어요…");
   const petSignature = trip.pets
     .map((pet) => `${pet.breed}:${pet.weight}`)
     .join("|");
@@ -298,6 +302,12 @@ export function PlaceDetail({
         {inquiryLoading && (
           <p className="field-caption" role="status">
             실제로 보낼 수 있는 말투로 문의 문구를 정리하고 있어요…
+          </p>
+        )}
+        {inquiryFallback && !inquiryLoading && (
+          <p className="field-caption" role="status">
+            AI 연결이 지연되어 기본 문의 문구를 준비했어요. 내용을 확인한 뒤
+            사용해 주세요.
           </p>
         )}
         <p className="inquiry-copy">{inquiry}</p>
