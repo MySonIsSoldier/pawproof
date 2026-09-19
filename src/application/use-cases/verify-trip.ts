@@ -9,6 +9,7 @@ import { evaluatePolicy, summarize } from "../../domain/policies/evaluate.ts";
 import { toMinutes } from "../../domain/itinerary/time.ts";
 import { createPolicy } from "../contracts/policy.ts";
 import { addMfdsFacts } from "../../domain/policies/mfds-facts.ts";
+import { addKtoFacts } from "../../domain/policies/kto-facts.ts";
 
 export async function verifyTrip(
   input: TripInput,
@@ -60,6 +61,7 @@ export async function verifyTrip(
             ],
           });
         }
+        if (document.place.source === "kto") policy = addKtoFacts(policy);
         if (
           document.place.source === "mfds" ||
           document.supplementalSources?.some((source) =>

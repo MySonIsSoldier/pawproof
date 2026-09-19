@@ -84,6 +84,37 @@ test("duplicate KTO facts collapse by user-facing meaning", () => {
     1,
   );
 });
+test("live course verification keeps a named indoor restriction out of outdoor visits", async () => {
+  const providers = demoProviders();
+  const get = providers.places.get;
+  providers.places.get = async (id) => {
+    const document = await get(id);
+    return {
+      ...document,
+      place: { ...document.place, source: "kto" as const },
+      raw: "동반 가능 구역: 일부구역 동반가능\n가옥 안쪽은 동반 불가",
+    };
+  };
+  providers.extractor.extract = async () => ({
+    ...demoPolicy("demo-table"),
+    raw: "동반 가능 구역: 일부구역 동반가능\n가옥 안쪽은 동반 불가",
+    rules: [
+      {
+        kind: "entry",
+        scope: "all",
+        operator: "deny",
+        value: null,
+        items: ["가옥 안쪽"],
+        quote: "가옥 안쪽은 동반 불가",
+      },
+    ],
+  });
+  const trip = createDemoTrip();
+  trip.mode = "live";
+  trip.visits = [{ ...trip.visits[0], zone: "outdoor" }];
+  const result = await verifyTrip(trip, providers);
+  assert.notEqual(result.visits[0]?.status, "blocked");
+});
 test("equipment findings use natural Korean particles", () => {
   const policy = {
     ...demoPolicy("demo-table"),
