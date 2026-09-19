@@ -245,6 +245,11 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 
 검증: 로컬·운영 문의 API에서 `generatedBy: "openrouter"`를 확인하고, 단위 124개, typecheck, lint, production build를 통과했다.
 
+## 2026-09-19 · 장소 선택 중 문의 API 중복 호출 축소
+
+- 장소를 선택하면 규정 조회 전·후로 문의 문구 요청이 두 번 나갈 수 있던 순서를 확인했다. 규정 조회가 끝난 뒤에만 OpenRouter 요청을 보내도록 하여 빠른 장소 전환과 불필요한 동시 호출을 줄였다.
+- 운영에서 동일 요청 6건을 동시에 보내 모두 HTTP 200·`generatedBy: "openrouter"`를 반환하는 것을 확인했다. 실제 공급자 실패는 기본 문구로 대체하되 화면에 상태를 표시한다.
+
 ## 2026-09-19 · 문의 문구 OpenRouter 응답 파싱
 
 - 문의 문구 API가 OpenRouter 응답의 `role`·`index`·`usage` 같은 정상적인 부가 필드를 엄격한 스키마에서 거부해, 실제 LLM 호출이 성공해도 `fallback` 문구를 반환하던 문제를 확인했다.

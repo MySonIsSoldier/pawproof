@@ -113,6 +113,10 @@ export function PlaceDetail({
     )
     .join("|");
   useEffect(() => {
+    // The first render can happen while the place policy is still being
+    // inspected. Wait for that result so one tap does not send an initial
+    // incomplete inquiry followed by a second complete one.
+    if (!check || inspecting) return;
     const controller = new AbortController();
     inquiryMutation.mutate({
       signal: controller.signal,
@@ -142,6 +146,7 @@ export function PlaceDetail({
     inquiryMutation.mutate,
     place.id,
     check?.policy.fetchedAt,
+    inspecting,
     trip.date,
     zone,
     petSignature,
