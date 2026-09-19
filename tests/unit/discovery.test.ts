@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  inquiryCompletionSchema,
   nearbyQuerySchema,
   inspectInputSchema,
 } from "../../src/application/contracts/discovery.ts";
@@ -147,4 +148,29 @@ test("contact links cannot turn ambiguous numbers into a wrong call and question
   );
   assert.ok(inquiry.includes("2026-09-20"));
   assert.ok(inquiry.includes("야외/테라스"));
+});
+test("inquiry completion accepts OpenRouter provider metadata", () => {
+  const completion = inquiryCompletionSchema.parse({
+    id: "gen-test",
+    object: "chat.completion",
+    model: "google/gemini-2.5-flash",
+    choices: [
+      {
+        index: 0,
+        finish_reason: "stop",
+        native_finish_reason: "STOP",
+        logprobs: null,
+        message: {
+          role: "assistant",
+          content: "안녕하세요. 반려견 동반 가능 여부를 문의드립니다.",
+          refusal: null,
+        },
+      },
+    ],
+    usage: { prompt_tokens: 10, completion_tokens: 8 },
+  });
+  assert.equal(
+    completion.choices[0].message.content,
+    "안녕하세요. 반려견 동반 가능 여부를 문의드립니다.",
+  );
 });

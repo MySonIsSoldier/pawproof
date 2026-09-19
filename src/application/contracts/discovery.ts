@@ -59,3 +59,9 @@ export const inquiryResultSchema = z.object({
   text: z.string().trim().min(1).max(3000),
   generatedBy: z.enum(["openrouter", "fallback"]),
 });
+/** OpenRouter adds provider metadata; the inquiry route consumes only content. */
+export const inquiryCompletionSchema = z.object({
+  choices: z
+    .array(z.object({ message: z.object({ content: z.string() }) }))
+    .min(1),
+});

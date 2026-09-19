@@ -238,6 +238,12 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - 화면에 노출하는 7개 준비물(목줄·배변봉투·이동장·유모차·입마개·예약·추가요금)을 요청 스키마에 모두 등록하고 최대 선택 개수도 7개로 맞췄다.
 - 에디터에 표시되는 모든 준비물 조합이 코스 검사 스키마를 통과하는 단위 회귀 테스트를 추가했다.
 
+## 2026-09-19 · 문의 문구 OpenRouter 응답 파싱
+
+- 문의 문구 API가 OpenRouter 응답의 `role`·`index`·`usage` 같은 정상적인 부가 필드를 엄격한 스키마에서 거부해, 실제 LLM 호출이 성공해도 `fallback` 문구를 반환하던 문제를 확인했다.
+- 사용하는 `choices[].message.content`만 검증하도록 응답 계약을 완화하고, OpenRouter 메타데이터가 포함된 실제 응답 형태의 회귀 테스트를 추가했다.
+- 수정 후 로컬 `/api/discovery/inquiry`에서 `generatedBy: "openrouter"`와 장소·방문일·반려견 정보가 들어간 자연스러운 문의 문구를 확인했다.
+
 검증: PNG 헤더·해상도, Markdown 상대 링크 16개, `git diff --check`를 확인했다. 캡처는 2026-09-18 비회원 예시 데이터 기준이며 실제 계정 정보는 포함하지 않는다.
 
 ## 2026-09-18 · 제출본 LLM 활용 설명 보강

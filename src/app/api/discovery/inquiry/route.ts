@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  inquiryCompletionSchema,
   inquiryInputSchema,
   inquiryResultSchema,
 } from "../../../../application/contracts/discovery";
@@ -8,12 +9,6 @@ import { fetchJson } from "../../../../infrastructure/http/fetch-json";
 import { errorResponse, inputJson, json } from "../../../../server/http";
 
 export const maxDuration = 35;
-
-const completion = z.object({
-  choices: z
-    .array(z.object({ message: z.object({ content: z.string() }).strict() }).strict())
-    .min(1),
-}).strict();
 
 function fallbackInquiry(input: z.infer<typeof inquiryInputSchema>) {
   const pets = input.pets
@@ -67,7 +62,7 @@ async function openRouterInquiry(input: z.infer<typeof inquiryInputSchema>) {
     fetch,
     30_000,
   );
-  const parsed = completion.parse(response);
+  const parsed = inquiryCompletionSchema.parse(response);
   const text = parsed.choices[0].message.content
     .replace(/^```(?:text|markdown)?\s*/i, "")
     .replace(/\s*```$/i, "")
