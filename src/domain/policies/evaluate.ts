@@ -21,8 +21,22 @@ const labels: Record<RuleKind, string> = {
   closedDays: "방문일 휴무 여부",
 };
 export function summarize(findings: Finding[]): Status {
+  // A venue can allow dogs in some areas while denying a named sub-area.
+  // Keep that denied rule in the evidence list, but do not classify the
+  // whole visit as unavailable when another entry rule confirms access.
+  const hasAvailableEntry = findings.some(
+    (finding) => finding.kind === "entry" && finding.status === "available",
+  );
+  const effective = findings.filter(
+    (finding) =>
+      !(
+        hasAvailableEntry &&
+        finding.kind === "entry" &&
+        finding.status === "blocked"
+      ),
+  );
   for (const state of ["blocked", "confirm", "prepare"] as const)
-    if (findings.some((f) => f.status === state)) return state;
+    if (effective.some((f) => f.status === state)) return state;
   return "available";
 }
 type Context = {

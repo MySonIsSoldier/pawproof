@@ -1,9 +1,6 @@
 import { statusLabels, type Finding, type Status } from "../../domain/policies/types";
 import { Icon } from "../../components/icon";
-import {
-  hasBlockedEntry,
-  hasKnownEntry,
-} from "../../domain/policies/presentation";
+import { hasKnownEntry } from "../../domain/policies/presentation";
 const icons = {
   available: "check",
   prepare: "bag",
@@ -33,19 +30,13 @@ export function ResultStatusBadges({
   findings: Finding[];
 }) {
   const entryKnown = hasKnownEntry(findings);
-  const entryBlocked = hasBlockedEntry(findings);
   return (
     <span className="result-status-badges">
       {entryKnown && (
-        <span className="status-badge available">
-          {entryBlocked ? "일부 구역 이용 가능" : "반려견 출입 가능"}
-        </span>
+        <span className="status-badge available">반려견 출입 가능</span>
       )}
       {(!entryKnown || status !== "available") && (
-        <StatusBadge
-          status={status}
-          label={entryBlocked && status === "blocked" ? "선택 구역 이용 불가" : undefined}
-        />
+        <StatusBadge status={status} />
       )}
     </span>
   );

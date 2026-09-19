@@ -11,7 +11,6 @@ import { inquiryResultSchema } from "../../application/contracts/discovery";
 import type { Inspection } from "../../application/contracts/discovery";
 import { inquiryText } from "../../domain/policies/discovery";
 import {
-  hasBlockedEntry,
   hasKnownEntry,
   readableEvidence,
   readableMessage,
@@ -39,19 +38,14 @@ export function ConditionBadges({
   unqueried?: boolean;
 }) {
   const entryKnown = hasKnownEntry(findings);
-  const entryBlocked = hasBlockedEntry(findings);
   return (
     <span className="status-badges">
       {entryKnown && (
-        <span className="map-status available">
-          {entryBlocked ? "일부 구역 이용 가능" : "반려견 출입 가능"}
-        </span>
+        <span className="map-status available">반려견 출입 가능</span>
       )}
       {(!entryKnown || status !== "available") && (
         <span className={`map-status ${status}`}>
-          {entryBlocked && status === "blocked"
-            ? "선택 구역 이용 불가"
-            : mapStatusLabels[status]}
+          {mapStatusLabels[status]}
           {unqueried ? " · 미조회" : ""}
         </span>
       )}

@@ -67,6 +67,6 @@ test("named indoor denial does not block an outdoor visit", () => {
   );
   assert.equal(
     summarize(evaluatePolicy(policy, { ...context, zone: "indoor" })),
-    "blocked",
+    "confirm",
   );
 });
