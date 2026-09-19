@@ -176,6 +176,19 @@ test("schema rejects invalid date, duplicate IDs and mixed data modes", () => {
     false,
   );
 });
+test("trip schema accepts every preparation option shown in the editor", () => {
+  const trip = createDemoTrip();
+  trip.equipment = [
+    "목줄",
+    "배변봉투",
+    "이동장",
+    "유모차",
+    "입마개",
+    "예약",
+    "추가요금",
+  ];
+  assert.equal(tripSchema.safeParse(trip).success, true);
+});
 test("schema accepts official Food Safety Korea place IDs in live courses", () => {
   const trip = createDemoTrip();
   assert.equal(

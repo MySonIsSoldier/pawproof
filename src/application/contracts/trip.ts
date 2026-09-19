@@ -35,8 +35,18 @@ export const tripSchema = z
     date,
     startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
     equipment: z
-      .array(z.enum(["목줄", "이동장", "유모차", "입마개", "예약", "추가요금"]))
-      .max(6),
+      .array(
+        z.enum([
+          "목줄",
+          "배변봉투",
+          "이동장",
+          "유모차",
+          "입마개",
+          "예약",
+          "추가요금",
+        ]),
+      )
+      .max(7),
     visits: z.array(visitSchema).min(1).max(5),
   })
   .strict()

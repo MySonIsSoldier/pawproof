@@ -88,6 +88,7 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
     "outline-color",
     "rgb(47, 107, 80)",
   );
+  await page.getByLabel("배변봉투", { exact: true }).check();
   const request = page.waitForRequest((request) =>
     request.url().endsWith("/api/verify"),
   );
@@ -97,6 +98,7 @@ test("custom controls preserve Korean dates, exact times and keyboard selection"
   const input = (await request).postDataJSON();
   expect(input.date).toBe(`${year + 1}-01-01`);
   expect(input.startTime).toBe("00:07");
+  expect(input.equipment).toContain("배변봉투");
   expect(input.visits[0]).toMatchObject({ duration: 90, zone: "indoor" });
   expect(
     await page.locator('input[type="date"], input[type="time"]').count(),
