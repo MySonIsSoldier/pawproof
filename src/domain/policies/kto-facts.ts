@@ -76,7 +76,20 @@ function addRule(rules: Rule[], next: Rule) {
  * when the optional LLM extraction is unavailable or phrases are ambiguous.
  */
 export function addKtoFacts(policy: Policy): Policy {
-  const rules = [...policy.rules];
+  // Some model responses describe a named indoor area (for example,
+  // “가옥 안쪽은 동반 불가”) with the broad `all` scope. That would wrongly
+  // block an outdoor visit. Preserve the evidence but constrain that denial to
+  // the indoor zone; the selected zone still decides the final course status.
+  const rules = policy.rules.map((rule) =>
+    rule.kind === "entry" &&
+    rule.operator === "deny" &&
+    rule.scope === "all" &&
+    /(?:가옥\s*안쪽|실내(?:\s*공간)?)(?:은|는|이|에서|만)?[^\n]*(?:동반|출입).*(?:불가|제한)/.test(
+      rule.quote,
+    )
+      ? { ...rule, scope: "indoor" as const }
+      : rule,
+  );
   const unresolved = new Set(policy.unresolved);
   for (const block of blocks(policy.raw)) {
     const compact = block.text.replace(/\s/g, "");

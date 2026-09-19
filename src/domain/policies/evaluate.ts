@@ -177,9 +177,15 @@ export function evaluatePolicy(policy: Policy, context: Context): Finding[] {
   const applicable = policy.rules.filter(
     (r) => r.scope === "all" || r.scope === context.zone,
   );
+  const entryRules = applicable.filter((r) => r.kind === "entry");
+  // A named zone overrides a generic all-zone statement when checking for a
+  // source conflict. Keep both findings so the user can see that the place
+  // accepts dogs somewhere while the selected zone has a restriction.
+  const scopedEntries = entryRules.filter((r) => r.scope === context.zone);
+  const consideredEntries = scopedEntries.length ? scopedEntries : entryRules;
   const entryConflict =
-    applicable.some((r) => r.kind === "entry" && r.operator === "allow") &&
-    applicable.some((r) => r.kind === "entry" && r.operator === "deny");
+    consideredEntries.some((r) => r.operator === "allow") &&
+    consideredEntries.some((r) => r.operator === "deny");
   const findings = applicable.map((rule) =>
     checkRule(
       entryConflict && rule.kind === "entry"

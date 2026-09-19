@@ -26,6 +26,11 @@ export function hasKnownEntry(findings: Finding[]) {
     (finding) => finding.kind === "entry" && finding.status === "available",
   );
 }
+export function hasBlockedEntry(findings: Finding[]) {
+  return findings.some(
+    (finding) => finding.kind === "entry" && finding.status === "blocked",
+  );
+}
 /** Convert provider field-prefixed evidence into copy users can understand. */
 export function readableEvidence(value: string | null | undefined): string {
   if (!value) return "";
