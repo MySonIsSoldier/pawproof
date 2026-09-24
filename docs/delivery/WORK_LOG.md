@@ -9,6 +9,7 @@
 - Resend 발신 도메인 인증, Turnstile 위젯, Vercel Production 환경변수 입력은 운영자 설정으로 남겼다. 순서와 변수는 [문의하기 메일 파이프라인](../operations/CONTACT_PIPELINE.md)에 기록했다.
 - 검증: 최종 원격 main을 합친 뒤 단위 127개, lint·typecheck·운영 빌드, 문의 전용 브라우저 검사 6개(데스크톱·모바일) 통과. 전체 브라우저 80개 회귀는 65개 통과·13개 실패·2개 건너뜀으로, 실패는 문의와 무관한 기존 planner/장소 흐름이며 별도 후속 확인이 필요하다.
 - 운영 QA: `pawproof.kr/contact`의 canonical redirect, `www.pawproof.kr/contact` HTTP 200, 제목·필드·Footer 링크, 390px 모바일 가로 overflow 없음, `/api/health` 200을 확인했다. malformed 문의는 400, 유효한 안전 테스트 요청은 `SETUP_REQUIRED`로 거부되었다. 현재 Vercel Production에 Resend·Turnstile 설정이 없어 실제 Gmail 수신은 아직 확인하지 않았다.
+- 후속 UI 조정: 모바일 Safari 입력 자동 확대를 막기 위해 이메일·문의 유형·내용 컨트롤을 16px로 맞췄고, 문의 유형은 기존 Radix Select 컴포넌트로 교체했다. 좌측 3중 원형 장식을 제거했다. 운영 390px viewport에서 폰트 크기·공통 Select 버튼·장식 제거·가로 overflow 없음을 직접 확인했다.
 
 ## 2026-09-13 · Vercel 배포와 PWA Google 로그인
 
