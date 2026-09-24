@@ -26,7 +26,8 @@ test("contact form posts through the app API and shows delivery success", async 
   );
   await page.goto("contact");
   await page.getByLabel("답변받을 이메일").fill("traveler@example.com");
-  await page.getByLabel("문의 유형").selectOption("data");
+  await page.getByLabel("문의 유형").click();
+  await page.getByRole("option", { name: "장소·동반 정보" }).click();
   await page
     .getByLabel("문의 내용")
     .fill("파주 장소 정보의 최신 동반 조건을 확인하고 싶어요.");

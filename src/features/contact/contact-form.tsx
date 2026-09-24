@@ -8,6 +8,13 @@ import {
 } from "../../application/contracts/contact.ts";
 import { Icon } from "../../components/icon";
 import { apiPath } from "../../config/public";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 
 declare global {
   interface Window {
@@ -143,22 +150,26 @@ export function ContactForm() {
             required
           />
         </label>
-        <label className="contact-field">
+        <div className="contact-field">
           <span>문의 유형</span>
-          <select
-            name="category"
+          <Select
             value={category}
-            onChange={(event) =>
-              setCategory(event.target.value as (typeof contactCategoryValues)[number])
+            onValueChange={(value) =>
+              setCategory(value as (typeof contactCategoryValues)[number])
             }
           >
-            {contactCategoryValues.map((value) => (
-              <option key={value} value={value}>
-                {contactCategoryLabels[value]}
-              </option>
-            ))}
-          </select>
-        </label>
+            <SelectTrigger aria-label="문의 유형">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {contactCategoryValues.map((value) => (
+                <SelectItem key={value} value={value}>
+                  {contactCategoryLabels[value]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <label className="contact-field">

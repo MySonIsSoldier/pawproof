@@ -661,19 +661,6 @@ select {
 }
 .contact-intro {
   padding-top: 24px;
-  position: relative;
-}
-.contact-intro:after {
-  content: "";
-  position: absolute;
-  width: 190px;
-  height: 190px;
-  right: -35px;
-  bottom: -75px;
-  border: 1px solid #cbdcc7;
-  border-radius: 50%;
-  box-shadow: 0 0 0 26px #dfe9d844, 0 0 0 52px #dfe9d82e;
-  pointer-events: none;
 }
 .contact-intro h1 {
   margin-top: 25px;
@@ -780,22 +767,28 @@ select {
   margin-top: 0;
 }
 .contact-field input,
-.contact-field select,
 .contact-field textarea {
   width: 100%;
   border: 1px solid #cfddcf;
   border-radius: 12px;
   background: #fbfcf8;
   color: var(--ink);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   outline: 0;
   transition: border-color 160ms, box-shadow 160ms, background 160ms;
 }
 .contact-field input,
-.contact-field select {
+.contact-field .ui-select-trigger {
   min-height: 48px;
   padding: 10px 13px;
+}
+.contact-field .ui-select-trigger {
+  border-color: #cfddcf;
+  border-radius: 12px;
+  background: #fbfcf8;
+  font-size: 16px;
+  font-weight: 500;
 }
 .contact-field textarea {
   min-height: 160px;
@@ -808,8 +801,8 @@ select {
   color: #9aa99c;
 }
 .contact-field input:focus,
-.contact-field select:focus,
-.contact-field textarea:focus {
+.contact-field textarea:focus,
+.contact-field .ui-select-trigger:focus-visible {
   border-color: var(--forest);
   box-shadow: 0 0 0 4px var(--focus-halo);
   background: white;
@@ -1198,11 +1191,6 @@ select {
   }
   .contact-intro {
     padding-top: 0;
-    overflow: hidden;
-  }
-  .contact-intro:after {
-    right: -70px;
-    bottom: -30px;
   }
   .contact-intro h1 {
     font-size: 40px;
