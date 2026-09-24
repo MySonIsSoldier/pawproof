@@ -31,6 +31,7 @@ Resend의 Free 플랜은 현재 월 3,000통·일 100통까지이며, 초기 문
 Cloudflare Turnstile에서 Managed 위젯을 만들고 다음 hostname을 등록한다.
 
 - `pawproof.kr`
+- `www.pawproof.kr` (현재 canonical 주소)
 - `pawproof-rose.vercel.app`
 
 개발 중 브라우저 확인이 필요하면 `localhost`도 추가한다. 생성된 sitekey는 브라우저용이고 secret key는 서버용이다. 두 값을 서로 바꾸지 않는다.
