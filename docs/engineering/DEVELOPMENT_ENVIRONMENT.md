@@ -62,7 +62,7 @@ PORT=3000
 
 배포 빌드에서는 `APP_ENV=production`, `APP_BASE_PATH=`를 사용한다. 프리뷰도 루트 경로를 사용한다. 자동 생성되는 프리뷰 origin은 신뢰하는 플랫폼 설정에서 구하고, 사용자 요청의 임의 `Host` 헤더로 공유 URL을 만들지 않는다.
 
-`.env.example`은 **Vercel Production 템플릿**이다. 운영 프로필·빈 basePath·PWA/실 API 활성화·현재 모델 기본값을 포함하고 API 키·Firebase 프로젝트별 값 10개는 비워 둔다. 실제 값은 Vercel 또는 비추적 `.env.vercel.local` 사본에 입력하며 공개 템플릿과 기존 `.env.local`을 덮어쓰지 않는다. `.env.vercel.local`은 가져오기용 사본이며 Next.js 자동 로딩 파일이 아니다. 개발 비밀은 기존 `.env.local`, 프록시 프로필은 `.env.code-server.example`을 참고한 **`.env.development.local`**에 둔다. 개발 시 `.env.development.local`이 `.env.local`보다 우선한다. 직접 로컬은 `pnpm dev:direct`로 실행한다. 공통 `.env.local`의 프록시 값이 배포 빌드까지 적용되는 것을 피한다. KTO·LLM 키·Firebase 관리 자격증명에는 `NEXT_PUBLIC_` 접두사를 붙이지 않는다.
+`.env.example`은 **Vercel Production 템플릿**이다. 운영 프로필·빈 basePath·PWA/실 API 활성화·현재 모델 기본값을 포함하고, 사용자가 채울 직접 입력값 15개를 표시한다. 문의하기의 Resend·Turnstile 변수도 이 템플릿의 마지막 항목이다. 실제 값은 Vercel 또는 비추적 `.env.vercel.local` 사본에 입력하며 공개 템플릿과 기존 `.env.local`을 덮어쓰지 않는다. `.env.vercel.local`은 가져오기용 사본이며 Next.js 자동 로딩 파일이 아니다. 개발 비밀은 기존 `.env.local`, 프록시 프로필은 `.env.code-server.example`을 참고한 **`.env.development.local`**에 둔다. 개발 시 `.env.development.local`이 `.env.local`보다 우선한다. 직접 로컬은 `pnpm dev:direct`로 실행한다. 공통 `.env.local`의 프록시 값이 배포 빌드까지 적용되는 것을 피한다. KTO·LLM 키·Firebase 관리 자격증명에는 `NEXT_PUBLIC_` 접두사를 붙이지 않는다.
 
 `APP_ENV`가 비어 있으면 개발은 `local`, 빌드·실행은 `production`으로 추론하고 Vercel의 `preview`·`production` 값도 지원한다. code-server의 origin은 명시한 `APP_ORIGIN`을 우선하고, 없으면 환경의 `VSCODE_PROXY_URI`에서 가져온다. 프리뷰의 origin은 `VERCEL_URL`을 사용할 수 있다. 운영 origin이 아직 정해지지 않아도 초기 빌드는 가능하며 절대 URL을 생성할 때 검증된 origin을 전달해야 한다.
 

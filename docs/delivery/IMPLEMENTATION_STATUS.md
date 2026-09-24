@@ -1,8 +1,15 @@
 # 현재 구현·검증 기록
 
-기준일: 2026-09-13
+기준일: 2026-09-24
 
 최근 운영 배포·PWA Google 로그인 포커스 변경과 남은 실기기 확인은 [작업 로그](WORK_LOG.md)를 따른다. 아래 날짜별 항목은 당시 검증 범위의 기록이다.
+
+## 문의하기 CX 메일 파이프라인 (2026-09-24)
+
+- `/contact` 페이지와 Footer 진입점을 구현했다. 문의 입력은 `/api/contact`에서 검증하고 Resend를 통해 `ohsong656565@gmail.com`으로 전달하며, 답장은 입력된 이메일로 돌아가도록 `Reply-To`를 지정한다.
+- Cloudflare Turnstile Managed 위젯과 서버 Siteverify를 운영 보호 계층으로 연결했다. honeypot·길이/이메일 검증·Resend 오류 상태를 포함하고, 운영 설정 누락은 명시적인 설정 오류로 반환한다.
+- 문의 데이터는 Firestore에 저장하지 않는다. Resend 도메인 인증, Turnstile 키 발급, Vercel Production 변수 입력과 실제 Gmail 수신 확인은 운영 설정 후 별도로 수행한다.
+- 최종 원격 main을 합친 뒤 단위 테스트 127개, lint·typecheck·운영 빌드, 문의 전용 Playwright 6개(데스크톱·모바일) 통과. 전체 80개 브라우저 회귀는 65개 통과·13개 실패·2개 건너뜀으로, 실패는 문의와 무관한 기존 planner/장소 흐름이다.
 
 ## 초기 개발 기반 (2026-09-10 기록)
 

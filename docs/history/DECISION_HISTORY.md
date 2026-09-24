@@ -114,6 +114,16 @@
 
 상세 구현을 진행하면서 확정한 결과는 관련 기준 문서와 이 기록에 함께 반영한다.
 
+## 11. 2026-09-24 문의하기 CX pipeline
+
+사용자 문의를 개인 Gmail `ohsong656565@gmail.com`으로 받는 공개 창구가 필요해졌다. `mailto`만으로는 제출 상태·전달 경계·스팸 방어를 제공하기 어려우므로 Footer의 `/contact` 페이지와 서버 Route Handler를 추가하기로 했다.
+
+- Resend Free 플랜을 발송 어댑터로 선택한다. Vercel의 Next.js 서버 경계에서 호출하며 API key는 서버 환경변수에 둔다.
+- 발신자는 `contact@pawproof.kr`처럼 인증된 PawProof 도메인으로 고정하고 사용자가 입력한 주소는 `Reply-To`에 넣는다.
+- Turnstile Managed 위젯과 서버 Siteverify를 운영에서 요구한다. secret이 없으면 문의를 성공처럼 처리하지 않는다.
+- 문의 내용은 초기 범위에서 Firestore에 저장하지 않는다. 답변·분류는 Gmail에서 관리하고, Resend 일 100통 제한을 운영 기준으로 기록한다.
+- 상세 설정·검증 순서는 [문의하기 메일 파이프라인](../operations/CONTACT_PIPELINE.md)에 둔다.
+
 ## 10. 2026-09-10 개발·운영 기획
 
 사용자는 무료 호스팅을 우선하고 Vercel·Firebase·Next.js를 제시했다. 보유 도메인은 Cloudflare DNS에서 관리하는 `hothyun.com`이며, 새 도메인 구매는 직접 결정하고 디자인 레퍼런스도 직접 제공하기로 했다.

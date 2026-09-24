@@ -21,3 +21,22 @@ export function getKtoConfig() {
 export function getLiveConfig() {
   return { enabled: process.env.LIVE_SERVICES_ENABLED === "true", kakaoKey: process.env.KAKAO_MOBILITY_REST_KEY?.trim() || "" };
 }
+
+export function getContactDeliveryConfig() {
+  return {
+    apiKey: requiredValue("RESEND_API_KEY"),
+    recipientEmail:
+      process.env.CONTACT_RECIPIENT_EMAIL?.trim() || "ohsong656565@gmail.com",
+    fromEmail: requiredValue("CONTACT_FROM_EMAIL"),
+  };
+}
+
+export function getContactProtectionConfig() {
+  return {
+    required:
+      process.env.CONTACT_REQUIRE_TURNSTILE === "true" ||
+      (process.env.APP_ENV === "production" &&
+        process.env.CONTACT_REQUIRE_TURNSTILE !== "false"),
+    secretKey: process.env.TURNSTILE_SECRET_KEY?.trim() || "",
+  };
+}

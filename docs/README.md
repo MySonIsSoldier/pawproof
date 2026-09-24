@@ -36,6 +36,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [UI 디자인 시스템·상태 책임](engineering/UI_DESIGN_SYSTEM.md) | shadcn/Radix 컴포넌트, 토큰, Zustand·TanStack Query, 공통 훅 |
 | [무료 호스팅·비용·운영](operations/HOSTING_AND_COST.md) | 사용량 예산, DNS, 배포 관리, 대안 전환, 심사 기간 운영 |
 | [Umami 분석 설정](operations/UMAMI_ANALYTICS.md) | Umami 사이트 등록, Vercel 환경변수, 제품 이벤트 목록 |
+| [문의하기 메일 파이프라인](operations/CONTACT_PIPELINE.md) | `/contact` 폼, Resend 발송, Turnstile, Vercel 운영 설정 |
 | [Vercel 첫 배포 안내](operations/VERCEL_DEPLOYMENT.md) | GitHub 연결·Node/pnpm·운영 환경변수·Firebase 도메인·배포 후 점검 |
 | [구현·검증·제출 계획](delivery/DELIVERY_PLAN.md) | 제출 버전 범위, 역할 분담, 개발 일정, 품질 평가, 시연 |
 | [현재 구현·검증 기록](delivery/IMPLEMENTATION_STATUS.md) | 실제 구현한 파일·실행한 검사·아직 검증하지 않은 연결 |

@@ -10,6 +10,9 @@ export function SiteFooter() {
         <p>작은 발걸음도, 여행의 끝까지.</p>
       </div>
       <div>
+        <Link href="/contact">
+          문의하기 <Icon name="arrow" size={14} />
+        </Link>
         <Link href="/about">
           서비스와 데이터 안내 <Icon name="arrow" size={14} />
         </Link>
