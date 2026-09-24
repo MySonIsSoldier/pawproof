@@ -1,7 +1,7 @@
 # 문의하기(CX) 메일 파이프라인
 
 기준일: 2026-09-24
-상태: 코드 연결 완료. Resend·Cloudflare Turnstile 계정과 Vercel Production 환경변수 입력은 운영자 설정으로 남아 있다.
+상태: 코드 연결 완료. Resend·Cloudflare Turnstile 계정과 Vercel Production 환경변수 입력은 운영자 설정으로 남아 있다. 2026-09-24 운영 QA에서 설정 누락 시 `SETUP_REQUIRED`로 안전하게 거부되는 것을 확인했다.
 
 ## 동작 범위
 

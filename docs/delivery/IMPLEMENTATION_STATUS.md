@@ -10,6 +10,7 @@
 - Cloudflare Turnstile Managed 위젯과 서버 Siteverify를 운영 보호 계층으로 연결했다. honeypot·길이/이메일 검증·Resend 오류 상태를 포함하고, 운영 설정 누락은 명시적인 설정 오류로 반환한다.
 - 문의 데이터는 Firestore에 저장하지 않는다. Resend 도메인 인증, Turnstile 키 발급, Vercel Production 변수 입력과 실제 Gmail 수신 확인은 운영 설정 후 별도로 수행한다.
 - 최종 원격 main을 합친 뒤 단위 테스트 127개, lint·typecheck·운영 빌드, 문의 전용 Playwright 6개(데스크톱·모바일) 통과. 전체 80개 브라우저 회귀는 65개 통과·13개 실패·2개 건너뜀으로, 실패는 문의와 무관한 기존 planner/장소 흐름이다.
+- 운영 QA에서 `pawproof.kr`의 canonical redirect와 `www.pawproof.kr/contact` 200, 핵심 필드·Footer 링크·390px 가로 overflow 없음·health 200을 확인했다. 설정 없는 유효 요청은 `SETUP_REQUIRED`로 안전하게 거부되며, Resend를 통한 실제 Gmail 수신은 운영 변수 입력 후 남아 있다.
 
 ## 초기 개발 기반 (2026-09-10 기록)
 

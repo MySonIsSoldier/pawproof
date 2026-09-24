@@ -8,6 +8,7 @@
 - 서버 Route Handler는 Zod 입력 검증, honeypot, Cloudflare Turnstile Siteverify, Resend 전송을 담당한다. Resend·Turnstile 설정이 빠진 운영 환경은 성공으로 위장하지 않고 `SETUP_REQUIRED`를 반환한다. 문의 내용은 Firestore에 저장하지 않는다.
 - Resend 발신 도메인 인증, Turnstile 위젯, Vercel Production 환경변수 입력은 운영자 설정으로 남겼다. 순서와 변수는 [문의하기 메일 파이프라인](../operations/CONTACT_PIPELINE.md)에 기록했다.
 - 검증: 최종 원격 main을 합친 뒤 단위 127개, lint·typecheck·운영 빌드, 문의 전용 브라우저 검사 6개(데스크톱·모바일) 통과. 전체 브라우저 80개 회귀는 65개 통과·13개 실패·2개 건너뜀으로, 실패는 문의와 무관한 기존 planner/장소 흐름이며 별도 후속 확인이 필요하다.
+- 운영 QA: `pawproof.kr/contact`의 canonical redirect, `www.pawproof.kr/contact` HTTP 200, 제목·필드·Footer 링크, 390px 모바일 가로 overflow 없음, `/api/health` 200을 확인했다. malformed 문의는 400, 유효한 안전 테스트 요청은 `SETUP_REQUIRED`로 거부되었다. 현재 Vercel Production에 Resend·Turnstile 설정이 없어 실제 Gmail 수신은 아직 확인하지 않았다.
 
 ## 2026-09-13 · Vercel 배포와 PWA Google 로그인
 
