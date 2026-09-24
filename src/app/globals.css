@@ -1198,6 +1198,7 @@ select {
   }
   .contact-intro {
     padding-top: 0;
+    overflow: hidden;
   }
   .contact-intro:after {
     right: -70px;
