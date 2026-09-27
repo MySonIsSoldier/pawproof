@@ -1,12 +1,19 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Icon } from "../../components/icon";
 import { SiteFooter } from "../../components/site-footer";
 import { SiteHeader } from "../../components/site-header";
 import { ContactForm } from "../../features/contact/contact-form";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "문의하기",
   description: "PawProof에 서비스 이용 경험과 장소 정보를 알려주세요.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "문의하기 | PawProof",
+    description: "PawProof에 서비스 이용 경험과 장소 정보를 알려주세요.",
+    url: "/contact",
+  },
 };
 
 export default function ContactPage() {

@@ -1,4 +1,4 @@
-const DEFAULT_SITE_ORIGIN = "https://pawproof.kr";
+const DEFAULT_SITE_ORIGIN = "https://www.pawproof.kr";
 
 /** Resolve the public origin used by canonical URLs and crawler metadata. */
 export function resolveSiteOrigin(

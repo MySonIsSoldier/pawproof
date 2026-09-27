@@ -14,5 +14,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${siteOrigin}${appPath("/contact")}`,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
   ];
 }
