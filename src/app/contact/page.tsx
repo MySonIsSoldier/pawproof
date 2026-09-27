@@ -6,13 +6,30 @@ import { SiteHeader } from "../../components/site-header";
 import { ContactForm } from "../../features/contact/contact-form";
 
 export const metadata: Metadata = {
-  title: "문의하기",
-  description: "PawProof에 서비스 이용 경험과 장소 정보를 알려주세요.",
+  title: { absolute: "PawProof 문의하기 | 반려견 동반여행 정보 의견" },
+  description:
+    "PawProof의 반려견 동반여행 장소 정보와 서비스 이용 경험, 확인이 필요한 출입 조건을 알려주세요. 운영 개선에 참고하겠습니다.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "문의하기 | PawProof",
-    description: "PawProof에 서비스 이용 경험과 장소 정보를 알려주세요.",
+    title: "PawProof 문의하기 | 반려견 동반여행 정보 의견",
+    description:
+      "반려견 동반 장소 정보와 서비스 이용 경험, 확인이 필요한 출입 조건을 PawProof에 알려주세요.",
     url: "/contact",
+    images: [
+      {
+        url: "/media/travel-companion.jpg",
+        width: 900,
+        height: 600,
+        alt: "반려견과 함께 떠나는 PawProof 여행",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PawProof 문의하기 | 반려견 동반여행 정보 의견",
+    description:
+      "반려견 동반 장소 정보와 서비스 이용 경험, 확인이 필요한 출입 조건을 PawProof에 알려주세요.",
+    images: ["/media/travel-companion.jpg"],
   },
 };
 

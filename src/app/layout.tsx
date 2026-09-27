@@ -8,6 +8,7 @@ import { AuthProvider } from "../features/auth/auth-provider";
 import { AuthDialog } from "../features/auth/auth-dialog";
 import { PwaProvider } from "../features/pwa/pwa-provider";
 import { UmamiScript } from "../components/analytics/umami-script";
+import { SiteJsonLd } from "../components/seo/site-json-ld";
 import { siteOrigin } from "../config/site";
 const pretendard = localFont({
   src: "../assets/fonts/PretendardVariable.woff2",
@@ -20,11 +21,11 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin),
   title: {
-    default: "PawProof | 반려견 동반여행 코스 사전검증",
+    default: "PawProof | 반려견 동반여행 코스와 출입 조건 검증",
     template: "%s | PawProof",
   },
   description:
-    "반려견의 견종·체중·마릿수와 장소별 동반 규정을 확인하고, 준비사항·문의 문구·대체 코스까지 안내하는 여행 노트",
+    "반려견의 견종·체중·마릿수와 장소별 동반 규정을 확인하고, 준비사항과 문의 문구, 일정 변화가 적은 대체 코스까지 안내하는 여행 노트입니다.",
   applicationName: "PawProof",
   keywords: [
     "반려견 동반 여행",
@@ -55,9 +56,9 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: "/",
     siteName: "PawProof",
-    title: "PawProof | 반려견 동반여행 코스 사전검증",
+    title: "PawProof | 반려견 동반여행 코스와 출입 조건 검증",
     description:
-      "우리 강아지와 갈 곳을 찾고, 장소별 동반 조건과 준비사항을 출발 전에 확인하세요.",
+      "가고 싶은 여행 코스를 담으면 반려견의 조건과 장소별 동반 규정을 대조하고, 준비사항과 일정 변화가 적은 대체 코스까지 출발 전에 살펴보세요.",
     images: [
       {
         url: "/media/travel-companion.jpg",
@@ -69,9 +70,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PawProof | 반려견 동반여행 코스 사전검증",
+    title: "PawProof | 반려견 동반여행 코스와 출입 조건 검증",
     description:
-      "장소별 동반 조건부터 준비사항과 대체 코스까지 출발 전에 확인하는 여행 노트",
+      "장소별 동반 조건부터 준비사항과 일정 변화가 적은 대체 코스까지 출발 전에 확인하는 여행 노트입니다.",
     images: ["/media/travel-companion.jpg"],
   },
   appleWebApp: { capable: true, title: "PawProof", statusBarStyle: "default" },
@@ -102,6 +103,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={pretendard.variable}
     >
       <body>
+        <SiteJsonLd />
         <UmamiScript />
         <a className="skip-link" href="#main">
           본문으로 바로가기

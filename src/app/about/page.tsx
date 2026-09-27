@@ -3,15 +3,30 @@ import type { Metadata } from "next";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 export const metadata: Metadata = {
-  title: "PawProof 소개",
+  title: { absolute: "PawProof 소개 | 반려견 동반여행 코스 검증 기준" },
   description:
-    "PawProof가 공식 관광 데이터와 AI 규정 구조화로 반려견 동반여행의 확인사항을 정리하는 방법을 소개합니다.",
+    "PawProof가 한국관광공사 반려동물 동반여행 데이터와 공식 안내를 바탕으로 반려견 동반여행 코스의 확인사항과 준비 기준을 정리하는 방법을 소개합니다.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "PawProof 소개 | 반려견 동반여행 코스 사전검증",
+    title: "PawProof 소개 | 반려견 동반여행 코스 검증 기준",
     description:
       "공식 근거와 반려견 조건을 바탕으로 여행 코스를 출발 전에 확인하는 PawProof를 소개합니다.",
     url: "/about",
+    images: [
+      {
+        url: "/media/travel-companion.jpg",
+        width: 900,
+        height: 600,
+        alt: "반려견과 함께 떠나는 PawProof 여행",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PawProof 소개 | 반려견 동반여행 코스 검증 기준",
+    description:
+      "공식 근거와 반려견 조건을 바탕으로 여행 코스를 출발 전에 확인하는 PawProof를 소개합니다.",
+    images: ["/media/travel-companion.jpg"],
   },
 };
 export default function About() {
