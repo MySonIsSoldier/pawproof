@@ -6,7 +6,16 @@ import {
   getContactDeliveryConfig,
   getContactProtectionConfig,
 } from "../../../config/server.ts";
-import { errorResponse, inputJson, json } from "../../../server/http.ts";
+import {
+  errorResponse,
+  inputJson,
+  json,
+  rateLimitResponse,
+} from "../../../server/http.ts";
+import {
+  checkRateLimit,
+  publicRateLimits,
+} from "../../../server/rate-limit.ts";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -14,6 +23,8 @@ export const maxDuration = 15;
 
 export async function POST(request: Request) {
   try {
+    const limit = checkRateLimit(request, "contact", publicRateLimits.contact);
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterSeconds);
     const input = contactInputSchema.parse(await inputJson(request, 12_000));
 
     // Quietly absorb obvious bot submissions without spending email quota.

@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { createProviders } from "../../../server/providers";
-import { errorResponse, json } from "../../../server/http";
+import { errorResponse, json, rateLimitResponse } from "../../../server/http";
+import {
+  checkRateLimit,
+  publicRateLimits,
+} from "../../../server/rate-limit";
 const querySchema = z.object({
   mode: z.enum(["demo", "live"]),
   q: z.string().trim().max(60),
@@ -8,6 +12,12 @@ const querySchema = z.object({
 });
 export async function GET(request: Request) {
   try {
+    const limit = checkRateLimit(
+      request,
+      "places",
+      publicRateLimits.placeSearch,
+    );
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterSeconds);
     const { mode, q, category } = querySchema.parse(
       Object.fromEntries(new URL(request.url).searchParams),
     );

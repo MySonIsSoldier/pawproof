@@ -1,7 +1,13 @@
 import { nearbyQuerySchema } from "../../../../application/contracts/discovery";
 import { createProviders } from "../../../../server/providers";
-import { errorResponse, json } from "../../../../server/http";
+import { errorResponse, json, rateLimitResponse } from "../../../../server/http";
+import {
+  checkRateLimit,
+  publicRateLimits,
+} from "../../../../server/rate-limit";
 export async function GET(request: Request) {
+  const limit = checkRateLimit(request, "nearby", publicRateLimits.nearby);
+  if (!limit.allowed) return rateLimitResponse(limit.retryAfterSeconds);
   const parsed = nearbyQuerySchema.safeParse(
     Object.fromEntries(new URL(request.url).searchParams),
   );

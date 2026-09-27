@@ -2,14 +2,29 @@ import "server-only";
 import { z } from "zod";
 import { readJson, ProviderError } from "../infrastructure/http/fetch-json.ts";
 import { SetupRequired } from "./providers.ts";
-export function json(value: unknown, status = 200) {
+export function json(
+  value: unknown,
+  status = 200,
+  headers: HeadersInit = {},
+) {
   return Response.json(value, {
     status,
     headers: {
       "Cache-Control": "no-store",
       "X-Content-Type-Options": "nosniff",
+      ...headers,
     },
   });
+}
+export function rateLimitResponse(retryAfterSeconds: number) {
+  return json(
+    {
+      error: "요청이 잠시 많아요. 잠시 후 다시 시도해 주세요.",
+      code: "RATE_LIMITED",
+    },
+    429,
+    { "Retry-After": String(retryAfterSeconds) },
+  );
 }
 export async function inputJson(
   request: Request,
@@ -45,6 +60,14 @@ export function errorResponse(error: unknown): Response {
       },
       502,
     );
+  if (error instanceof FunctionTimeoutError)
+    return json(
+      {
+        error: "처리가 오래 걸리고 있어요. 잠시 후 다시 시도해 주세요.",
+        code: "FUNCTION_TIMEOUT",
+      },
+      504,
+    );
   return json(
     {
       error: "검사를 완료하지 못했어요. 입력을 확인하고 다시 시도해 주세요.",
@@ -52,4 +75,11 @@ export function errorResponse(error: unknown): Response {
     },
     500,
   );
+}
+
+export class FunctionTimeoutError extends Error {
+  constructor() {
+    super("Function execution budget exceeded");
+    this.name = "FunctionTimeoutError";
+  }
 }

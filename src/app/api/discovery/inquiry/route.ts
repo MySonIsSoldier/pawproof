@@ -6,7 +6,16 @@ import {
 } from "../../../../application/contracts/discovery";
 import { getOpenRouterConfig } from "../../../../config/server";
 import { fetchJson } from "../../../../infrastructure/http/fetch-json";
-import { errorResponse, inputJson, json } from "../../../../server/http";
+import {
+  errorResponse,
+  inputJson,
+  json,
+  rateLimitResponse,
+} from "../../../../server/http";
+import {
+  checkRateLimit,
+  publicRateLimits,
+} from "../../../../server/rate-limit";
 
 export const maxDuration = 35;
 
@@ -72,6 +81,8 @@ async function openRouterInquiry(input: z.infer<typeof inquiryInputSchema>) {
 
 export async function POST(request: Request) {
   try {
+    const limit = checkRateLimit(request, "inquiry", publicRateLimits.inquiry);
+    if (!limit.allowed) return rateLimitResponse(limit.retryAfterSeconds);
     const parsed = inquiryInputSchema.safeParse(await inputJson(request, 18_000));
     if (!parsed.success)
       return json({ error: "문의 문구를 만들 장소와 반려견 정보를 확인해 주세요." }, 400);
