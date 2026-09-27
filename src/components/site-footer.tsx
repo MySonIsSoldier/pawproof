@@ -16,6 +16,8 @@ export function SiteFooter() {
         <Link href="/about">
           서비스와 데이터 안내 <Icon name="arrow" size={14} />
         </Link>
+        <Link href="/privacy">개인정보처리방침</Link>
+        <Link href="/terms">이용약관</Link>
         <p>© 2026 PawProof · 반려견과 함께하는 여행</p>
       </div>
     </footer>

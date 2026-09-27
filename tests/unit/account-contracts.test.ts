@@ -6,6 +6,10 @@ import {
   tripIdSchema,
 } from "../../src/application/contracts/saved-trip.ts";
 import { initialTrip } from "../../src/features/itinerary/state/initial-trip.ts";
+import {
+  accountDeletionResultSchema,
+  accountDeletionSchema,
+} from "../../src/application/contracts/account.ts";
 test("Firebase config exposes only allowed web identifiers and rejects partial config", () => {
   assert.equal(parseFirebaseWebConfig({ projectId: "example-project" }), null);
   const value = parseFirebaseWebConfig({
@@ -57,4 +61,12 @@ test("account writes reject ownership injection, raw data, invalid revisions and
     tripIdSchema.safeParse("../accounts/another-user").success,
     false,
   );
+});
+
+test("account deletion requires an explicit confirmation phrase", () => {
+  assert.equal(accountDeletionSchema.safeParse({ confirmation: "DELETE" }).success, true);
+  assert.equal(accountDeletionSchema.safeParse({ confirmation: "delete" }).success, false);
+  assert.equal(accountDeletionSchema.safeParse({ confirmation: "DELETE", uid: "other" }).success, false);
+  assert.equal(accountDeletionResultSchema.safeParse({ deleted: true }).success, true);
+  assert.equal(accountDeletionResultSchema.safeParse({ deleted: false }).success, false);
 });

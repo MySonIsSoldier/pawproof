@@ -67,6 +67,26 @@
   color: var(--muted);
   line-height: 1.8;
 }
+.danger {
+  grid-column: 1 / -1;
+  border-color: #e9caca;
+  background: #fffafa;
+}
+.danger h2 {
+  color: #8c3d3d;
+}
+.danger p {
+  color: #795959;
+  line-height: 1.8;
+}
+.dangerButton {
+  color: #8c3d3d;
+  border-color: #d99b9b;
+}
+.dangerButton:hover:not(:disabled) {
+  background: #fff0f0;
+  border-color: #b96c6c;
+}
 @media (max-width: 720px) {
   .grid {
     grid-template-columns: 1fr;

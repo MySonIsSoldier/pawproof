@@ -7,6 +7,7 @@ import {
   contactCategoryValues,
 } from "../../application/contracts/contact.ts";
 import { Icon } from "../../components/icon";
+import Link from "next/link";
 import { apiPath } from "../../config/public";
 import {
   Select,
@@ -211,8 +212,9 @@ export function ContactForm() {
 
       <div className="contact-form-footer">
         <p>
-          보내주신 내용은 답변을 위해 이메일로만 전달돼요. 비밀번호나 민감한
-          개인정보는 입력하지 말아 주세요.
+          보내주신 내용은 답변을 위해 이메일로 전달돼요. 비밀번호나 민감한
+          개인정보는 입력하지 말아 주세요.{" "}
+          <Link href="/privacy">개인정보처리방침</Link>을 확인해 주세요.
         </p>
         <button
           className="button"

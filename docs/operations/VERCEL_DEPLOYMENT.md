@@ -82,7 +82,15 @@ Import 화면의 Environment Variables 또는 **Project → Settings → Environ
 
 ## 4. 함수와 Deploy
 
-**Settings → Functions**에서 Fluid Compute가 켜져 있는지 확인한다. 현재 검사 라우트는 최대 180초, 대체 탐색은 최대 300초를 선언한다. Hobby의 Fluid Compute 최대 실행시간은 300초다. 비-Fluid의 짧은 제한과 혼동하지 않는다. [함수 실행시간](https://vercel.com/docs/functions/configuring-functions/duration).
+**Settings → Functions**에서 Fluid Compute가 켜져 있는지 확인한다. 현재 장시간 라우트는 다음처럼 Vercel 상한과 앱 내부 예산을 따로 둔다.
+
+| 경로 | Vercel maxDuration | 앱 응답 예산 |
+|---|---:|---:|
+| /api/discovery/inspect | 180초 | 170초 |
+| /api/verify | 180초 | 170초 |
+| /api/recover | 300초 | 290초 |
+
+앱 예산을 넘기면 플랫폼의 빈 504 대신 FUNCTION_TIMEOUT JSON을 반환한다. 다만 현재 외부 공급자 호출은 각자의 fetch timeout으로 취소되며, 앱 예산 경주는 응답을 먼저 종료하는 안전장치다. **Fluid Compute가 꺼진 Hobby 환경에서는 긴 라우트의 선언값이 허용 한도를 넘을 수 있으므로 배포 전에 반드시 켜고 확인한다.** Fluid Compute가 없는 환경을 사용해야 한다면 장시간 작업을 비동기 job/status 구조로 바꾸기 전까지 이 라우트를 운영에 노출하지 않는다. [함수 실행시간](https://vercel.com/docs/functions/configuring-functions/duration), [함수 제한](https://vercel.com/docs/functions/limitations).
 
 함수 지역은 Firebase DB와의 거리를 고려한다. DB가 서울이면 Seoul/icn1을 우선 검토한다. Hobby는 단일 지역을 사용한다. [함수 지역](https://vercel.com/docs/functions/configuring-functions/region).
 
@@ -149,7 +157,16 @@ Deploy를 눌러 Ready가 되면 프로젝트의 **고정 Production 주소**를
 | 이전 화면 표시 | GitHub main과 배포 커밋 일치·고정 Production 주소 사용 |
 | Vercel 로그인 요구 | 해당 URL/환경의 Deployment Protection |
 
-실제 URL을 확보한 뒤 운영 환경의 인증·관광 API·저장 흐름을 검증한다. [호스팅·비용 기준](HOSTING_AND_COST.md)도 함께 참고한다.
+공개 API에는 인스턴스별 IP 요청 제한이 적용된다. 이는 무료 운영을 위한 첫 번째 방어선이며 Vercel의 여러 함수 인스턴스 사이에서 전역 quota를 보장하지 않는다. 트래픽이 커지거나 API 비용을 엄격히 묶어야 하면 Redis/KV 기반 제한 또는 Cloudflare WAF/Rate Limiting을 추가한다. [호스팅·비용 기준](HOSTING_AND_COST.md)도 함께 참고한다.
+
+실제 URL을 확보한 뒤 운영 환경의 인증·관광 API·저장 흐름을 검증한다.
+
+## 8. 계정 삭제와 개인정보 안내
+
+- /privacy와 /terms가 운영 도메인에서 200으로 열리고 footer·sitemap에 포함되는지 확인한다.
+- 로그인 후 /profile → 계정과 저장 정보 삭제에서 DELETE 확인 문구를 입력하면 /api/account가 Firestore의 accounts/{uid} 하위 데이터와 Firebase Auth 사용자를 삭제한다.
+- 삭제 실패 시 화면에 오류를 남기고 로그아웃하지 않는다. 운영에서 실제 계정을 삭제하는 검사는 사용자 동의가 있는 테스트 계정으로만 수행한다.
+- 문의 메일, Firebase, Vercel, Turnstile, OpenRouter, 관광·지도 API의 외부 보관은 PawProof의 계정 삭제 API가 대신 삭제하지 않는다. 외부 서비스 사본 삭제는 각 서비스의 절차를 따르고, 개인정보처리방침의 운영자·문의처 정보를 공개 전 실제 법적 고지 정보와 대조한다.
 
 ## 카카오 지도와 추가 운영 도메인 (2026-09-16)
 

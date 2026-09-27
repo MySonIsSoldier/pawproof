@@ -16,6 +16,7 @@ import {
   useNotify,
 } from "../../components/notifications/with-notifications";
 import styles from "./profile.module.css";
+import { DeleteAccount } from "./delete-account";
 function ProfileScreenInner() {
   const auth = useAuth();
   const profile = useProfile();
@@ -238,6 +239,7 @@ function ProfileScreenInner() {
               반려견 정보는 유지돼요.
             </p>
           </section>
+          <DeleteAccount />
         </div>
       )}
       {error && (

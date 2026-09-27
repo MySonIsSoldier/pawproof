@@ -42,6 +42,14 @@ export async function requireAccount(request: Request, verified = true) {
   return token.uid;
 }
 export const accountTrips = () => new FirestoreTrips(adminDb());
+export async function deleteAccount(uid: string) {
+  const db = adminDb();
+  const auth = adminAuth();
+  // Remove the account document and every nested trip before deleting Auth.
+  // If Auth deletion fails, a retry can safely repeat this idempotent cleanup.
+  await db.recursiveDelete(db.doc(`accounts/${uid}`));
+  await auth.deleteUser(uid);
+}
 export function accountErrorResponse(error: unknown) {
   if (error instanceof AccountError) {
     const statuses = {
@@ -74,7 +82,7 @@ export function accountErrorResponse(error: unknown) {
   return json(
     {
       error:
-        "여행 노트를 처리하지 못했어요. 입력은 그대로 두고 잠시 후 다시 시도해 주세요.",
+        "계정 작업을 완료하지 못했어요. 입력은 그대로 두고 잠시 후 다시 시도해 주세요.",
       code: "UNAVAILABLE",
     },
     503,
