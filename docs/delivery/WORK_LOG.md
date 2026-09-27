@@ -10,6 +10,15 @@
 - 검증: lint·typecheck·단위 테스트 129개·운영 build 통과. `1c38d46`을 main에 푸시한 뒤 약 1분 후 운영에서 redirect trace, metadata audit 경고 0개, JSON-LD 구조 확인, GPTBot·OAI-SearchBot·ClaudeBot·PerplexityBot·Google-Extended·Bingbot HTTP 200, `llms.txt` 200, sitemap 3개 URL을 확인했다. 390px 브라우저에서도 세 공개 페이지의 JSON-LD·H1·canonical·OG image·가로 overflow·page error를 확인했다.
 - 해석: GEO skill의 composite 점수는 공식 검색 지표가 아니다. Search Console의 색인·노출·검색어 데이터가 수집된 뒤 실제 성과와 별도로 비교한다.
 
+## 2026-09-27 · 공개 API 보호·실행시간·계정 데이터 삭제
+
+- 공개 비용 경로인 장소 검색·주변 검색·상세 검사·코스 검증·대체 코스·AI 문의에 IP별 인스턴스 요청 제한을 추가했다. 초과 시 429 JSON과 Retry-After를 반환한다. 무료 Vercel 환경에서 여러 함수 인스턴스 사이의 전역 quota까지 보장하는 구현은 아니며, 트래픽이 커지면 Redis/KV 또는 WAF 제한을 추가해야 한다.
+- 장시간 검사/복구 라우트에 Vercel maxDuration보다 앞선 앱 실행 예산을 추가해 빈 플랫폼 504 대신 FUNCTION_TIMEOUT JSON을 반환한다. Vercel Hobby에서 Fluid Compute가 꺼진 상태는 현재 선언값을 지원하지 않을 수 있으므로 운영 설정에서 Fluid Compute를 확인해야 한다.
+- 개인정보처리방침(/privacy)과 이용약관(/terms)을 추가하고 footer·sitemap·문의 폼에서 연결했다. 실제 처리 범위에 맞춰 Firebase, Resend, Turnstile, Vercel, OpenRouter, 관광·지도 API, 선택적 Umami 분석을 설명했다.
+- /profile의 계정 삭제 영역과 /api/account DELETE를 추가했다. 명시적인 DELETE 확인 문구와 인증 토큰을 요구하며, Firestore accounts/{uid} 하위 데이터 삭제 후 Firebase Auth 사용자를 삭제한다. 운영 QA에서는 실제 계정 삭제를 수행하지 않는다.
+- 검증: 단위 132개·lint·typecheck·운영 build 통과. Firebase 에뮬레이터는 현재 셸에 Java가 없어 실행하지 못했다. cc5fb74, 0c9c6fb를 main에 순차 push한 뒤 www.pawproof.kr에서 장소 검색 31번째 요청 429/Retry-After, 정책·약관·sitemap 200, 인증 없는 계정 DELETE 401을 확인했다. Playwright 런타임으로 390px 정책 페이지의 H1·footer 링크·가로 overflow·page error 없음과 /profile 200을 확인했다.
+- 남은 운영 확인: 동의한 테스트 계정으로 계정 삭제 성공 후 Auth 사용자와 Firestore 하위 문서가 함께 사라지는지, Vercel Settings → Functions의 Fluid Compute 상태, 법적 공개 전 운영자 실명·주소 등 고지 정보의 실제 검토가 필요하다.
+
 ## 2026-09-27 · 운영 SEO canonical과 문의 페이지 색인 경로
 
 - 운영 redirect가 `https://pawproof.kr`에서 `https://www.pawproof.kr`로 정규화되는 실제 동작에 맞춰 SEO 기본 origin을 `www`로 변경했다. Vercel Production에서 `APP_ORIGIN`을 별도로 설정했다면 `https://www.pawproof.kr`로 맞춰야 한다.

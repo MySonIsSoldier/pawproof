@@ -12,6 +12,14 @@
 - `public/llms.txt`는 PawProof의 실제 기능, KTO 데이터 사용 조건, 가상 체험의 한계, 입장 보장 불가를 명시한다. 표준의 검색 노출 효과를 보장한다고 기록하지 않는다.
 - 운영 검증에서 세 공개 route metadata audit 경고 0개, JSON-LD 3종, AI crawler 6종 HTTP 200, llms.txt 200, 390px 브라우저 page error/overflow 없음.
 
+## 공개 API 보호·개인정보·계정 삭제 (2026-09-27)
+
+- src/server/rate-limit.ts의 인스턴스별 IP window limiter를 장소 검색·주변 검색·문의·상세 검사·검증·대체 코스에 적용했다. 429 응답은 Retry-After와 고정 JSON 오류를 제공한다. 전역 분산 quota가 필요한 운영 규모에서는 Redis/KV 또는 WAF로 교체·보강한다.
+- /api/discovery/inspect, /api/verify, /api/recover는 각각 170초·170초·290초 앱 예산을 사용하고, 라우트의 Vercel maxDuration은 180초·180초·300초다. 예산 초과는 FUNCTION_TIMEOUT 504로 응답한다. 외부 fetch는 기존 provider timeout을 사용한다.
+- /privacy와 /terms를 정적 공개 페이지로 구현하고 /sitemap.xml, footer, 문의 안내에 연결했다. 페이지 내용은 코드가 실제로 저장·전송하는 범위에 한정하며, 운영자 법정 고지 정보는 공개 전 별도 검토 사항이다.
+- /api/account DELETE는 인증과 DELETE 확인 문구를 통과한 경우 accounts/{uid} 전체 하위 문서와 Firebase Auth 사용자를 삭제한다. 실패 시 자동 로그아웃하지 않는다. 실제 계정 삭제 성공 검증은 동의한 테스트 계정으로 남아 있다.
+- 단위 132개, lint, typecheck, production build를 통과했다. Firebase 에뮬레이터는 실행 환경에 Java가 없어 미실행이며, 실제 운영에서는 인증 없는 DELETE 401과 정책 페이지 모바일 레이아웃을 확인했다.
+
 ## 운영 SEO canonical과 sitemap (2026-09-27)
 
 - `src/config/site.ts`의 SEO 기본 origin을 실제 운영 정규 호스트인 `https://www.pawproof.kr`로 맞췄다.
