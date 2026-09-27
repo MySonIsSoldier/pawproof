@@ -14,7 +14,7 @@ const siteJsonLd = {
       url: siteOrigin,
       logo: `${siteOrigin}${publicAssetPath("/pwa/icon-512.png")}`,
       description:
-        "반려견의 조건과 장소별 동반 규정을 여행 일정에 대조하는 PawProof 서비스입니다.",
+        "반려견과 함께 가고 싶은 곳을 미리 살펴보고 더 좋은 여행을 준비하는 PawProof 서비스입니다.",
     },
     {
       "@type": "WebSite",
@@ -24,7 +24,7 @@ const siteJsonLd = {
       url: siteOrigin,
       inLanguage: "ko-KR",
       description:
-        "반려견의 조건과 장소별 동반 규정을 확인하고 여행 코스를 출발 전에 점검하는 웹앱입니다.",
+        "반려견과 함께 가고 싶은 여행 코스를 미리 살펴보고 동반 조건과 준비사항을 확인하는 웹앱입니다.",
       publisher: { "@id": organizationId },
     },
     {
@@ -36,7 +36,7 @@ const siteJsonLd = {
       operatingSystem: "Web",
       inLanguage: "ko-KR",
       description:
-        "반려견의 견종·체중·마릿수와 장소별 동반 규정을 대조하고 준비사항과 대체 코스를 안내하는 여행 앱입니다.",
+        "우리 강아지의 조건에 맞는 장소와 준비사항을 살펴보고, 함께할 여행을 계획하는 앱입니다.",
       publisher: { "@id": organizationId },
     },
   ],

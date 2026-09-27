@@ -21,11 +21,11 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin),
   title: {
-    default: "PawProof | 반려견 동반여행 코스와 출입 조건 검증",
+    default: "PawProof | 반려견과 함께하는 좋은 여행",
     template: "%s | PawProof",
   },
   description:
-    "반려견의 견종·체중·마릿수와 장소별 동반 규정을 확인하고, 준비사항과 문의 문구, 일정 변화가 적은 대체 코스까지 안내하는 여행 노트입니다.",
+    "가고 싶은 곳에 우리 강아지와 함께 갈 수 있도록, 반려견 동반여행 코스와 장소별 조건을 미리 살펴보세요.",
   applicationName: "PawProof",
   keywords: [
     "반려견 동반 여행",
@@ -56,9 +56,9 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: "/",
     siteName: "PawProof",
-    title: "PawProof | 반려견 동반여행 코스와 출입 조건 검증",
+    title: "PawProof | 반려견과 함께하는 좋은 여행",
     description:
-      "가고 싶은 여행 코스를 담으면 반려견의 조건과 장소별 동반 규정을 대조하고, 준비사항과 일정 변화가 적은 대체 코스까지 출발 전에 살펴보세요.",
+      "우리 강아지와 가고 싶은 곳을 담고, 동반 조건과 준비사항을 미리 살펴보며 더 편안한 여행을 준비해요.",
     images: [
       {
         url: "/media/travel-companion.jpg",
@@ -70,19 +70,21 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PawProof | 반려견 동반여행 코스와 출입 조건 검증",
+    title: "PawProof | 반려견과 함께하는 좋은 여행",
     description:
-      "장소별 동반 조건부터 준비사항과 일정 변화가 적은 대체 코스까지 출발 전에 확인하는 여행 노트입니다.",
+      "반려견과 함께 가고 싶은 곳을 미리 살펴보고, 우리만의 여행을 준비하는 PawProof입니다.",
     images: ["/media/travel-companion.jpg"],
   },
   appleWebApp: { capable: true, title: "PawProof", statusBarStyle: "default" },
   icons: {
     icon: [
-      { url: publicAssetPath("/favicon.ico"), sizes: "48x48" },
+      { url: publicAssetPath("/favicon.ico"), sizes: "any", type: "image/x-icon" },
+      { url: publicAssetPath("/favicon-16x16.png"), sizes: "16x16", type: "image/png" },
+      { url: publicAssetPath("/favicon-32x32.png"), sizes: "32x32", type: "image/png" },
       { url: publicAssetPath("/pwa/icon-192.png"), sizes: "192x192", type: "image/png" },
       { url: publicAssetPath("/pwa/icon-512.png"), sizes: "512x512", type: "image/png" },
     ],
-    shortcut: [publicAssetPath("/favicon.ico")],
+    shortcut: [publicAssetPath("/favicon-32x32.png")],
     apple: [
       { url: publicAssetPath("/pwa/apple-touch-icon.png"), sizes: "180x180" },
     ],

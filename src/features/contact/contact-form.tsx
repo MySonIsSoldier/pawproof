@@ -130,9 +130,9 @@ export function ContactForm() {
       <div className="contact-form-heading">
         <div>
           <p className="eyebrow">
-            <span /> WRITE TO US
+            <span /> A NOTE FOR THE JOURNEY
           </p>
-          <h2>어떤 점이 궁금했나요?</h2>
+          <h2>무엇이든 들려주세요.</h2>
         </div>
         <Icon name="paw" size={28} />
       </div>

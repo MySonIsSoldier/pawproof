@@ -37,6 +37,14 @@ const faviconSizes = [16, 32, 48];
 const faviconPngs = await Promise.all(
   faviconSizes.map((size) => sharp(source).resize(size).png().toBuffer()),
 );
+for (const size of [16, 32]) {
+  await sharp(source)
+    .resize(size)
+    .png()
+    .toFile(
+      new URL(`../public/favicon-${size}x${size}.png`, import.meta.url).pathname,
+    );
+}
 const header = Buffer.alloc(6);
 header.writeUInt16LE(0, 0);
 header.writeUInt16LE(1, 2);

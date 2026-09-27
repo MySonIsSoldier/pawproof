@@ -3,14 +3,14 @@ import type { Metadata } from "next";
 import { SiteHeader } from "../../components/site-header";
 import { SiteFooter } from "../../components/site-footer";
 export const metadata: Metadata = {
-  title: { absolute: "PawProof 소개 | 반려견 동반여행 코스 검증 기준" },
+  title: { absolute: "PawProof 소개 | 반려견과 함께하는 좋은 여행" },
   description:
-    "PawProof가 한국관광공사 반려동물 동반여행 데이터와 공식 안내를 바탕으로 반려견 동반여행 코스의 확인사항과 준비 기준을 정리하는 방법을 소개합니다.",
+    "PawProof가 반려견과 함께 가고 싶은 곳을 살펴보고, 더 편안한 동반여행을 준비하는 방법을 소개합니다.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "PawProof 소개 | 반려견 동반여행 코스 검증 기준",
+    title: "PawProof 소개 | 반려견과 함께하는 좋은 여행",
     description:
-      "공식 근거와 반려견 조건을 바탕으로 여행 코스를 출발 전에 확인하는 PawProof를 소개합니다.",
+      "우리 강아지와 가고 싶은 곳을 미리 살펴보고, 함께할 순간을 더 편안하게 준비하는 PawProof를 소개합니다.",
     url: "/about",
     images: [
       {
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PawProof 소개 | 반려견 동반여행 코스 검증 기준",
+    title: "PawProof 소개 | 반려견과 함께하는 좋은 여행",
     description:
-      "공식 근거와 반려견 조건을 바탕으로 여행 코스를 출발 전에 확인하는 PawProof를 소개합니다.",
+      "반려견과 함께 가고 싶은 곳을 미리 살펴보고 우리만의 여행을 준비해요.",
     images: ["/media/travel-companion.jpg"],
   },
 };
@@ -34,32 +34,34 @@ export default function About() {
     <>
       <SiteHeader compact />
       <main className="about-page wrap">
-        <p className="eyebrow">HELLO, PAWPROOF</p>
-        <h1>PawProof 소개</h1>
-        <p className="lead">함께 떠난 여행을, 끝까지 함께할 수 있도록.</p>
-        <h2>동반 조건을 먼저 살펴보는 여행 노트</h2>
-        <p>
-          PawProof는 반려견의 견종·체중·마릿수와 여행 일정을 장소 규정에
-          대조하고, 조건이 맞지 않는 방문지의 대안을 찾는 웹앱입니다. 확인되지
-          않은 정보는 확인 필요로 남기고, 결론을 뒷받침하는 원문을 함께
-          보여드립니다.
+        <p className="eyebrow">A GOOD DAY, TOGETHER</p>
+        <h1>반려견과 함께라서 더 좋은 여행</h1>
+        <p className="lead">
+          가고 싶은 곳과 우리 강아지의 하루를 함께 생각하는 여행 노트,
+          PawProof입니다.
         </p>
-        <h2>실제 정보와 가상 체험</h2>
+        <h2>함께 갈 수 있는 곳을 찾는 여행 노트</h2>
         <p>
-          실제 모드는 한국관광공사 반려동물 동반여행 OpenAPI의 원문을 조회하고
-          AI로 규정을 추출한 뒤 규칙 엔진으로 판정합니다. 실제 연결이 준비되지
-          않았거나 실패하면 그 사실을 알려드립니다. 가상 체험의 모든
-          장소·규정·이동시간은 자체 작성 예시이며 실제 여행에 사용하면 안
-          됩니다.
+          PawProof는 반려견과 떠나고 싶은 여행 코스를 미리 살펴보고, 우리
+          강아지의 조건에 맞는지 차근차근 확인하는 서비스입니다. 함께할 수
+          있는 곳은 더 안심하고 담고, 아직 모르는 조건은 확인할 수 있도록
+          남겨둡니다.
         </p>
-        <h2>출처와 확인 시점</h2>
+        <h2>떠나기 전, 마음 놓을 수 있도록</h2>
         <p>
-          공사 데이터는 ‘출처: ⓒ한국관광공사’로 표시합니다. API 조회 시각과
-          콘텐츠 수정일은 규정을 업체가 확인한 시각과 다릅니다. 실제 입장과
-          예약을 보장하지 않으며, 최종 이용 조건은 업체의 최신 안내를 확인해
-          주세요.
+          실제 여행에서는 공개된 관광 안내와 장소 정보를 바탕으로 동반 조건과
+          준비사항을 살펴봅니다. 정보가 부족하거나 최신 여부를 확인하기
+          어려운 내용은 괜찮다고 넘기지 않고 직접 확인할 수 있도록 알려드려요.
+          가상 체험은 서비스 흐름을 살펴보기 위한 예시입니다.
         </p>
-        <h2>내 정보와 저장</h2>
+        <h2>확인하는 순간까지가 여행의 시작</h2>
+        <p>
+          장소마다 안내가 달라질 수 있으니 출처와 확인 시점을 함께 보여드립니다.
+          PawProof의 결과가 실제 입장이나 예약을 대신하지는 않아요. 출발 전
+          업체의 최신 안내까지 확인하면, 우리 여행을 더 든든하게 준비할 수
+          있습니다.
+        </p>
+        <h2>우리의 여행을 더 오래 기억하도록</h2>
         <p>
           회원가입이나 현재 GPS 위치 없이 사용할 수 있습니다. 선택한
           프로필·코스는 현재 화면에서만 사용하며 비회원의 여행 노트는 저장하지

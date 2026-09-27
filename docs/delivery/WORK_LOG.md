@@ -323,3 +323,11 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - 화면 배지는 `반려견 출입 가능`과 `일부 구역 이용 가능`, `선택 구역 이용 불가`를 구분해 보여준다. 따라서 장소 전체가 불가능한 것처럼 보이지 않으면서도 선택한 구역의 제한은 명확하게 안내한다.
 
 검증: 단위 124개, typecheck, lint, production build 통과. 장소 상세 조회와 코스 검사 양쪽에서 특정 실내 구역 제한이 장소 전체를 `이용 불가`로 만들지 않고, 근거 상세에서만 제한을 보여주는 회귀 테스트를 추가했다.
+
+## 2026-09-27 · 브랜드 검색 문구·favicon 정리
+
+- 홈의 검색 제목과 설명을 `반려견과 함께하는 좋은 여행`을 중심으로 다듬고, 소개·문의 페이지와 Open Graph·Twitter·JSON-LD·PWA 문구를 같은 브랜드 톤으로 맞췄다.
+- 소개·문의 화면은 기술 구현보다 반려견과 함께 떠나는 여행을 미리 살피고 더 편안하게 준비한다는 사용자 메시지가 먼저 읽히도록 정리했다.
+- 기존 PawProof 발바닥 SVG를 원본으로 명시적인 16×16·32×32 PNG favicon을 추가 생성하고, ICO·PWA·Apple 아이콘과 함께 metadata에 연결했다.
+
+검증: `git diff --check`, typecheck, lint, production build 및 배포 후 `pawproof.kr`의 제목·canonical·favicon 응답과 데스크톱·모바일 화면을 확인한다. Google 검색 결과의 favicon은 재수집·캐시 갱신 시점에 따라 반영까지 시간이 걸릴 수 있다.

@@ -4,9 +4,9 @@ import { appPath, publicAssetPath } from "../config/public";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: appPath("/"),
-    name: "PawProof · 반려견 여행 노트",
+    name: "PawProof · 반려견과 함께하는 좋은 여행",
     short_name: "PawProof",
-    description: "우리 강아지와 떠나는 여행, 방문 조건부터 출발 준비까지.",
+    description: "우리 강아지와 가고 싶은 곳을 미리 살펴보고 여행을 준비해요.",
     lang: "ko",
     start_url: appPath("/plan"),
     scope: appPath("/"),
