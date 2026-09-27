@@ -616,16 +616,22 @@ select {
   margin-top: 8px;
 }
 .site-footer > div:last-child {
-  text-align: right;
+  text-align: left;
 }
-.site-footer > div:last-child > a {
+.site-footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, max-content));
+  gap: 12px 28px;
+}
+.site-footer-links a {
   font-size: 12px;
   display: inline-flex;
   gap: 10px;
   align-items: center;
+  white-space: nowrap;
 }
-.site-footer > div:last-child > a + a {
-  margin-left: 18px;
+.site-footer > div:last-child > p {
+  margin-top: 18px;
 }
 .about-page {
   max-width: 780px;
@@ -1264,11 +1270,11 @@ select {
   }
 }
 @media (max-width: 600px) {
-  .site-footer > div:last-child > a + a {
-    margin-left: 0;
-    margin-top: 12px;
+  .site-footer-links {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
-  .site-footer > div:last-child > a {
+  .site-footer-links a {
     display: flex;
   }
   .contact-intro h1 {
