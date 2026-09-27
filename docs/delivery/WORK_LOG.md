@@ -2,6 +2,14 @@
 
 상세 구현 이력은 [구현 기록](IMPLEMENTATION_STATUS.md), 결정 근거는 [결정 이력](../history/DECISION_HISTORY.md)에 둔다. 다음 작업자는 이 문서와 루트 AGENTS.md부터 확인한다.
 
+## 2026-09-27 · SEO·GEO discoverability 최적화
+
+- 공개 GitHub skill 세 가지를 설치해 점검했다: `k97/skills`의 `discoverability`, `TheSmokeDev/geo-skills`의 `geo`, `eigent-ai/agent-skills`의 `seo-audit`. 프로젝트에 레포 전체를 복사하지 않고 각각의 통합 진입점만 사용했다.
+- root JSON-LD에 실제 서비스 엔터티인 `Organization`, `WebSite`, `WebApplication`을 연결했다. 공식 SNS/프로필과 실제 검색 페이지가 없으므로 `sameAs`와 `SearchAction`은 추측으로 추가하지 않았다.
+- 홈·소개·문의 페이지의 title, description, canonical, Open Graph 이미지, Twitter metadata를 보강하고, 사실과 한계를 명시한 `public/llms.txt`를 추가했다. 평점·리뷰·트래픽 예측·보장 문구는 넣지 않았다.
+- 검증: lint·typecheck·단위 테스트 129개·운영 build 통과. `1c38d46`을 main에 푸시한 뒤 약 1분 후 운영에서 redirect trace, metadata audit 경고 0개, JSON-LD 구조 확인, GPTBot·OAI-SearchBot·ClaudeBot·PerplexityBot·Google-Extended·Bingbot HTTP 200, `llms.txt` 200, sitemap 3개 URL을 확인했다. 390px 브라우저에서도 세 공개 페이지의 JSON-LD·H1·canonical·OG image·가로 overflow·page error를 확인했다.
+- 해석: GEO skill의 composite 점수는 공식 검색 지표가 아니다. Search Console의 색인·노출·검색어 데이터가 수집된 뒤 실제 성과와 별도로 비교한다.
+
 ## 2026-09-27 · 운영 SEO canonical과 문의 페이지 색인 경로
 
 - 운영 redirect가 `https://pawproof.kr`에서 `https://www.pawproof.kr`로 정규화되는 실제 동작에 맞춰 SEO 기본 origin을 `www`로 변경했다. Vercel Production에서 `APP_ORIGIN`을 별도로 설정했다면 `https://www.pawproof.kr`로 맞춰야 한다.

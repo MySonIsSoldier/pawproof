@@ -4,6 +4,14 @@
 
 최근 운영 배포·PWA Google 로그인 포커스 변경과 남은 실기기 확인은 [작업 로그](WORK_LOG.md)를 따른다. 아래 날짜별 항목은 당시 검증 범위의 기록이다.
 
+## SEO·GEO discoverability 최적화 (2026-09-27)
+
+- 설치한 skill 진입점: `discoverability`, `geo`, `seo-audit`. 기술 audit은 redirect·canonical·metadata·JSON-LD를 확인하고, GEO audit은 AI crawler 접근·인용 가능한 사실·`llms.txt`를 확인하는 범위로 사용했다.
+- `src/components/seo/site-json-ld.tsx`를 root layout에 연결해 `Organization`·`WebSite`·`WebApplication`을 하나의 `@graph`로 표현했다. 모든 URL과 logo는 현재 public origin에서 생성한다.
+- root/about/contact metadata는 실제 페이지 목적에 맞게 작성했고, about/contact에도 같은 social image와 페이지별 Twitter metadata를 제공한다.
+- `public/llms.txt`는 PawProof의 실제 기능, KTO 데이터 사용 조건, 가상 체험의 한계, 입장 보장 불가를 명시한다. 표준의 검색 노출 효과를 보장한다고 기록하지 않는다.
+- 운영 검증에서 세 공개 route metadata audit 경고 0개, JSON-LD 3종, AI crawler 6종 HTTP 200, llms.txt 200, 390px 브라우저 page error/overflow 없음.
+
 ## 운영 SEO canonical과 sitemap (2026-09-27)
 
 - `src/config/site.ts`의 SEO 기본 origin을 실제 운영 정규 호스트인 `https://www.pawproof.kr`로 맞췄다.

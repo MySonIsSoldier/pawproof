@@ -9,6 +9,10 @@
 
 운영 도메인은 `https://pawproof.kr`에서 `https://www.pawproof.kr`로 redirect되므로, canonical·sitemap·crawler metadata의 기본 origin도 `www`로 통일한다. `/contact`는 루트 페이지와 다른 색인 가능한 공개 페이지이므로 자체 canonical과 sitemap 항목을 갖는다. Vercel의 `APP_ORIGIN`이 설정되어 있으면 이 결정과 동일하게 `https://www.pawproof.kr`를 사용한다.
 
+## 0.1. 2026-09-27 SEO·GEO 구조화 정보 범위
+
+AI 검색 점검은 기술 SEO의 대체물이 아니라 보완으로 사용한다. 실제로 확인한 PawProof의 서비스 사실만 `Organization`·`WebSite`·`WebApplication`과 `llms.txt`에 기록하고, 공식 SNS 연결이 없는 `sameAs`, 실제 검색 기능이 없는 `SearchAction`, 리뷰·평점·트래픽 예측은 추가하지 않는다. AI skill의 점수는 자체 진단값으로만 보고 Search Console 지표와 분리한다.
+
 ## 1. 공모전 참가와 주제 탐색
 
 사용자는 생활관 선임과 2인 팀으로 웹·앱 구현 부문에 참가하고, 10개 지정과제 중 독창적이며 실제 구현 가능한 아이디어를 탐색했다. 초기 요청에는 전년도 수상작과 대회 관계자 발언을 분석해 주제를 추천해 달라는 의도가 있었다.
