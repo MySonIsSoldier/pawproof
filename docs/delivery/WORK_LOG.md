@@ -19,6 +19,11 @@
 - 검증: 단위 132개·lint·typecheck·운영 build 통과. Firebase 에뮬레이터는 현재 셸에 Java가 없어 실행하지 못했다. cc5fb74, 0c9c6fb를 main에 순차 push한 뒤 www.pawproof.kr에서 장소 검색 31번째 요청 429/Retry-After, 정책·약관·sitemap 200, 인증 없는 계정 DELETE 401을 확인했다. Playwright 런타임으로 390px 정책 페이지의 H1·footer 링크·가로 overflow·page error 없음과 /profile 200을 확인했다.
 - 남은 운영 확인: 동의한 테스트 계정으로 계정 삭제 성공 후 Auth 사용자와 Firestore 하위 문서가 함께 사라지는지, Vercel Settings → Functions의 Fluid Compute 상태, 법적 공개 전 운영자 실명·주소 등 고지 정보의 실제 검토가 필요하다.
 
+## 2026-09-27 · 정책 페이지 이용자 중심 문구 정리
+
+- 개인정보처리방침과 이용약관에서 Firebase, Firestore, Resend, Turnstile, OpenRouter, Vercel, Umami, 개별 API 제공처 등 구현 기술명을 제거했다.
+- 수집 항목·이용 목적·보관·삭제·외부 서비스 이용의 한계처럼 이용자에게 필요한 고지 내용은 유지하고, 계정 저장 공간·운영자 이메일·외부 정보 제공처·자동 규정 정리처럼 서비스 관점의 표현으로 바꿨다.
+
 ## 2026-09-27 · 운영 SEO canonical과 문의 페이지 색인 경로
 
 - 운영 redirect가 `https://pawproof.kr`에서 `https://www.pawproof.kr`로 정규화되는 실제 동작에 맞춰 SEO 기본 origin을 `www`로 변경했다. Vercel Production에서 `APP_ORIGIN`을 별도로 설정했다면 `https://www.pawproof.kr`로 맞춰야 한다.
