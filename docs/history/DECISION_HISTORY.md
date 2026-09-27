@@ -1,9 +1,13 @@
 # 의사결정 및 이전 대화 히스토리
 
-정리일: 2026-09-10\
+정리일: 2026-09-27\
 입력 자료: 사용자가 붙여 준 과거 ChatGPT 대화, 최초 요청의 공모전 안내·제출 아이디어, 2026-09-10 기획 제안과 사용자 승인.
 
 이 문서는 대화 전문의 보관본이 아니라 **결정과 근거의 요약**이다. 대화에 포함된 API 인증키는 의도적으로 제외했다.
+
+## 0. 2026-09-27 운영 SEO 정규 호스트
+
+운영 도메인은 `https://pawproof.kr`에서 `https://www.pawproof.kr`로 redirect되므로, canonical·sitemap·crawler metadata의 기본 origin도 `www`로 통일한다. `/contact`는 루트 페이지와 다른 색인 가능한 공개 페이지이므로 자체 canonical과 sitemap 항목을 갖는다. Vercel의 `APP_ORIGIN`이 설정되어 있으면 이 결정과 동일하게 `https://www.pawproof.kr`를 사용한다.
 
 ## 1. 공모전 참가와 주제 탐색
 

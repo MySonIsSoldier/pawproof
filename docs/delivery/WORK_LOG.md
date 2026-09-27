@@ -2,6 +2,13 @@
 
 상세 구현 이력은 [구현 기록](IMPLEMENTATION_STATUS.md), 결정 근거는 [결정 이력](../history/DECISION_HISTORY.md)에 둔다. 다음 작업자는 이 문서와 루트 AGENTS.md부터 확인한다.
 
+## 2026-09-27 · 운영 SEO canonical과 문의 페이지 색인 경로
+
+- 운영 redirect가 `https://pawproof.kr`에서 `https://www.pawproof.kr`로 정규화되는 실제 동작에 맞춰 SEO 기본 origin을 `www`로 변경했다. Vercel Production에서 `APP_ORIGIN`을 별도로 설정했다면 `https://www.pawproof.kr`로 맞춰야 한다.
+- `/contact`에 자체 canonical과 Open Graph URL을 추가하고 sitemap에 문의 페이지를 포함했다. 이로써 문의 페이지가 루트 canonical을 상속하던 문제를 제거했다.
+- 검증: lint·typecheck·단위 테스트 129개·운영 빌드 통과. `f5bb326`을 `main`에 푸시하고 약 1분 후 운영에서 `pawproof.kr` 308 → `www` redirect, `/contact` canonical, `robots.txt`의 `www` sitemap, sitemap의 `/contact`를 직접 확인했다.
+- 후속: Google Search Console Domain property는 `pawproof.kr`로 등록하고 `https://www.pawproof.kr/sitemap.xml`을 제출한다. SEO/GEO agent skill은 코드 변경 전에 실제 HTML·redirect·robots·sitemap·schema 근거를 출력하도록 제한한다.
+
 ## 2026-09-24 · 문의하기 CX 메일 파이프라인
 
 - Footer에 `/contact` 문의 페이지를 추가하고 이메일·문의 유형·내용을 입력해 개인 수신 주소 `ohsong656565@gmail.com`으로 보내는 흐름을 구현했다. 사용자 주소는 발신자가 아니라 `Reply-To`로만 사용한다.

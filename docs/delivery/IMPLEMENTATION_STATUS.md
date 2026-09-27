@@ -1,8 +1,15 @@
 # 현재 구현·검증 기록
 
-기준일: 2026-09-24
+기준일: 2026-09-27
 
 최근 운영 배포·PWA Google 로그인 포커스 변경과 남은 실기기 확인은 [작업 로그](WORK_LOG.md)를 따른다. 아래 날짜별 항목은 당시 검증 범위의 기록이다.
+
+## 운영 SEO canonical과 sitemap (2026-09-27)
+
+- `src/config/site.ts`의 SEO 기본 origin을 실제 운영 정규 호스트인 `https://www.pawproof.kr`로 맞췄다.
+- `/contact`에 자체 canonical·Open Graph URL을 추가하고 `src/app/sitemap.ts`에 문의 페이지를 등록했다. `APP_ORIGIN`을 명시할 때는 프로토콜과 호스트만 사용한다.
+- SEO origin 기본값과 명시적 preview origin 보존을 단위 테스트로 고정했다.
+- lint·typecheck·단위 테스트 129개·운영 빌드와 배포 후 운영 HTTP 점검을 통과했다. `pawproof.kr`의 redirect, contact canonical, robots sitemap, sitemap URL은 모두 `www` 기준이다.
 
 ## 문의하기 CX 메일 파이프라인 (2026-09-24)
 
