@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import type { TripConfirmation } from "../../application/contracts/trip-confirmation";
+import { ConfirmationDialog } from "../verification/confirmation-dialog";
 export function VisitCard({
   place,
   visit,
@@ -24,6 +26,8 @@ export function VisitCard({
   remove,
   evidence,
   recover,
+  confirmations,
+  recordConfirmation,
 }: {
   place: Place;
   visit: Visit;
@@ -37,8 +41,34 @@ export function VisitCard({
   remove: () => void;
   evidence: () => void;
   recover: () => void;
+  confirmations: TripConfirmation[];
+  recordConfirmation: (value: {
+    kind: TripConfirmation["kind"];
+    findingMessage: string;
+    outcome: TripConfirmation["outcome"];
+    answer: string;
+  }) => void;
 }) {
   const problem = result?.findings.find((f) => f.status === result.status);
+  const noteConfirmations = confirmations.filter(
+    (confirmation) => confirmation.placeId === place.id,
+  );
+  const confirmationOptions = [
+    ...(result?.findings.filter((finding) => finding.status === "confirm") || []),
+    ...noteConfirmations
+      .filter(
+        (confirmation) =>
+          !result?.findings.some(
+            (finding) =>
+              finding.kind === confirmation.kind &&
+              finding.message === confirmation.findingMessage,
+          ),
+      )
+      .map((confirmation) => ({
+        kind: confirmation.kind,
+        message: confirmation.findingMessage,
+      })),
+  ];
   return (
     <article
       className={`visit-card ${result && !stale ? result.status : ""}`}
@@ -186,7 +216,24 @@ export function VisitCard({
                 대체 장소 찾기 <Icon name="swap" size={15} />
               </Button>
             )}
+            {!!confirmationOptions.length && (
+              <ConfirmationDialog
+                placeName={place.name}
+                options={confirmationOptions}
+                confirmations={noteConfirmations}
+                onSave={recordConfirmation}
+              />
+            )}
           </div>
+          {!!noteConfirmations.length && (
+            <div className="note-confirmation" role="status">
+              <Icon name="check" size={14} />
+              <span>
+                이 노트에 기록한 답변 {noteConfirmations.length}건이 적용됐어요.
+                <small>{noteConfirmations.at(-1)?.answer}</small>
+              </span>
+            </div>
+          )}
         </div>
       )}
     </article>

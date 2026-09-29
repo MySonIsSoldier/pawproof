@@ -340,3 +340,9 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - 두 페이지에 self canonical, Open Graph·Twitter metadata, Article·WebPage·BreadcrumbList·FAQPage JSON-LD를 연결하고 sitemap에 추가했다.
 
 검증: 단위 132개, typecheck, lint, production build 통과. 빌드 HTML의 metadata·JSON-LD 감사가 오류 없이 통과했으며, 운영 배포 후 `pawproof.kr`의 새 URL·모바일 화면·내부 링크·콘솔 오류를 직접 확인한다.
+
+## 2026-09-29 · 확인 필요 답변과 대표 지역 통일
+
+- `확인 필요` 방문지의 조건별 장소 답변 기록을 여행 노트에 연결했다. 답변 상태와 메모는 당시 여행 입력 지문과 함께 저장하며 같은 노트·같은 조건에서만 판정 결과에 적용한다. 전역 장소 정책이나 다른 노트에는 승격하지 않는다.
+- 서울 명동을 대표 지역으로 명시하는 `/regions/seoul-myeongdong`을 추가하고 홈·가이드·sitemap의 대표 링크를 변경했다. 경기 북서부 페이지는 보조 권역으로 유지한다.
+- 관련 단위 134개·lint·typecheck 통과. 운영 Resend/Turnstile 문의 발송, 실제 Google OAuth·여행 노트 저장, Kakao 지도 타일은 배포 후 운영 smoke test에서 별도로 확인한다.

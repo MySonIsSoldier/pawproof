@@ -15,6 +15,10 @@ import {
   recordVerification,
   type TripRecord,
 } from "../../../application/contracts/trip-record.ts";
+import {
+  applyTripConfirmations,
+  type TripConfirmation,
+} from "../../../application/contracts/trip-confirmation.ts";
 type Verification = {
   fingerprint: string;
   result: TripResult;
@@ -27,6 +31,7 @@ type TripState = {
   startNote: ((mode?: TripInput["mode"]) => Promise<void>) | null;
   places: Record<string, Place>;
   verification: Verification | null;
+  confirmations: TripConfirmation[];
   previous: { trip: TripInput; verification: Verification | null } | null;
   feedback: ActionNotification | null;
   notice: string;
@@ -39,6 +44,7 @@ type TripActions = {
   reset: (trip: TripInput, notice: string) => void;
   remember: (places: Place[]) => void;
   acceptVerification: (revision: number, result: TripResult) => boolean;
+  recordConfirmation: (confirmation: Omit<TripConfirmation, "inputFingerprint" | "recordedAt">) => void;
   applyAlternative: (
     revision: number,
     index: number,
@@ -66,6 +72,7 @@ export function createTripStore(trip: TripInput) {
       get().reset(record.trip, "저장한 여행 노트를 불러왔어요.");
       set({
         places: { ...get().places, ...placeIndex(record.places) },
+        confirmations: record.confirmations,
         verification: record.verification
           ? {
               fingerprint: JSON.stringify(record.verification.input),
@@ -77,6 +84,7 @@ export function createTripStore(trip: TripInput) {
     },
     places: trip.mode === "demo" ? placeIndex(demoPlaces) : {},
     verification: null,
+    confirmations: [],
     previous: null,
     feedback: null,
     notice: "",
@@ -95,6 +103,7 @@ export function createTripStore(trip: TripInput) {
         revision: state.revision + 1,
         places: next.mode === "demo" ? placeIndex(demoPlaces) : {},
         verification: null,
+        confirmations: [],
         previous: null,
         notice,
         feedback: { kind: "info", title: "여행 노트를 열었어요" },
@@ -106,7 +115,10 @@ export function createTripStore(trip: TripInput) {
       const state = get();
       if (state.revision !== revision) return false;
       set({
-        verification: { fingerprint: JSON.stringify(state.trip), result },
+        verification: {
+          fingerprint: JSON.stringify(state.trip),
+          result: applyTripConfirmations(result, state.confirmations, state.trip),
+        },
         places: {
           ...state.places,
           ...placeIndex(result.visits.map((v) => v.place)),
@@ -116,6 +128,47 @@ export function createTripStore(trip: TripInput) {
         error: "",
       });
       return true;
+    },
+    recordConfirmation: (confirmation) => {
+      const state = get();
+      const inputFingerprint = JSON.stringify(state.trip);
+      const nextConfirmation: TripConfirmation = {
+        ...confirmation,
+        inputFingerprint,
+        recordedAt: new Date().toISOString(),
+      };
+      const confirmations = [
+        ...state.confirmations.filter(
+          (item) =>
+            !(
+              item.inputFingerprint === inputFingerprint &&
+              item.placeId === nextConfirmation.placeId &&
+              item.kind === nextConfirmation.kind &&
+              item.findingMessage === nextConfirmation.findingMessage
+            ),
+        ),
+        nextConfirmation,
+      ];
+      if (!state.verification) {
+        set({ confirmations });
+        return;
+      }
+      set({
+        confirmations,
+        revision: state.revision + 1,
+        verification: {
+          ...state.verification,
+          result: applyTripConfirmations(
+            state.verification.result,
+            confirmations,
+            state.trip,
+          ),
+          historical: false,
+        },
+        feedback: { kind: "success", title: "이 여행 노트에 답변을 기록했어요" },
+        notice: "기록한 답변은 이 여행 노트의 현재 조건에만 적용돼요.",
+        error: "",
+      });
     },
     applyAlternative: (revision, index, alternative) => {
       const state = get();
@@ -214,5 +267,6 @@ export function tripRecord(state: TripStoreState): TripRecord {
           state.verification.result,
         )
       : null,
+    confirmations: state.confirmations,
   };
 }

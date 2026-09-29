@@ -275,3 +275,27 @@ test("replacement action is limited to blocked demo visits", async ({ page }) =>
       .getByRole("button", { name: "대체 장소 찾기" }),
   ).toHaveCount(0);
 });
+
+test("records a venue answer on the current trip note only", async ({ page }) => {
+  await page.goto("plan?mode=demo");
+  await page.getByRole("button", { name: "이 코스 검사하기", exact: true }).click();
+
+  const lake = page.getByRole("article", { name: "4번 방문지 물빛 호수공원" });
+  await lake.getByRole("button", { name: "답변 기록", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(
+    dialog.getByRole("heading", { name: "물빛 호수공원에 확인한 답변을 기록해요" }),
+  ).toBeVisible();
+  await dialog.getByRole("radio", { name: "조건을 충족해요" }).check();
+  await dialog.getByRole("textbox", { name: "받은 답변" }).fill(
+    "전화로 두 마리까지 가능하다고 안내받았어요.",
+  );
+  await dialog.getByRole("button", { name: "이 노트에 기록하기" }).click();
+
+  await expect(dialog).toHaveCount(0);
+  await expect(lake.getByText("반려견 출입 가능", { exact: true })).toBeVisible();
+  await expect(lake.getByText("이 노트에 기록한 답변 1건이 적용됐어요.")).toBeVisible();
+  await expect(lake).toContainText("전화로 두 마리까지 가능하다고 안내받았어요.");
+  await expect(page.locator(".status-counts .available strong")).toHaveText("2");
+});

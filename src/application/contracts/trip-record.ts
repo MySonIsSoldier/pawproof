@@ -2,6 +2,9 @@ import { z } from "zod";
 import { tripSchema, visitSchema } from "./trip.ts";
 import { resultSchema, placeSchema } from "./result.ts";
 import type { TripResult } from "../../domain/policies/types.ts";
+import {
+  tripConfirmationsSchema,
+} from "./trip-confirmation.ts";
 // Drafts may be incomplete; the verification endpoint still requires the strict tripSchema.
 export const draftTripSchema = tripSchema.safeExtend({
   pets: z
@@ -66,6 +69,7 @@ export const tripRecordSchema = z
       )
       .max(5)
       .default([]),
+    confirmations: tripConfirmationsSchema.default([]),
     verification: verificationRecordSchema.nullable().default(null),
   })
   .strict()

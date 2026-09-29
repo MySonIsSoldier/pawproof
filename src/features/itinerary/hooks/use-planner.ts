@@ -17,6 +17,7 @@ import { useTripOperations } from "./use-trip-operations";
 import { usePlannerNotifications } from "./use-planner-notifications";
 import { useGuestLeaveWarning } from "./use-guest-leave-warning";
 import { trackUmami } from "../../../lib/analytics/umami";
+import type { TripConfirmation } from "../../../application/contracts/trip-confirmation";
 
 /** Compose UI operations; business policy evaluation remains on the server. */
 export function usePlanner() {
@@ -30,6 +31,7 @@ export function usePlanner() {
       historical: !!s.verification?.historical,
       places: s.places,
       result: s.verification?.result || null,
+      confirmations: s.confirmations,
       stale: isTripStale(s),
       previous: s.previous,
       notice: s.notice,
@@ -137,6 +139,16 @@ export function usePlanner() {
           `${place.name}을(를) 코스에 담았어요.`,
           "코스에 방문지를 담았어요",
         );
+    },
+    recordConfirmation: (
+      confirmation: Omit<TripConfirmation, "inputFingerprint" | "recordedAt">,
+    ) => {
+      if (operations.busy || !state.result || state.stale) return;
+      trackUmami("trip_confirmation_record", {
+        outcome: confirmation.outcome,
+        kind: confirmation.kind,
+      });
+      store.getState().recordConfirmation(confirmation);
     },
     remove: (index: number) => {
       const trip = store.getState().trip;

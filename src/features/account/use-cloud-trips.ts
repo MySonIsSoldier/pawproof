@@ -264,6 +264,7 @@ export function useCloudTrips(
                 mode === "demo" ? initialTrip("demo", current.date).visits : [],
             }),
             places: [],
+            confirmations: [],
             verification: null,
           });
           id = crypto.randomUUID();

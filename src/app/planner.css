@@ -386,6 +386,129 @@
   font-size: 11px;
   min-height: 33px;
 }
+.confirmation-open {
+  color: #476781;
+  gap: 5px;
+}
+.note-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 11px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: #edf5ef;
+  color: #386148;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.note-confirmation > svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.note-confirmation small {
+  display: block;
+  color: #617966;
+  overflow-wrap: anywhere;
+}
+.confirmation-dialog {
+  --dialog-width: 550px;
+}
+.confirmation-dialog > [data-slot="dialog-title"] {
+  font-size: 23px;
+  margin: 12px 0 9px;
+}
+.confirmation-dialog > [data-slot="dialog-description"] {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.confirmation-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 22px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.confirmation-field textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.7 var(--font-body);
+}
+.confirmation-field textarea:focus {
+  outline: 2px solid #b9d8bf;
+  border-color: var(--forest);
+  background: white;
+}
+.confirmation-field > small {
+  align-self: flex-end;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.confirmation-outcomes {
+  display: grid;
+  gap: 8px;
+  margin: 22px 0 0;
+  padding: 0;
+  border: 0;
+}
+.confirmation-outcomes legend {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.confirmation-outcome {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  cursor: pointer;
+}
+.confirmation-outcome:has(input:checked) {
+  border-color: #9fbea2;
+  background: #f1f7ef;
+}
+.confirmation-outcome input {
+  margin-top: 3px;
+  accent-color: var(--forest);
+}
+.confirmation-outcome strong,
+.confirmation-outcome small {
+  display: block;
+}
+.confirmation-outcome strong {
+  font-size: 13px;
+}
+.confirmation-outcome small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.confirmation-hint {
+  margin-top: 9px;
+  color: var(--forest);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.confirmation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 23px;
+}
 .stale {
   opacity: 0.6;
 }

@@ -184,6 +184,16 @@ function PlannerScreen({
                         )
                       }
                       recover={() => void recover(index)}
+                      confirmations={model.confirmations.filter(
+                        (confirmation) =>
+                          confirmation.inputFingerprint === JSON.stringify(trip),
+                      )}
+                      recordConfirmation={(confirmation) =>
+                        model.recordConfirmation({
+                          ...confirmation,
+                          placeId: placeFor(visit.placeId).id,
+                        })
+                      }
                     />
                   ))}
                 </div>
