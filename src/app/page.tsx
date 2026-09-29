@@ -131,6 +131,36 @@ export default function Home() {
             </span>
           </div>
         </div>
+        <section className="home-seo-intro wrap" aria-labelledby="home-seo-title">
+          <div>
+            <p className="eyebrow">A CALMER WAY TO TRAVEL</p>
+            <h2 id="home-seo-title">
+              반려견 동반여행,
+              <br />
+              출발 전에 한 번 더 확인해요.
+            </h2>
+          </div>
+          <div className="home-seo-copy">
+            <p>
+              반려견과 함께하는 여행은 ‘동반 가능’이라는 한마디만으로 결정하기
+              어려워요. 실내·야외 구역, 견종·체중·마릿수, 목줄·이동장·예약 같은
+              장소별 조건을 우리 여행에 맞춰 살펴봐야 합니다.
+            </p>
+            <p>
+              PawProof는 공식 안내와 확인 시점을 바탕으로 이용 가능, 준비 필요,
+              확인 필요, 이용 불가를 나누고, 문제가 있는 방문지는 일정 변화가
+              적은 대안을 함께 검토할 수 있도록 도와드려요.
+            </p>
+            <div className="home-seo-links">
+              <Link href="/guide/dog-friendly-travel" className="text-button">
+                반려견 동반여행 준비 가이드 <Icon name="arrow" size={16} />
+              </Link>
+              <Link href="/regions/gyeonggi-northwest" className="text-button">
+                고양·파주·양주 여행 살펴보기 <Icon name="arrow" size={16} />
+              </Link>
+            </div>
+          </div>
+        </section>
         <section id="how-it-works" className="how-section wrap">
           <div className="section-heading">
             <div>

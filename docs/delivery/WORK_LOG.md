@@ -331,3 +331,12 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - 기존 PawProof 발바닥 SVG를 원본으로 명시적인 16×16·32×32 PNG favicon을 추가 생성하고, ICO·PWA·Apple 아이콘과 함께 metadata에 연결했다.
 
 검증: `git diff --check`, typecheck, lint, production build 및 배포 후 `pawproof.kr`의 제목·canonical·favicon 응답과 데스크톱·모바일 화면을 확인한다. Google 검색 결과의 favicon은 재수집·캐시 갱신 시점에 따라 반영까지 시간이 걸릴 수 있다.
+
+## 2026-09-29 · 반려견 동반여행 공개 콘텐츠
+
+- 홈에 `반려견 동반여행`의 장소 조건·준비·판정 기준을 설명하는 서버 렌더링 섹션과 가이드·지역 페이지 내부 링크를 추가했다.
+- `/guide/dog-friendly-travel`에 출발 전 체크 순서, 네 가지 결과 의미, 공식 출처 확인, FAQ를 추가했다.
+- `/regions/gyeonggi-northwest`에 고양·파주·양주를 1차 탐색 권역으로 정한 근거와 2026-09-16 조사 수치(고양 9/58, 파주 10/36, 양주 4/22)를 넣었다. KTO 항목·식약처 목록 행은 실제 이용 가능 장소 수가 아니라는 한계를 함께 표시했다.
+- 두 페이지에 self canonical, Open Graph·Twitter metadata, Article·WebPage·BreadcrumbList·FAQPage JSON-LD를 연결하고 sitemap에 추가했다.
+
+검증: 단위 132개, typecheck, lint, production build 통과. 빌드 HTML의 metadata·JSON-LD 감사가 오류 없이 통과했으며, 운영 배포 후 `pawproof.kr`의 새 URL·모바일 화면·내부 링크·콘솔 오류를 직접 확인한다.

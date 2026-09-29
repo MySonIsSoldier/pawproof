@@ -25,6 +25,16 @@ import { chromium } from '@playwright/test';
       title: 'PawProof 문의하기 | 더 좋은 반려견 여행을 함께 만들어요',
       heading: '우리의 다음 여행을 위해\n작은 이야기를 들려주세요.',
     },
+    {
+      path: '/guide/dog-friendly-travel',
+      title: '반려견 동반여행 준비 체크리스트와 가이드 | PawProof',
+      heading: '반려견 동반여행,\n출발 전에 이렇게 확인하세요',
+    },
+    {
+      path: '/regions/gyeonggi-northwest',
+      title: '고양·파주·양주 반려견 동반여행 코스와 정보 | PawProof',
+      heading: '고양·파주·양주\n반려견 동반여행을 준비해요',
+    },
   ];
 
   async function inspectRoute(viewport, route) {

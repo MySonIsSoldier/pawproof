@@ -20,6 +20,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.4,
     },
     {
+      url: `${siteOrigin}${appPath("/guide/dog-friendly-travel")}`,
+      lastModified: new Date("2026-09-29"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteOrigin}${appPath("/regions/gyeonggi-northwest")}`,
+      lastModified: new Date("2026-09-29"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: siteOrigin + appPath("/privacy"),
       changeFrequency: "yearly",
       priority: 0.2,

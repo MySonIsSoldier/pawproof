@@ -300,3 +300,11 @@ Firebase 에뮬레이터의 개발 basePath 검사 14개와 추가 탭 간 계�
 홈·소개·문의의 검색 제목, 설명, 화면 문구를 반려견과 함께하는 좋은 여행이라는 방향으로 통일했다. JSON-LD·manifest·`llms.txt`도 동일한 메시지를 사용하도록 갱신했으며, 기존 발바닥 로고에서 16×16·32×32 PNG favicon을 생성해 브라우저와 검색 엔진이 사용할 수 있는 명시적 아이콘 후보를 추가했다.
 
 검증: typecheck·lint·운영 빌드와 운영 도메인 QA를 변경 후 기록한다. Google 검색 결과의 favicon은 Google 재수집 및 캐시 갱신 뒤 반영될 수 있다.
+
+## 2026-09-29 · 반려견 동반여행 공개 콘텐츠
+
+홈의 검색 의도를 설명하는 SEO 섹션과 서버 렌더링 공개 페이지 `/guide/dog-friendly-travel`, `/regions/gyeonggi-northwest`를 추가했다. 가이드는 장소 조건·준비물·네 가지 판정 상태·공식 출처·FAQ를, 지역 페이지는 고양·파주·양주의 탐색 기준·조사 수치·데이터 한계를 설명한다. 두 페이지는 실제 이용 가능 여부를 과장하지 않으며 `/plan`으로 이어지는 CTA를 제공한다.
+
+`ContentJsonLd`가 WebPage·Article·BreadcrumbList·FAQPage를 절대 URL과 `@id`로 생성하고, metadata와 sitemap에 두 URL을 등록한다. 페이지 콘텐츠는 기존 제품의 공식 출처·확인 필요 원칙을 따른다.
+
+검증: 단위 132개·typecheck·lint·운영 빌드 통과, 빌드 HTML metadata 및 JSON-LD 감사 통과. 운영 URL QA와 Google Search Console URL 검사·색인 요청은 배포 후 별도로 기록한다.
