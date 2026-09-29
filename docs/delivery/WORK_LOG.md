@@ -346,3 +346,11 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - `확인 필요` 방문지의 조건별 장소 답변 기록을 여행 노트에 연결했다. 답변 상태와 메모는 당시 여행 입력 지문과 함께 저장하며 같은 노트·같은 조건에서만 판정 결과에 적용한다. 전역 장소 정책이나 다른 노트에는 승격하지 않는다.
 - 서울 명동을 대표 지역으로 명시하는 `/regions/seoul-myeongdong`을 추가하고 홈·가이드·sitemap의 대표 링크를 변경했다. 경기 북서부 페이지는 보조 권역으로 유지한다.
 - 관련 단위 134개·lint·typecheck 통과. 운영 Resend/Turnstile 문의 발송, 실제 Google OAuth·여행 노트 저장, Kakao 지도 타일은 배포 후 운영 smoke test에서 별도로 확인한다.
+
+## 2026-09-29 · 대표 지역·답변 기록 배포 후 운영 QA
+
+- `4790a29`, `1c488f4`를 `main`에 푸시하고 Vercel 반영 후 `pawproof.kr`에서 운영 smoke를 실행했다. 홈·문의·실제 장소 모드·서울 명동 지역 페이지·가이드·sitemap·robots가 모두 HTTP 200이었다.
+- 재사용 smoke 스크립트 `scripts/playwright/generated/production-pawproof-operations-smoke-test-for-co-6783a2eeda.js`가 모바일 가로 넘침 없음, Turnstile 위젯, 문의 입력 16px, Firebase 로그인 UI, 인증 없는 여행 노트 API 401/no-store, 잘못된 문의 본문 400, 브라우저 오류 없음을 통과했다. 실제 메일 발송·계정 생성은 하지 않았다.
+- `scripts/check-map-discovery.mjs https://www.pawproof.kr --live`가 실제 Kakao SDK·타일과 서울 명동 주변 후보 70곳, 검색 2회, 노트 화면 복귀, LLM 호출 0회를 통과했다. 모바일 Chromium 에뮬레이션이며 실제 휴대폰·GPS는 포함하지 않았다.
+- 배포된 `pawproof.kr`에서 새 `답변 기록` 흐름을 데스크톱·모바일 각 1회 실행해 장소 답변 저장 후 노트 전용 결과 반영을 확인했다.
+- 남은 수동 확인: 실제 테스트 문의의 Resend 수신·Reply-To, 사용자 본인의 Google OAuth, 실계정 Firebase 노트 저장. 자동 검사에는 실제 자격증명과 실제 메일을 넣지 않는다.
