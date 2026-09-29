@@ -287,6 +287,24 @@ test("records a venue answer on the current trip note only", async ({ page }) =>
   await expect(
     dialog.getByRole("heading", { name: "물빛 호수공원에 확인한 답변을 기록해요" }),
   ).toBeVisible();
+  await dialog.getByRole("combobox", { name: "확인한 항목" }).click();
+  await expect(page.getByRole("option").first()).toBeVisible();
+  const overlayLayers = await page.evaluate(() => {
+    const selectContent = document.querySelector<HTMLElement>(
+      '[data-slot="select-content"]',
+    );
+    const dialogContent = document.querySelector<HTMLElement>('[role="dialog"]');
+    return {
+      select: selectContent
+        ? Number.parseInt(getComputedStyle(selectContent).zIndex, 10)
+        : Number.NaN,
+      dialog: dialogContent
+        ? Number.parseInt(getComputedStyle(dialogContent).zIndex, 10)
+        : Number.NaN,
+    };
+  });
+  expect(overlayLayers.select).toBeGreaterThan(overlayLayers.dialog);
+  await page.keyboard.press("Escape");
   await dialog.getByRole("radio", { name: "조건을 충족해요" }).check();
   await dialog.getByRole("textbox", { name: "받은 답변" }).fill(
     "전화로 두 마리까지 가능하다고 안내받았어요.",

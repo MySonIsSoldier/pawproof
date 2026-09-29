@@ -288,7 +288,8 @@
 }
 .ui-select-content,
 .ui-popover-content {
-  z-index: 70;
+  /* Radix portals render under body, so overlays must sit above dialogs. */
+  z-index: 100;
   border: 1px solid var(--line);
   border-radius: var(--radius-popover);
   background: #fffefa;

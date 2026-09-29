@@ -354,3 +354,11 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - `scripts/check-map-discovery.mjs https://www.pawproof.kr --live`가 실제 Kakao SDK·타일과 서울 명동 주변 후보 70곳, 검색 2회, 노트 화면 복귀, LLM 호출 0회를 통과했다. 모바일 Chromium 에뮬레이션이며 실제 휴대폰·GPS는 포함하지 않았다.
 - 배포된 `pawproof.kr`에서 새 `답변 기록` 흐름을 데스크톱·모바일 각 1회 실행해 장소 답변 저장 후 노트 전용 결과 반영을 확인했다.
 - 남은 수동 확인: 실제 테스트 문의의 Resend 수신·Reply-To, 사용자 본인의 Google OAuth, 실계정 Firebase 노트 저장. 자동 검사에는 실제 자격증명과 실제 메일을 넣지 않는다.
+
+## 2026-09-29 · 확인한 항목 Select 레이어 수정
+
+- 확인한 답변 모달 안의 Select 옵션이 Radix Portal을 통해 `body` 아래에 렌더링되면서, Dialog(`z-index: 81`)보다 낮은 레이어(`z-index: 70`)에 놓이던 문제를 수정했다.
+- 공통 Select·Popover 레이어를 `z-index: 100`으로 올려 모달 위에서 옵션을 선택할 수 있게 했다.
+- 해당 확인 필요 흐름의 E2E에 Select 옵션 표시와 Dialog보다 높은 레이어 순서 검증을 추가했다.
+
+검증: lint, typecheck, 확인 필요 답변 기록 E2E(데스크톱·모바일 2개) 통과. 배포 후 운영에서 동일 Select를 다시 확인한다.
