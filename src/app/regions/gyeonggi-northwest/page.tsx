@@ -101,8 +101,8 @@ export default function GyeonggiNorthwestRegion() {
           </div>
           <aside className="seo-note region-note" aria-label="지역 선정 기준">
             <Icon name="pin" size={29} />
-            <strong>첫 탐색 권역</strong>
-            <p>서울에서 이어지는 자가용 당일 여행 시나리오에 맞춰 확인 범위를 좁혔어요.</p>
+            <strong>보조 탐색 권역</strong>
+            <p>현재 기본 지도는 서울 명동이며, 경기 북서부는 사용자가 지역을 바꿔 살펴볼 수 있는 보조 권역이에요.</p>
             <time dateTime={publishedDate}>2026년 9월 29일 기준</time>
           </aside>
         </header>
@@ -113,8 +113,7 @@ export default function GyeonggiNorthwestRegion() {
             <h2>가까운 하루를 더 꼼꼼하게</h2>
           </div>
           <p>
-            경기 북서부는 고객 규모와 수도권 당일 여행이라는 제품 시나리오를 함께
-            고려해 선택한 첫 탐색 권역입니다. 이 페이지의 수치는 지역의 인기도나
+            경기 북서부는 서울 명동 다음으로 확인할 수 있는 수도권 보조 권역입니다. 이 페이지의 수치는 지역의 인기도나
             이용 가능 장소 수를 보장하는 순위가 아니라, 공식 데이터를 어디부터
             확인할지 정한 작업 기준입니다.
           </p>

@@ -21,7 +21,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [데이터 전략](data/DATA_STRATEGY.md) | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙 |
 | [지도 중심 탐색 작업](delivery/MAP_DISCOVERY_PLAN.md) | 카카오맵·위치·조건 필터·문의·노트 연결의 단계별 구현과 검증 |
 | [서울 명동 데이터 보강](data/SEOUL_MYEONGDONG_COVERAGE_2026-09-18.md) | 서울 명동 KTO 표본·공식 출입 기준·참고 자료와 한계 |
-| [집중 지역 선정](data/REGION_SELECTION_2026-09-16.md) | 기존 경기 북서부 선정 근거와 보조 권역 운영 기준 |
+| [지역 선정 기록](data/REGION_SELECTION_2026-09-16.md) | 서울 명동 대표 지역 전환과 경기 북서부 보조 권역 근거 |
 | [인천 데이터 보강](data/INCHEON_COVERAGE.md) | 확보 출처·지역 검색·장소 병합·충돌·갱신 기준 |
 | [사용자 앱 조사 안내](data/INCHEON_APP_RESEARCH_GUIDE.md) | 첫 4개 가게·앱별 조사 순서·캡처 항목·자료 전달 양식 |
 | [인천 업체 확인 목록](data/INCHEON_CONFIRMATION_QUEUE.md) | 30곳의 누락 항목·자료 내 연락처·남은 확인 질문 |
@@ -37,6 +37,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [무료 호스팅·비용·운영](operations/HOSTING_AND_COST.md) | 사용량 예산, DNS, 배포 관리, 대안 전환, 심사 기간 운영 |
 | [Umami 분석 설정](operations/UMAMI_ANALYTICS.md) | Umami 사이트 등록, Vercel 환경변수, 제품 이벤트 목록 |
 | [문의하기 메일 파이프라인](operations/CONTACT_PIPELINE.md) | `/contact` 폼, Resend 발송, Turnstile, Vercel 운영 설정 |
+| [운영 smoke test](operations/PRODUCTION_SMOKE_TESTS.md) | 배포 후 문의·Firebase·Kakao·외부 연결 반복 점검 |
 | [Vercel 첫 배포 안내](operations/VERCEL_DEPLOYMENT.md) | GitHub 연결·Node/pnpm·운영 환경변수·Firebase 도메인·배포 후 점검 |
 | [구현·검증·제출 계획](delivery/DELIVERY_PLAN.md) | 제출 버전 범위, 역할 분담, 개발 일정, 품질 평가, 시연 |
 | [현재 구현·검증 기록](delivery/IMPLEMENTATION_STATUS.md) | 실제 구현한 파일·실행한 검사·아직 검증하지 않은 연결 |

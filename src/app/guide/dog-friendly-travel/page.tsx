@@ -100,8 +100,8 @@ export default function DogFriendlyTravelGuide() {
               <Link href="/plan" className="button">
                 내 코스 확인하기 <Icon name="arrow" />
               </Link>
-              <Link href="/regions/gyeonggi-northwest" className="text-button">
-                경기 북서부 지역 보기 <Icon name="arrow" size={16} />
+              <Link href="/regions/seoul-myeongdong" className="text-button">
+                서울 명동 지역 보기 <Icon name="arrow" size={16} />
               </Link>
             </div>
           </div>
@@ -243,8 +243,8 @@ export default function DogFriendlyTravelGuide() {
             </div>
             <nav className="seo-related-links" aria-label="관련 콘텐츠">
               <strong>더 살펴보기</strong>
-              <Link href="/regions/gyeonggi-northwest">
-                고양·파주·양주 반려견 여행 <Icon name="arrow" size={15} />
+              <Link href="/regions/seoul-myeongdong">
+                서울 명동 반려견 여행 <Icon name="arrow" size={15} />
               </Link>
               <Link href="/about">
                 PawProof가 정보를 확인하는 방법 <Icon name="arrow" size={15} />

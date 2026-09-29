@@ -29,7 +29,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${siteOrigin}${appPath("/regions/gyeonggi-northwest")}`,
       lastModified: new Date("2026-09-29"),
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.5,
+    },
+    {
+      url: `${siteOrigin}${appPath("/regions/seoul-myeongdong")}`,
+      lastModified: new Date("2026-09-29"),
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: siteOrigin + appPath("/privacy"),

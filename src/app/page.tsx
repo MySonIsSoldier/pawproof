@@ -155,8 +155,8 @@ export default function Home() {
               <Link href="/guide/dog-friendly-travel" className="text-button">
                 반려견 동반여행 준비 가이드 <Icon name="arrow" size={16} />
               </Link>
-              <Link href="/regions/gyeonggi-northwest" className="text-button">
-                고양·파주·양주 여행 살펴보기 <Icon name="arrow" size={16} />
+              <Link href="/regions/seoul-myeongdong" className="text-button">
+                서울 명동 여행 살펴보기 <Icon name="arrow" size={16} />
               </Link>
             </div>
           </div>
