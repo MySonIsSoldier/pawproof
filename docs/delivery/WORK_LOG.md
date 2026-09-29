@@ -362,3 +362,5 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - 해당 확인 필요 흐름의 E2E에 Select 옵션 표시와 Dialog보다 높은 레이어 순서 검증을 추가했다.
 
 검증: lint, typecheck, 확인 필요 답변 기록 E2E(데스크톱·모바일 2개) 통과. 배포 후 운영에서 동일 Select를 다시 확인한다.
+
+배포 후 검증: `1221da2`를 `main`에 푸시하고 Vercel 반영 후 `pawproof.kr`에서 확인 필요 답변 기록 E2E(데스크톱·모바일 2개)를 재실행해 통과했다. 운영 smoke도 홈·문의·실제 장소 모드·Turnstile·입력 폰트·Firebase 로그인 UI·인증 API·잘못된 문의 본문 검증과 브라우저 오류 없음까지 통과했다.
