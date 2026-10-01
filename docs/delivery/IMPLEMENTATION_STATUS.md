@@ -10,7 +10,8 @@
 - `articles/{id}` 글 본문과 별도로 `articleSlugs/{slug}` 예약 문서, `articleMetadata/publicTags` 공개 태그 집계를 사용한다. slug 중복 검사와 태그 집계 변경은 Firestore 트랜잭션이다. public list는 body 필드를 선택하지 않고 sitemap은 500개 페이지, 최대 49,900개 글로 제한한다.
 - Production API는 Vercel의 `VERCEL=1`과 `VERCEL_ENV=production`에서만 운영 Firebase 연결을 허용한다. Preview는 차단하며, 로컬은 Firebase Auth와 Firestore 에뮬레이터가 모두 설정될 때만 허용한다. 수집 토큰은 Bearer 헤더를 constant-time 비교하고 초안만 만들 수 있다.
 - 검증: 138개 단위 검사, `pnpm typecheck`, `pnpm lint`, `pnpm build`, Firebase 에뮬레이터 Playwright 2개(데스크톱·모바일) 통과. production Firebase/Vercel 변수 설정과 운영 데이터에 대한 검증은 수행하지 않았다.
-- 후속 운영: Vercel Production에 `ARTICLE_ADMIN_UIDS`와 `ARTICLE_INGEST_TOKEN` 설정 후 배포, 운영 Firestore에 `firestore.indexes.json` 인덱스 적용, 실제 관리자 초안 작성/수동 발행 smoke 확인. 실제 운영 아티클은 없다.
+- 배포 기록: `9286e94` main push의 Vercel 체크는 성공했다. 운영 `/articles`와 `/sitemap.xml`은 HTTP 200이다. `/articles`는 운영 Firestore 데이터를 불러오지 못한 상태를 표시했으며, 해당 런타임 원문 오류는 조회하지 않았다.
+- 후속 운영: Vercel Production에 `ARTICLE_ADMIN_UIDS`와 `ARTICLE_INGEST_TOKEN` 설정 후 재배포, 운영 Firestore에 `firestore.indexes.json` 인덱스 적용, 실제 관리자 초안 작성/수동 발행 smoke 확인. 실제 운영 아티클은 없다.
 
 ## SEO·GEO discoverability 최적화 (2026-09-27)
 

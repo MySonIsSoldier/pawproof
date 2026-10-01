@@ -8,6 +8,7 @@
 - 공개 `/articles` 목록·태그 필터·상세 Markdown 페이지·Article/Breadcrumb JSON-LD·metadata·sitemap을 추가했다. 관리자 `/admin/articles`에서는 UID 허용 사용자만 글 CRUD·미리보기·발행/초안 복귀/보관/삭제를 할 수 있고, 공유 토큰 수집 API는 `draft`만 생성한다. raw HTML 플러그인은 사용하지 않는다.
 - Firestore slug 예약과 공개 태그별 글 수는 article 쓰기와 같은 트랜잭션으로 유지한다. 목록 화면은 본문을 읽지 않고, 사이트맵은 500건 단위로 최대 49,900개 아티클을 페이지 조회한다. Firebase Rules는 브라우저의 직접 접근을 계속 차단한다.
 - 검증: `pnpm typecheck`, `pnpm lint`, 단위 테스트 138개, `pnpm build`, `pnpm test:firebase tests/firebase/articles.spec.ts`의 데스크톱·모바일 2개 시나리오가 통과했다. 에뮬레이터 시나리오는 토큰 없는/오류/발행 상태 제출 거부, 중복 slug, 비관리자 거부, 직접 Firestore 읽기 거부, 공개 상태·태그 집계, 편집기 미리보기·발행·삭제를 확인했다.
+- `9286e94`를 main에 push했고 GitHub의 Vercel 체크는 배포 성공을 보고했다. 이후 운영 `/articles`와 `/sitemap.xml`은 HTTP 200이지만, `/articles` 화면은 Firestore 콘텐츠를 불러오지 못했다는 상태를 표시한다. 응답 코드만으로 실제 Firestore 인덱스 오류를 직접 확인하지는 못했다.
 - 운영 설정은 별도다. Production Vercel의 `ARTICLE_ADMIN_UIDS`·`ARTICLE_INGEST_TOKEN`, 올바른 Firebase 프로젝트의 `firestore.indexes.json` 반영, 관리자 계정 UID 확인 후 실제 초안/발행 smoke 검증이 남아 있다. 이 작업에서는 실제 운영 글·계정·API 토큰을 만들거나 외부 API를 호출하지 않았다.
 
 ## 2026-09-27 · SEO·GEO discoverability 최적화
