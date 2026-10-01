@@ -28,6 +28,10 @@ export default defineConfig({
       FIREBASE_PRIVATE_KEY: "",
       FIREBASE_AUTH_EMULATOR_HOST: "127.0.0.1:9099",
       FIRESTORE_EMULATOR_HOST: "127.0.0.1:8080",
+      VERCEL_ENV: "development",
+      ARTICLE_ADMIN_UIDS: "pawproof-article-admin-test",
+      ARTICLE_INGEST_TOKEN:
+        "local-only-pawproof-article-ingest-token-never-for-production",
     },
   },
 });

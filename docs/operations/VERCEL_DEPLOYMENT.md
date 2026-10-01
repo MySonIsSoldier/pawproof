@@ -18,15 +18,15 @@
 
 2026-09-13 사용자가 첫 배포 주소 `https://pawproof-rose.vercel.app/`와 환경변수 설정 완료를 확인했다. 이후 관련 변경은 검증·커밋 후 에이전트가 `main`에 푸시해 Vercel 자동 배포를 진행하도록 승인했다. 사용자 설명상 푸시 후 약 1분 이내 배포가 시작되며 완료 시점은 운영 응답과 변경 반영으로 별도 확인한다. [작업 로그](../delivery/WORK_LOG.md).
 
-| 항목 | 값 |
-|---|---|
-| Framework Preset | Next.js |
-| Root Directory | 저장소 루트 `./` — package.json 위치 |
-| Node.js Version | 24.x |
-| Build Command | `pnpm build`로 Override |
-| Install Command | 우선 기본값 유지, Override 끔 |
-| Output Directory | Next.js 기본값 유지, Override 끔 |
-| Production Branch | main |
+| 항목              | 값                                   |
+| ----------------- | ------------------------------------ |
+| Framework Preset  | Next.js                              |
+| Root Directory    | 저장소 루트 `./` — package.json 위치 |
+| Node.js Version   | 24.x                                 |
+| Build Command     | `pnpm build`로 Override              |
+| Install Command   | 우선 기본값 유지, Override 끔        |
+| Output Directory  | Next.js 기본값 유지, Override 끔     |
+| Production Branch | main                                 |
 
 `pnpm build`는 환경 파싱과 PWA 릴리스 ID 생성을 수행한다. `next build`로 임의 대체하지 않는다. 개발 서버/포트 3000/code-server 프록시/정적 export를 배포 설정에 넣지 않는다.
 
@@ -50,27 +50,29 @@ Import 화면의 Environment Variables 또는 **Project → Settings → Environ
 
 `.env.local`은 GitHub에 올라가지 않으므로 자동 복사되지 않는다. 아래 기존 값은 사용자가 로컬 파일에서 직접 옮긴다. 실제 키를 문서·커밋·채팅에 넣지 않는다.
 
-루트 [.env.example](../../.env.example)은 Production 기본값을 채운 템플릿이다. `[직접 입력]` 15개를 본인 값으로 채운다. 마지막 4개는 문의하기 Resend·Turnstile 설정이다. APP_BASE_PATH와 선택 항목 APP_ORIGIN의 빈칸은 누락이 아니다. 실제 값은 Vercel 입력란 또는 비추적 `.env.vercel.local` 사본에 입력한다. 공개 템플릿과 기존 `.env.local`을 덮어쓰지 않는다. `.env.vercel.local`은 가져오기용 사본이며 Next.js가 자동으로 읽는 파일은 아니다.
+루트 [.env.example](../../.env.example)은 Production 기본값을 채운 템플릿이다. `[직접 입력]` 17개를 본인 값으로 채운다. 마지막 4개는 문의하기 Resend·Turnstile 설정이고, 아티클 관리자 UID와 수집 토큰 2개는 아티클 운영을 시작할 때 추가한다. APP_BASE_PATH와 선택 항목 APP_ORIGIN의 빈칸은 누락이 아니다. 실제 값은 Vercel 입력란 또는 비추적 `.env.vercel.local` 사본에 입력한다. 공개 템플릿과 기존 `.env.local`을 덮어쓰지 않는다. `.env.vercel.local`은 가져오기용 사본이며 Next.js가 자동으로 읽는 파일은 아니다.
 
-| 변수 | 입력 값 |
-|---|---|
-| ENABLE_EXPERIMENTAL_COREPACK | `1` |
-| APP_ENV | `production` |
-| APP_BASE_PATH | 등록하지 않거나 빈 값. `/absproxy/3000` 금지 |
-| APP_ORIGIN | 첫 배포는 생략 가능. 주소 확정 후 `https://운영-호스트` 설정 가능. 경로 제외 |
-| PWA_ENABLED | `true` |
-| LIVE_SERVICES_ENABLED | `true` |
-| KTO_SERVICE_KEY | 기존 로컬 값 |
-| OPENROUTER_API_KEY | 기존 로컬 값 |
-| OPENROUTER_MODEL | 현재 검증한 로컬 모델 ID |
-| KAKAO_MOBILITY_REST_KEY | 기존 로컬 값 |
-| FIREBASE_PROJECT_ID | 기존 로컬 값 |
-| FIREBASE_CLIENT_EMAIL | 기존 서비스 계정 이메일 |
-| FIREBASE_PRIVATE_KEY | 기존 서비스 계정 PEM 개인 키 |
-| NEXT_PUBLIC_FIREBASE_API_KEY | 기존 Firebase Web 앱 값 |
-| NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN | 기존 Firebase 인증 도메인 유지 |
-| NEXT_PUBLIC_FIREBASE_PROJECT_ID | 기존 Firebase Web 앱 값 |
-| NEXT_PUBLIC_FIREBASE_APP_ID | 기존 Firebase Web 앱 값 |
+| 변수                             | 입력 값                                                                      |
+| -------------------------------- | ---------------------------------------------------------------------------- |
+| ENABLE_EXPERIMENTAL_COREPACK     | `1`                                                                          |
+| APP_ENV                          | `production`                                                                 |
+| APP_BASE_PATH                    | 등록하지 않거나 빈 값. `/absproxy/3000` 금지                                 |
+| APP_ORIGIN                       | 첫 배포는 생략 가능. 주소 확정 후 `https://운영-호스트` 설정 가능. 경로 제외 |
+| PWA_ENABLED                      | `true`                                                                       |
+| LIVE_SERVICES_ENABLED            | `true`                                                                       |
+| KTO_SERVICE_KEY                  | 기존 로컬 값                                                                 |
+| OPENROUTER_API_KEY               | 기존 로컬 값                                                                 |
+| OPENROUTER_MODEL                 | 현재 검증한 로컬 모델 ID                                                     |
+| KAKAO_MOBILITY_REST_KEY          | 기존 로컬 값                                                                 |
+| FIREBASE_PROJECT_ID              | 기존 로컬 값                                                                 |
+| FIREBASE_CLIENT_EMAIL            | 기존 서비스 계정 이메일                                                      |
+| FIREBASE_PRIVATE_KEY             | 기존 서비스 계정 PEM 개인 키                                                 |
+| NEXT_PUBLIC_FIREBASE_API_KEY     | 기존 Firebase Web 앱 값                                                      |
+| NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN | 기존 Firebase 인증 도메인 유지                                               |
+| NEXT_PUBLIC_FIREBASE_PROJECT_ID  | 기존 Firebase Web 앱 값                                                      |
+| NEXT_PUBLIC_FIREBASE_APP_ID      | 기존 Firebase Web 앱 값                                                      |
+| ARTICLE_ADMIN_UIDS               | 아티클을 편집할 Firebase 사용자 UID. 복수 UID는 쉼표로 구분                  |
+| ARTICLE_INGEST_TOKEN             | 예약 작업의 초안 등록 Bearer token. 32자 이상 무작위 값                      |
 
 두 Firebase PROJECT_ID는 같아야 한다. AUTH_DOMAIN은 기존 `<프로젝트>.firebaseapp.com` 등 설정값을 유지하며 Vercel 주소로 바꾸지 않는다. 앱 접속 도메인 허용은 다음 단계에서 처리한다.
 
@@ -78,17 +80,21 @@ Import 화면의 Environment Variables 또는 **Project → Settings → Environ
 
 배포에 넣지 않는 개발 설정: PORT, DEV_ALLOWED_HOSTS, VSCODE_PROXY_URI, NEXT_PUBLIC_APP_BASE_PATH, NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_URL, FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST. NODE_ENV와 PWA 릴리스 ID도 수동 설정하지 않는다.
 
+아티클 CMS의 `ARTICLE_ADMIN_UIDS`, `ARTICLE_INGEST_TOKEN`과 Firebase Admin 자격증명은 **Production 환경에만** 지정한다. Preview 배포에 Production Firebase를 연결하지 않는다. Firebase Console의 Authentication 사용자 목록에서 관리자 UID를 확인해 UID 목록에 입력하고, 강한 무작위 토큰은 비밀 관리자에만 보관해 ChatGPT 예약 작업의 `Authorization: Bearer …` 헤더로 전달한다. 토큰을 콘텐츠 본문이나 URL에 넣지 않는다. Preview UI 검증은 에뮬레이터를 사용하고, 실제 초안 생성·발행 검증은 운영에서 관리자 계정으로 확인한다.
+
+새 Firestore 복합 인덱스는 저장소의 `firestore.indexes.json`에 정의했다. 운영 Firestore에 아직 인덱스를 배포하지 않았다면 Firebase Console의 쿼리 오류 링크에서 승인하거나, 올바른 프로젝트를 확인한 뒤 명시적으로 `firebase deploy --only firestore:indexes --project <project-id>`를 실행한다. 코드 배포만으로 원격 인덱스가 생성되지는 않는다. 공개 태그별 글 수는 `articleMetadata/publicTags`에서 아티클 발행·상태 변경·삭제 트랜잭션으로 함께 유지한다.
+
 환경변수 변경은 기존 배포에 소급되지 않으므로 Redeploy한다. NEXT_PUBLIC_*는 빌드 결과에 포함된다. [Vercel 환경변수](https://vercel.com/docs/environment-variables).
 
 ## 4. 함수와 Deploy
 
 **Settings → Functions**에서 Fluid Compute가 켜져 있는지 확인한다. 현재 장시간 라우트는 다음처럼 Vercel 상한과 앱 내부 예산을 따로 둔다.
 
-| 경로 | Vercel maxDuration | 앱 응답 예산 |
-|---|---:|---:|
-| /api/discovery/inspect | 180초 | 170초 |
-| /api/verify | 180초 | 170초 |
-| /api/recover | 300초 | 290초 |
+| 경로                   | Vercel maxDuration | 앱 응답 예산 |
+| ---------------------- | -----------------: | -----------: |
+| /api/discovery/inspect |              180초 |        170초 |
+| /api/verify            |              180초 |        170초 |
+| /api/recover           |              300초 |        290초 |
 
 앱 예산을 넘기면 플랫폼의 빈 504 대신 FUNCTION_TIMEOUT JSON을 반환한다. 다만 현재 외부 공급자 호출은 각자의 fetch timeout으로 취소되며, 앱 예산 경주는 응답을 먼저 종료하는 안전장치다. **Fluid Compute가 꺼진 Hobby 환경에서는 긴 라우트의 선언값이 허용 한도를 넘을 수 있으므로 배포 전에 반드시 켜고 확인한다.** Fluid Compute가 없는 환경을 사용해야 한다면 장시간 작업을 비동기 job/status 구조로 바꾸기 전까지 이 라우트를 운영에 노출하지 않는다. [함수 실행시간](https://vercel.com/docs/functions/configuring-functions/duration), [함수 제한](https://vercel.com/docs/functions/limitations).
 
@@ -144,18 +150,18 @@ Deploy를 눌러 Ready가 되면 프로젝트의 **고정 Production 주소**를
 
 배포 후 `/api/health`뿐 아니라 인증 정보 없는 `/api/account/profile`·`/api/account/trips`가 401 JSON을 반환하는지 확인한다. 이는 계정 함수 로딩 검사이며 실제 계정 저장 성공을 의미하지 않는다. 빈 500은 Runtime Logs의 모듈 로딩 스택을 확인하고, JSON 503은 Admin 설정·Firestore 연결을 구분해서 확인한다.
 
-| 현상 | 확인할 것 |
-|---|---|
-| pnpm/lockfile 오류 | Corepack 플래그·실제 pnpm 12.3.4·버전 고정 Install Command |
-| Node 엔진 오류 | Node 24.x와 프로젝트 최소 버전 |
-| CSS 404·/absproxy 경로 | APP_ENV=production, APP_BASE_PATH 비움 후 재빌드 |
-| 로그인 연결 준비 중 | Firebase Web 값 4개의 Production 적용·재배포 |
-| auth/unauthorized-domain | 실제 호스트의 Firebase 승인 도메인 등록 |
-| Admin/PEM 오류 | 키 바깥 따옴표·줄바꿈·프로젝트 ID·서비스 계정 권한 |
-| 실제 검사 503 | LIVE_SERVICES_ENABLED·공급자 키·모델·Runtime Logs |
-| 긴 요청 504 | Fluid Compute·실행시간·공급자 응답 시간 |
-| 이전 화면 표시 | GitHub main과 배포 커밋 일치·고정 Production 주소 사용 |
-| Vercel 로그인 요구 | 해당 URL/환경의 Deployment Protection |
+| 현상                     | 확인할 것                                                  |
+| ------------------------ | ---------------------------------------------------------- |
+| pnpm/lockfile 오류       | Corepack 플래그·실제 pnpm 12.3.4·버전 고정 Install Command |
+| Node 엔진 오류           | Node 24.x와 프로젝트 최소 버전                             |
+| CSS 404·/absproxy 경로   | APP_ENV=production, APP_BASE_PATH 비움 후 재빌드           |
+| 로그인 연결 준비 중      | Firebase Web 값 4개의 Production 적용·재배포               |
+| auth/unauthorized-domain | 실제 호스트의 Firebase 승인 도메인 등록                    |
+| Admin/PEM 오류           | 키 바깥 따옴표·줄바꿈·프로젝트 ID·서비스 계정 권한         |
+| 실제 검사 503            | LIVE_SERVICES_ENABLED·공급자 키·모델·Runtime Logs          |
+| 긴 요청 504              | Fluid Compute·실행시간·공급자 응답 시간                    |
+| 이전 화면 표시           | GitHub main과 배포 커밋 일치·고정 Production 주소 사용     |
+| Vercel 로그인 요구       | 해당 URL/환경의 Deployment Protection                      |
 
 공개 API에는 인스턴스별 IP 요청 제한이 적용된다. 이는 무료 운영을 위한 첫 번째 방어선이며 Vercel의 여러 함수 인스턴스 사이에서 전역 quota를 보장하지 않는다. 트래픽이 커지거나 API 비용을 엄격히 묶어야 하면 Redis/KV 기반 제한 또는 Cloudflare WAF/Rate Limiting을 추가한다. [호스팅·비용 기준](HOSTING_AND_COST.md)도 함께 참고한다.
 

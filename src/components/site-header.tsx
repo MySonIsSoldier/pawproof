@@ -14,6 +14,11 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
       <nav aria-label="주 메뉴">
         <InstallButton />
         {!compact && <Link href="/#how-it-works">이용 방법</Link>}
+        {!compact && (
+          <Link className="site-header-articles" href="/articles">
+            반려견 정보
+          </Link>
+        )}
         <Link href={compact ? "/" : "/plan"} className="button small">
           {compact ? "처음으로" : "지도에서 찾기"}
           <Icon name="arrow" size={16} />

@@ -1,8 +1,17 @@
 import type { MetadataRoute } from "next";
 import { appPath } from "../config/public";
 import { siteOrigin } from "../config/site";
+import { getPublicArticlesForSitemap } from "../server/public-articles";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  let articles: Awaited<ReturnType<typeof getPublicArticlesForSitemap>> = [];
+  try {
+    articles = await getPublicArticlesForSitemap();
+  } catch {
+    // Keep the static product URLs available if Firebase is temporarily offline.
+  }
   return [
     {
       url: `${siteOrigin}${appPath("/")}`,
@@ -25,6 +34,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    {
+      url: `${siteOrigin}${appPath("/articles")}`,
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    ...articles.map((article) => ({
+      url: `${siteOrigin}${appPath(`/articles/${article.slug}`)}`,
+      lastModified: new Date(article.updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
     {
       url: `${siteOrigin}${appPath("/regions/gyeonggi-northwest")}`,
       lastModified: new Date("2026-09-29"),

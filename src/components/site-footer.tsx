@@ -11,6 +11,9 @@ export function SiteFooter() {
       </div>
       <div>
         <nav className="site-footer-links" aria-label="서비스 안내">
+          <Link href="/articles">
+            반려견 정보 아티클 <Icon name="arrow" size={14} />
+          </Link>
           <Link href="/contact">
             문의하기 <Icon name="arrow" size={14} />
           </Link>

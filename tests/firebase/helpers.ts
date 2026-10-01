@@ -17,9 +17,10 @@ export const password = "Only-Local-Test-123!";
 export function email() {
   return `test-${randomUUID()}@example.test`;
 }
-export async function createUser(verified = true) {
+export async function createUser(verified = true, uid?: string) {
   const address = email();
   const user = await auth.createUser({
+    ...(uid ? { uid } : {}),
     email: address,
     password,
     emailVerified: verified,

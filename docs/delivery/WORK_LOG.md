@@ -2,6 +2,14 @@
 
 상세 구현 이력은 [구현 기록](IMPLEMENTATION_STATUS.md), 결정 근거는 [결정 이력](../history/DECISION_HISTORY.md)에 둔다. 다음 작업자는 이 문서와 루트 AGENTS.md부터 확인한다.
 
+## 2026-10-01 · 반려견 정보 아티클 큐레이션
+
+- 구현 전에 [아티클 제품·운영 계획](../product/ARTICLE_CURATION.md)을 작성하고 제품 범위·상태 전이·API 권한·Production/Preview 경계를 고정했다. 별도 Firebase·Notion·이미지·자동 발행 없이 Production Firestore 초안 → 관리자 검수/편집 → 명시적 발행 흐름을 구현했다.
+- 공개 `/articles` 목록·태그 필터·상세 Markdown 페이지·Article/Breadcrumb JSON-LD·metadata·sitemap을 추가했다. 관리자 `/admin/articles`에서는 UID 허용 사용자만 글 CRUD·미리보기·발행/초안 복귀/보관/삭제를 할 수 있고, 공유 토큰 수집 API는 `draft`만 생성한다. raw HTML 플러그인은 사용하지 않는다.
+- Firestore slug 예약과 공개 태그별 글 수는 article 쓰기와 같은 트랜잭션으로 유지한다. 목록 화면은 본문을 읽지 않고, 사이트맵은 500건 단위로 최대 49,900개 아티클을 페이지 조회한다. Firebase Rules는 브라우저의 직접 접근을 계속 차단한다.
+- 검증: `pnpm typecheck`, `pnpm lint`, 단위 테스트 138개, `pnpm build`, `pnpm test:firebase tests/firebase/articles.spec.ts`의 데스크톱·모바일 2개 시나리오가 통과했다. 에뮬레이터 시나리오는 토큰 없는/오류/발행 상태 제출 거부, 중복 slug, 비관리자 거부, 직접 Firestore 읽기 거부, 공개 상태·태그 집계, 편집기 미리보기·발행·삭제를 확인했다.
+- 운영 설정은 별도다. Production Vercel의 `ARTICLE_ADMIN_UIDS`·`ARTICLE_INGEST_TOKEN`, 올바른 Firebase 프로젝트의 `firestore.indexes.json` 반영, 관리자 계정 UID 확인 후 실제 초안/발행 smoke 검증이 남아 있다. 이 작업에서는 실제 운영 글·계정·API 토큰을 만들거나 외부 API를 호출하지 않았다.
+
 ## 2026-09-27 · SEO·GEO discoverability 최적화
 
 - 공개 GitHub skill 세 가지를 설치해 점검했다: `k97/skills`의 `discoverability`, `TheSmokeDev/geo-skills`의 `geo`, `eigent-ai/agent-skills`의 `seo-audit`. 프로젝트에 레포 전체를 복사하지 않고 각각의 통합 진입점만 사용했다.

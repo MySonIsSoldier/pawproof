@@ -154,6 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         completeLogin: (message) => {
           setOpen(false);
           if (pathname.endsWith("/plan")) accountSuccess(message);
+          else if (pathname.startsWith("/admin/")) accountSuccess(message);
           else {
             loginNotice.current = message;
             router.push("/plan");

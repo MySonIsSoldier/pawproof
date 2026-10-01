@@ -19,7 +19,10 @@
 accounts/{verifiedUid}                  -> tripCount
 accounts/{verifiedUid}/trips/{uuid}     -> title, trip, places, verification, revision, timestamps
 accounts/{uid}/profile/main             -> pets (stable IDs), revision
+articles/{uuid}                         -> title, slug, summary, body (Markdown), tags, status, origin, timestamps
 ```
+
+아티클은 계정 하위 데이터가 아닌 PawProof 자체 콘텐츠다. Firestore Rules는 기존처럼 브라우저 접근을 거부하고, 서버 전용 Admin SDK 어댑터만 `articles`, slug 예약 `articleSlugs`, 공개 태그 요약 `articleMetadata/publicTags`를 쓴다. 예약 작업 수집 API는 항상 draft로 생성한다. 관리자 화면/API는 로그인 Firebase UID가 `ARTICLE_ADMIN_UIDS`에 포함되는지 확인한 뒤 편집·발행·보관·삭제를 수행한다. `ARTICLE_INGEST_TOKEN`은 서버 환경변수의 32자 이상 Bearer 비밀이며 발행 권한은 없다. 두 아티클 변수는 Vercel Production에만 설정한다.
 
 계정 노트는 최대 20개다. 작성 중인 0~5개 방문지·미완성 반려견 입력도 초안으로 저장하며 한 곳 이상이면 코스 검사를 시작할 수 있다. 900ms 입력 대기 후 직렬로 저장하고 저장 중 새 입력은 다음 요청에 반영한다. 미전송 초안은 계정별 sessionStorage에 두며 성공한 최신 내용만 지운다. 실패·revision 충돌은 자동 반복하지 않고 화면에 남긴다. 새로고침·탭 닫기 때 미저장 입력이 있으면 브라우저 이탈 경고를 요청한다. 브라우저 기본 문구와 모바일 호출 제한을 따르며 저장 성공 후에는 경고하지 않는다. 로그아웃 후 다른 계정에는 이전 계정의 초안을 불러오지 않는다.
 
@@ -57,6 +60,13 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
 ```
 
 두 project ID는 동일해야 한다. private_key 안의 줄바꿈은 실제 줄바꿈 또는 `\n` 형식을 지원한다. 서비스 계정 키에 `NEXT_PUBLIC_` 접두사를 붙이지 않는다. Vercel에서도 같은 이름으로 설정하며, Firebase Web의 공개 API 키와 Admin 개인 키를 혼동하지 않는다.
+
+아티클 CMS를 켤 때 아래 두 값은 Vercel Production에만 추가한다. Preview 환경에는 Production Firebase Admin 자격증명을 복사하지 않는다.
+
+```dotenv
+ARTICLE_ADMIN_UIDS=Firebase-Auth-UID
+ARTICLE_INGEST_TOKEN=32자-이상의-무작위-비밀
+```
 
 설정이 없거나 불완전하면 로그인 패널에서 준비 중임을 안내하고 비로그인 검사를 계속 제공하되 저장할 수 없음을 안내한다. 서버 설정이 없으면 DB API가 503을 반환한다. 오프라인 계정 저장을 성공 처리하거나 나중에 몰래 업로드하지 않는다.
 
@@ -102,8 +112,6 @@ OCI에서는 `PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright`, `LD_LIBRARY_PATH=/tm
 - [Admin SDK 초기화](https://firebase.google.com/docs/admin/setup), [서버 SDK와 Firestore Rules](https://firebase.google.com/docs/firestore/security/rules-conditions)
 - [로컬 에뮬레이터](https://firebase.google.com/docs/emulator-suite/install_and_configure)
 
-
 노트 관리 UI는 여행 화면 상단의 제목·자동 저장 상태·내 여행 노트·새 여행 노트로 구성한다. 노트 목록은 제목/날짜로 검색하고 선택 즉시 열며 정상 미전송 변경은 전환 전에 flush한다. 저장 실패 초안 폐기와 삭제만 확인한다. 비회원과 이메일 미인증 사용자에게는 저장 전제와 새로고침 시 손실을 안내한다.
-
 
 서버 토큰 검증은 실제 만료만 TOKEN_EXPIRED/401로 구분한다. 철회·비활성/삭제된 계정·잘못된 토큰은 접근을 거부하며, 서버 자격증명·권한·연결·의존성 오류는 UNAVAILABLE/503이다. 인증 실패를 저장 성공으로 처리하거나 철회 검사를 생략하지 않는다. 응답 reason과 서버 로그에는 고정 진단 분류만 포함하고 SDK 원문 오류·토큰·클레임·키는 기록하지 않는다.

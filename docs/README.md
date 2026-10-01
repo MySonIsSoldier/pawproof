@@ -13,39 +13,40 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 
 에이전트 작업 규칙은 루트의 [AGENTS.md](../AGENTS.md)에 간략히 정리한다. 상세 기획·설계·운영 기준은 이 `docs/` 문서 묶음에서 관리한다.
 
-| 문서 | 다루는 내용 |
-|---|---|
-| [공모전 개요](competition/COMPETITION.md) | 지정과제, 심사 기준, 일정, 제출 항목, API 활용·출처 규정 |
-| [제품 기획](product/PRODUCT_PLAN.md) | 사용자, 가치 제안, 핵심 경험, 화면 흐름, 차별성, 사업 확장 |
-| [판정·일정 복구 기준](product/RULES_AND_RECOVERY.md) | 네 가지 상태, 규정 해석, 불확실성, 대체 장소, 코스 재검증 |
-| [데이터 전략](data/DATA_STRATEGY.md) | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙 |
-| [지도 중심 탐색 작업](delivery/MAP_DISCOVERY_PLAN.md) | 카카오맵·위치·조건 필터·문의·노트 연결의 단계별 구현과 검증 |
-| [서울 명동 데이터 보강](data/SEOUL_MYEONGDONG_COVERAGE_2026-09-18.md) | 서울 명동 KTO 표본·공식 출입 기준·참고 자료와 한계 |
-| [지역 선정 기록](data/REGION_SELECTION_2026-09-16.md) | 서울 명동 대표 지역 전환과 경기 북서부 보조 권역 근거 |
-| [인천 데이터 보강](data/INCHEON_COVERAGE.md) | 확보 출처·지역 검색·장소 병합·충돌·갱신 기준 |
-| [사용자 앱 조사 안내](data/INCHEON_APP_RESEARCH_GUIDE.md) | 첫 4개 가게·앱별 조사 순서·캡처 항목·자료 전달 양식 |
-| [인천 업체 확인 목록](data/INCHEON_CONFIRMATION_QUEUE.md) | 30곳의 누락 항목·자료 내 연락처·남은 확인 질문 |
-| [인천 보강 실측](delivery/INCHEON_VALIDATION_2026-09-11.md) | 실제 브라우저·표본 지표·보강 한계·검사 결과 |
-| [기술 스택 선택](engineering/STACK_DECISION.md) | Vercel·Workers·OCI, Firebase·Supabase·D1 비교와 우선안 |
-| [애플리케이션 아키텍처](engineering/ARCHITECTURE.md) | 단일 앱의 계층·인터페이스·데이터 흐름·저장 경계 |
-| [개발 환경과 경로 처리](engineering/DEVELOPMENT_ENVIRONMENT.md) | code-server 프록시, 환경변수, URL 유틸, 빌드·검증 계약 |
-| [코드 작성과 검증 원칙](engineering/CODE_STANDARDS.md) | 단일 책임, 타입·실패 처리, 테스트, 협업 |
-| [Firebase 인증·계정 저장](engineering/FIREBASE_AUTH_AND_STORAGE.md) | 공통 SDK·인증·사용자별 노트·환경변수·에뮬레이터 |
-| [PWA 설치·오프라인·업데이트](engineering/PWA.md) | 설치 UX, 워커·캐시 경계, 개발 프록시, 검증 범위 |
-| [코드 품질 점검](engineering/CODE_QUALITY_REVIEW.md) | 작업 알림·실패 경계의 발견 사항, 수정, 검증 범위 |
-| [UI 디자인 시스템·상태 책임](engineering/UI_DESIGN_SYSTEM.md) | shadcn/Radix 컴포넌트, 토큰, Zustand·TanStack Query, 공통 훅 |
-| [무료 호스팅·비용·운영](operations/HOSTING_AND_COST.md) | 사용량 예산, DNS, 배포 관리, 대안 전환, 심사 기간 운영 |
-| [Umami 분석 설정](operations/UMAMI_ANALYTICS.md) | Umami 사이트 등록, Vercel 환경변수, 제품 이벤트 목록 |
-| [문의하기 메일 파이프라인](operations/CONTACT_PIPELINE.md) | `/contact` 폼, Resend 발송, Turnstile, Vercel 운영 설정 |
-| [운영 smoke test](operations/PRODUCTION_SMOKE_TESTS.md) | 배포 후 문의·Firebase·Kakao·외부 연결 반복 점검 |
-| [Vercel 첫 배포 안내](operations/VERCEL_DEPLOYMENT.md) | GitHub 연결·Node/pnpm·운영 환경변수·Firebase 도메인·배포 후 점검 |
-| [구현·검증·제출 계획](delivery/DELIVERY_PLAN.md) | 제출 버전 범위, 역할 분담, 개발 일정, 품질 평가, 시연 |
-| [현재 구현·검증 기록](delivery/IMPLEMENTATION_STATUS.md) | 실제 구현한 파일·실행한 검사·아직 검증하지 않은 연결 |
-| [최근 작업 로그](delivery/WORK_LOG.md) | 운영 배포·PWA 로그인 수정·검증 결과·남은 실기기 확인 |
-| [실 API 검증 실행](engineering/LIVE_VALIDATION.md) | 비용·호출 상한이 있는 공급자/브라우저 검사, 비밀 없는 집계 기록 |
-| [2026-09-11 실사용 검증](delivery/LIVE_VALIDATION_2026-09-11.md) | 실제 장소 결과·수정한 오류·처리 시간·비용·미완료 범위 |
-| [의사결정 및 대화 히스토리](history/DECISION_HISTORY.md) | 아이디어 발전 과정, 확정한 선택, 수정한 가정, 미결 사항 |
-| [근거 및 참고자료](research/SOURCES.md) | 사용자 제공 자료, 이전 검토에서 확인한 외부 자료, 미확인 자료 |
+| 문서                                                                  | 다루는 내용                                                      |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [공모전 개요](competition/COMPETITION.md)                             | 지정과제, 심사 기준, 일정, 제출 항목, API 활용·출처 규정         |
+| [제품 기획](product/PRODUCT_PLAN.md)                                  | 사용자, 가치 제안, 핵심 경험, 화면 흐름, 차별성, 사업 확장       |
+| [반려견 정보 아티클](product/ARTICLE_CURATION.md)                     | 공개 아티클·Markdown 편집·초안 수집 API·관리자 검수와 발행 기준  |
+| [판정·일정 복구 기준](product/RULES_AND_RECOVERY.md)                  | 네 가지 상태, 규정 해석, 불확실성, 대체 장소, 코스 재검증        |
+| [데이터 전략](data/DATA_STRATEGY.md)                                  | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙     |
+| [지도 중심 탐색 작업](delivery/MAP_DISCOVERY_PLAN.md)                 | 카카오맵·위치·조건 필터·문의·노트 연결의 단계별 구현과 검증      |
+| [서울 명동 데이터 보강](data/SEOUL_MYEONGDONG_COVERAGE_2026-09-18.md) | 서울 명동 KTO 표본·공식 출입 기준·참고 자료와 한계               |
+| [지역 선정 기록](data/REGION_SELECTION_2026-09-16.md)                 | 서울 명동 대표 지역 전환과 경기 북서부 보조 권역 근거            |
+| [인천 데이터 보강](data/INCHEON_COVERAGE.md)                          | 확보 출처·지역 검색·장소 병합·충돌·갱신 기준                     |
+| [사용자 앱 조사 안내](data/INCHEON_APP_RESEARCH_GUIDE.md)             | 첫 4개 가게·앱별 조사 순서·캡처 항목·자료 전달 양식              |
+| [인천 업체 확인 목록](data/INCHEON_CONFIRMATION_QUEUE.md)             | 30곳의 누락 항목·자료 내 연락처·남은 확인 질문                   |
+| [인천 보강 실측](delivery/INCHEON_VALIDATION_2026-09-11.md)           | 실제 브라우저·표본 지표·보강 한계·검사 결과                      |
+| [기술 스택 선택](engineering/STACK_DECISION.md)                       | Vercel·Workers·OCI, Firebase·Supabase·D1 비교와 우선안           |
+| [애플리케이션 아키텍처](engineering/ARCHITECTURE.md)                  | 단일 앱의 계층·인터페이스·데이터 흐름·저장 경계                  |
+| [개발 환경과 경로 처리](engineering/DEVELOPMENT_ENVIRONMENT.md)       | code-server 프록시, 환경변수, URL 유틸, 빌드·검증 계약           |
+| [코드 작성과 검증 원칙](engineering/CODE_STANDARDS.md)                | 단일 책임, 타입·실패 처리, 테스트, 협업                          |
+| [Firebase 인증·계정 저장](engineering/FIREBASE_AUTH_AND_STORAGE.md)   | 공통 SDK·인증·사용자별 노트·환경변수·에뮬레이터                  |
+| [PWA 설치·오프라인·업데이트](engineering/PWA.md)                      | 설치 UX, 워커·캐시 경계, 개발 프록시, 검증 범위                  |
+| [코드 품질 점검](engineering/CODE_QUALITY_REVIEW.md)                  | 작업 알림·실패 경계의 발견 사항, 수정, 검증 범위                 |
+| [UI 디자인 시스템·상태 책임](engineering/UI_DESIGN_SYSTEM.md)         | shadcn/Radix 컴포넌트, 토큰, Zustand·TanStack Query, 공통 훅     |
+| [무료 호스팅·비용·운영](operations/HOSTING_AND_COST.md)               | 사용량 예산, DNS, 배포 관리, 대안 전환, 심사 기간 운영           |
+| [Umami 분석 설정](operations/UMAMI_ANALYTICS.md)                      | Umami 사이트 등록, Vercel 환경변수, 제품 이벤트 목록             |
+| [문의하기 메일 파이프라인](operations/CONTACT_PIPELINE.md)            | `/contact` 폼, Resend 발송, Turnstile, Vercel 운영 설정          |
+| [운영 smoke test](operations/PRODUCTION_SMOKE_TESTS.md)               | 배포 후 문의·Firebase·Kakao·외부 연결 반복 점검                  |
+| [Vercel 첫 배포 안내](operations/VERCEL_DEPLOYMENT.md)                | GitHub 연결·Node/pnpm·운영 환경변수·Firebase 도메인·배포 후 점검 |
+| [구현·검증·제출 계획](delivery/DELIVERY_PLAN.md)                      | 제출 버전 범위, 역할 분담, 개발 일정, 품질 평가, 시연            |
+| [현재 구현·검증 기록](delivery/IMPLEMENTATION_STATUS.md)              | 실제 구현한 파일·실행한 검사·아직 검증하지 않은 연결             |
+| [최근 작업 로그](delivery/WORK_LOG.md)                                | 운영 배포·PWA 로그인 수정·검증 결과·남은 실기기 확인             |
+| [실 API 검증 실행](engineering/LIVE_VALIDATION.md)                    | 비용·호출 상한이 있는 공급자/브라우저 검사, 비밀 없는 집계 기록  |
+| [2026-09-11 실사용 검증](delivery/LIVE_VALIDATION_2026-09-11.md)      | 실제 장소 결과·수정한 오류·처리 시간·비용·미완료 범위            |
+| [의사결정 및 대화 히스토리](history/DECISION_HISTORY.md)              | 아이디어 발전 과정, 확정한 선택, 수정한 가정, 미결 사항          |
+| [근거 및 참고자료](research/SOURCES.md)                               | 사용자 제공 자료, 이전 검토에서 확인한 외부 자료, 미확인 자료    |
 
 제품 이해: 공모전 개요 → 제품 기획 → 판정·일정 복구 기준 → 데이터 전략.
 
@@ -92,15 +93,15 @@ docs/
 
 ## 사실과 계획을 구분하는 방법
 
-| 구분 | 의미 |
-|---|---|
-| 사용자 제공 공지 | 사용자가 붙여 준 공모전 안내. 원본 페이지·양식과 최종 대조 필요 |
-| 이전 검토에서 확인 | 2026-09-10 기획 답변 작성 중 열람한 공개 자료. 이번 문서화 작업에서 재조회한 것은 아님 |
-| 이번 기술 검토에서 확인 | 2026-09-10 공식 가격·제약·프레임워크 문서를 조회. 계정 연결·실행 성능 검증과 구분 |
-| 과거 검증 기록 | 이전 ChatGPT 대화가 보고한 API·데이터 분석. 현재 작업 공간에 원응답·결과 파일 없음 |
-| 승인 기획 | 사용자가 승인한 제품 방향. 기능 구현 완료나 성과 달성을 의미하지 않음 |
-| 제안 목표 | 일정, 장소 수, 평가 규모 등 실행을 위한 목표. 실제 확보·측정 결과와 구분 |
-| 미확정 | 공식 자료, 데이터, 팀 가용시간 등 추가 확인이 필요한 사항 |
+| 구분                    | 의미                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| 사용자 제공 공지        | 사용자가 붙여 준 공모전 안내. 원본 페이지·양식과 최종 대조 필요                        |
+| 이전 검토에서 확인      | 2026-09-10 기획 답변 작성 중 열람한 공개 자료. 이번 문서화 작업에서 재조회한 것은 아님 |
+| 이번 기술 검토에서 확인 | 2026-09-10 공식 가격·제약·프레임워크 문서를 조회. 계정 연결·실행 성능 검증과 구분      |
+| 과거 검증 기록          | 이전 ChatGPT 대화가 보고한 API·데이터 분석. 현재 작업 공간에 원응답·결과 파일 없음     |
+| 승인 기획               | 사용자가 승인한 제품 방향. 기능 구현 완료나 성과 달성을 의미하지 않음                  |
+| 제안 목표               | 일정, 장소 수, 평가 규모 등 실행을 위한 목표. 실제 확보·측정 결과와 구분               |
+| 미확정                  | 공식 자료, 데이터, 팀 가용시간 등 추가 확인이 필요한 사항                              |
 
 ## 문서 관리 원칙
 
