@@ -1,17 +1,24 @@
 # 현재 구현·검증 기록
 
-기준일: 2026-10-01
+기준일: 2026-10-02
 
 최근 구현·검증·운영 설정이 필요한 범위는 [작업 로그](WORK_LOG.md)를 따른다. 아래 날짜별 항목은 당시 검증 범위의 기록이다.
 
 ## 반려견 정보 아티클 큐레이션 (2026-10-01)
 
-- 기획을 먼저 [아티클 제품·운영 계획](../product/ARTICLE_CURATION.md)에 고정한 뒤 구현했다. 기존 Firebase 프로젝트 안에 초안 전용 수집 API, UID 허용 관리자 API/UI, 공개 목록/상세, 안전한 Markdown 미리보기·렌더링을 추가했다.
+- 기획을 먼저 [아티클 제품·운영 계획](../product/ARTICLE_CURATION.md)에 고정한 뒤 구현했다. 기존 Firebase 프로젝트 안에 초안 전용 수집 API, 관리자 API/UI, 공개 목록/상세, 안전한 Markdown 미리보기·렌더링을 추가했다. 2026-10-02부터 관리 권한은 지정된 Google 계정으로 제한한다.
 - `articles/{id}` 글 본문과 별도로 `articleSlugs/{slug}` 예약 문서, `articleMetadata/publicTags` 공개 태그 집계를 사용한다. slug 중복 검사와 태그 집계 변경은 Firestore 트랜잭션이다. public list는 body 필드를 선택하지 않고 sitemap은 500개 페이지, 최대 49,900개 글로 제한한다.
 - Production API는 Vercel의 `VERCEL=1`과 `VERCEL_ENV=production`에서만 운영 Firebase 연결을 허용한다. Preview는 차단하며, 로컬은 Firebase Auth와 Firestore 에뮬레이터가 모두 설정될 때만 허용한다. 수집 토큰은 Bearer 헤더를 constant-time 비교하고 초안만 만들 수 있다.
 - 검증: 138개 단위 검사, `pnpm typecheck`, `pnpm lint`, `pnpm build`, Firebase 에뮬레이터 Playwright 2개(데스크톱·모바일) 통과. production Firebase/Vercel 변수 설정과 운영 데이터에 대한 검증은 수행하지 않았다.
 - 배포 기록: `9286e94` main push의 Vercel 체크는 성공했다. 운영 `/articles`와 `/sitemap.xml`은 HTTP 200이다. `/articles`는 운영 Firestore 데이터를 불러오지 못한 상태를 표시했으며, 해당 런타임 원문 오류는 조회하지 않았다.
-- 후속 운영: Vercel Production에 `ARTICLE_ADMIN_UIDS`와 `ARTICLE_INGEST_TOKEN` 설정 후 재배포, 운영 Firestore에 `firestore.indexes.json` 인덱스 적용, 실제 관리자 초안 작성/수동 발행 smoke 확인. 실제 운영 아티클은 없다.
+- 후속 운영: Vercel Production에 `ARTICLE_INGEST_TOKEN` 설정 후 재배포, 운영 Firestore에 `firestore.indexes.json` 인덱스 적용, 실제 관리자 초안 작성/수동 발행 smoke 확인. 실제 운영 아티클은 없다.
+
+## 아티클 관리자 권한·편집기 접근 제한 (2026-10-02)
+
+- 관리자 API는 Firebase ID token의 이메일 인증 여부, `ohsong656565@gmail.com` 이메일, `google.com` 로그인 provider를 매 요청 확인한다. Firebase Auth UID 환경변수 허용 목록은 제거했다.
+- 관리자 편집기 진입도 같은 Google 계정 조건으로 제한한다. 자동화 수집 API는 기존 Bearer 토큰으로 열어 두되 초안 생성만 허용한다. 공개 아티클 페이지는 계속 공개다.
+- 검증: 단위 검사 138개, lint, typecheck, production build 통과. Firebase 에뮬레이터 Playwright 데스크톱·모바일 4개 통과. 미인증 요청 401, 이메일/비밀번호 로그인과 다른 Google 계정 거부, 지정 Google 계정의 관리자 작업 및 초안 전용 자동화 흐름을 확인했다.
+- Production Firebase/Vercel에 대한 실제 계정 OAuth 및 관리자 작업은 검증하지 않았다.
 
 ## SEO·GEO discoverability 최적화 (2026-09-27)
 

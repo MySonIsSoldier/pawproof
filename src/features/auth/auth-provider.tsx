@@ -27,6 +27,7 @@ type Identity = {
   verified: boolean;
   displayName: string | null;
   photoURL: string | null;
+  signInProvider: string | "checking" | null;
 };
 type AuthContextValue = {
   configured: boolean;
@@ -42,7 +43,10 @@ type AuthContextValue = {
   token: (expectedUid: string) => Promise<string>;
 };
 const Context = createContext<AuthContextValue | null>(null);
-const identity = (user: User | null): Identity | null =>
+const identity = (
+  user: User | null,
+  signInProvider: Identity["signInProvider"] = "checking",
+): Identity | null =>
   user
     ? {
         uid: user.uid,
@@ -50,8 +54,20 @@ const identity = (user: User | null): Identity | null =>
         verified: user.emailVerified,
         displayName: user.displayName,
         photoURL: user.photoURL,
+        signInProvider,
       }
     : null;
+function tokenSignInProvider(claims: Record<string, unknown>) {
+  const firebase = claims.firebase;
+  if (
+    typeof firebase !== "object" ||
+    firebase === null ||
+    !("sign_in_provider" in firebase)
+  )
+    return null;
+  const provider = firebase.sign_in_provider;
+  return typeof provider === "string" ? provider : null;
+}
 export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -64,6 +80,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [pathname]);
   const queryClient = useQueryClient();
   const lastUid = useRef<string | null>(null);
+  const lastIdentity = useRef<Identity | null>(null);
+  const identityGeneration = useRef(0);
   const configured = !!firebaseWebConfig();
   const [ready, setReady] = useState(!configured);
   const [user, setUser] = useState<Identity | null>(null);
@@ -71,6 +89,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const instance = useRef<Auth | null>(null);
   const authSdk = useRef<typeof import("firebase/auth") | null>(null);
+  const clearPrivateArticleQueries = useCallback(() => {
+    for (const queryKey of [["admin-articles"], ["admin-article"]])
+      void queryClient
+        .cancelQueries({ queryKey })
+        .then(() => queryClient.removeQueries({ queryKey }));
+  }, [queryClient]);
+  const applyIdentity = useCallback(
+    (nextIdentity: Identity | null) => {
+      const previousIdentity = lastIdentity.current;
+      if (
+        previousIdentity &&
+        (!nextIdentity ||
+          previousIdentity.uid !== nextIdentity.uid ||
+          previousIdentity.email !== nextIdentity.email ||
+          previousIdentity.verified !== nextIdentity.verified ||
+          previousIdentity.signInProvider !== nextIdentity.signInProvider)
+      )
+        clearPrivateArticleQueries();
+      lastIdentity.current = nextIdentity;
+      setUser(nextIdentity);
+    },
+    [clearPrivateArticleQueries],
+  );
   useEffect(() => {
     if (!configured) return;
     let active = true;
@@ -88,22 +129,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           auth,
           (next) => {
             if (active) {
+              const generation = ++identityGeneration.current;
               if (lastUid.current && lastUid.current !== next?.uid) {
                 void queryClient.cancelQueries({ queryKey: ["account"] });
                 queryClient.removeQueries({ queryKey: ["account"] });
+                clearPrivateArticleQueries();
+                lastIdentity.current = null;
                 const url = new URL(window.location.href);
                 url.searchParams.delete("note");
                 window.history.replaceState(null, "", url);
               }
               lastUid.current = next?.uid || null;
+              if (!next) lastIdentity.current = null;
               setUser(identity(next));
               setReady(true);
               setError("");
+              if (next) {
+                void next
+                  .getIdTokenResult()
+                  .then((result) => {
+                    if (
+                      active &&
+                      generation === identityGeneration.current &&
+                      auth.currentUser?.uid === next.uid
+                    ) {
+                      const resolvedIdentity = identity(
+                        next,
+                        tokenSignInProvider(result.claims),
+                      );
+                      applyIdentity(resolvedIdentity);
+                    }
+                  })
+                  .catch(() => {
+                    if (
+                      active &&
+                      generation === identityGeneration.current &&
+                      auth.currentUser?.uid === next.uid
+                    ) {
+                      applyIdentity(identity(next, null));
+                    }
+                  });
+              }
             }
           },
           (error) => {
             if (active) {
-              setUser(null);
+              identityGeneration.current += 1;
+              applyIdentity(null);
               setError(authErrorMessage(error));
               setReady(true);
             }
@@ -122,14 +194,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       instance.current = null;
       authSdk.current = null;
     };
-  }, [configured, queryClient]);
+  }, [applyIdentity, clearPrivateArticleQueries, configured, queryClient]);
   async function run(action: AuthAction) {
     const auth = instance.current;
     const sdk = authSdk.current;
     if (!auth || !sdk) throw new Error("로그인 연결을 준비하고 있어요.");
     // The SDK is loaded before ready; preserve the click's user activation for OAuth.
     await action(auth, sdk);
-    if (instance.current === auth) setUser(identity(auth.currentUser));
+    if (instance.current === auth) {
+      const current = auth.currentUser;
+      const generation = ++identityGeneration.current;
+      setUser(identity(current));
+      if (!current) {
+        applyIdentity(null);
+      } else {
+        void current
+          .getIdTokenResult()
+          .then((result) => {
+            if (
+              instance.current === auth &&
+              identityGeneration.current === generation &&
+              auth.currentUser === current
+            )
+              applyIdentity(
+                identity(current, tokenSignInProvider(result.claims)),
+              );
+          })
+          .catch(() => {
+            if (
+              instance.current === auth &&
+              identityGeneration.current === generation &&
+              auth.currentUser === current
+            )
+              applyIdentity(identity(current, null));
+          });
+      }
+    }
   }
   const token = useCallback(async (expectedUid: string) => {
     const current = instance.current?.currentUser;

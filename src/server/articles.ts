@@ -8,7 +8,8 @@ import {
 } from "../application/ports/article-repository";
 import { adminDb } from "../infrastructure/firebase/admin";
 import { FirestoreArticles } from "../infrastructure/persistence/firestore-articles";
-import { requireAccount } from "./account";
+import { isArticleAdminIdentity } from "../config/article-admin";
+import { requireAccountToken } from "./account";
 import { json } from "./http";
 
 export const articleRepository = (): ArticleRepository => {
@@ -21,7 +22,6 @@ export class ArticleAccessError extends Error {
     readonly code:
       | "UNAUTHORIZED"
       | "FORBIDDEN"
-      | "ADMIN_NOT_CONFIGURED"
       | "INGEST_NOT_CONFIGURED"
       | "ARTICLE_ENV_DISABLED",
     message: string,
@@ -48,19 +48,19 @@ function assertArticleEnvironmentEnabled() {
 
 export async function requireArticleAdmin(request: Request) {
   assertArticleEnvironmentEnabled();
-  const uid = await requireAccount(request, false);
-  const allowedUids = (process.env.ARTICLE_ADMIN_UIDS ?? "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  if (allowedUids.length === 0)
+  const token = await requireAccountToken(request);
+  if (
+    !isArticleAdminIdentity(
+      token.email,
+      token.firebase?.sign_in_provider,
+      token.email_verified === true,
+    )
+  )
     throw new ArticleAccessError(
-      "ADMIN_NOT_CONFIGURED",
-      "관리자 권한 설정이 필요합니다.",
+      "FORBIDDEN",
+      "지정된 Google 계정만 아티클 관리 기능을 사용할 수 있습니다.",
     );
-  if (!allowedUids.includes(uid))
-    throw new ArticleAccessError("FORBIDDEN", "아티클 관리자 권한이 없습니다.");
-  return uid;
+  return token.uid;
 }
 
 function tokenDigest(value: string) {
@@ -91,7 +91,6 @@ export function articleErrorResponse(error: unknown) {
     const status = {
       UNAUTHORIZED: 401,
       FORBIDDEN: 403,
-      ADMIN_NOT_CONFIGURED: 503,
       INGEST_NOT_CONFIGURED: 503,
       ARTICLE_ENV_DISABLED: 503,
     }[error.code];

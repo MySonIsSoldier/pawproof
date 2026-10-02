@@ -1,8 +1,8 @@
 # PawProof 반려견 정보 아티클
 
-기준일: 2026-10-01
+기준일: 2026-10-02
 
-상태: 구현 기준. 운영 Firebase 연결·관리자 UID·수집 토큰 설정은 배포 환경에서 별도로 완료해야 한다.
+상태: 구현 기준. 운영 Firebase 연결과 수집 토큰 설정은 배포 환경에서 별도로 완료해야 한다.
 
 ## 목표
 
@@ -13,7 +13,7 @@ PawProof의 기존 여행 검증 서비스와 같은 도메인에서 반려견 �
 - 공개 목록 `/articles`, 공개 상세 `/articles/[slug]`를 제공한다.
 - 글은 제목, 고유 slug, 요약, Markdown 본문, 태그, 상태, 작성·수정·발행 시각을 가진다.
 - 목록에서 태그로 글을 좁혀보고 최신순으로 탐색한다.
-- 관리자 `/admin/articles`는 로그인 후 허용된 Firebase UID만 접근할 수 있다.
+- 관리자 `/admin/articles`와 편집기는 이메일 인증을 완료한 `ohsong656565@gmail.com` Google 계정만 접근할 수 있다.
 - 관리자는 초안 작성, Markdown 미리보기, 기존 글 편집, 발행, 보관, 영구 삭제를 수행한다.
 - 서버 간 수집 API는 공유 비밀 토큰으로 인증하고 새 글을 초안 상태로만 저장한다. 요청으로 상태나 발행 시각을 지정할 수 없다.
 - 공개 페이지·메타데이터·사이트맵에는 `published` 상태의 글만 포함한다.
@@ -28,7 +28,7 @@ draft ──관리자 발행──> published ──관리자 보관──> arch
 ```
 
 - 생성 API는 항상 `draft`로 시작한다.
-- `published` 전이는 관리자 인증과 UID 허용 목록을 모두 통과한 요청만 수행한다.
+- `published` 전이는 지정된 Google 계정의 인증을 통과한 요청만 수행한다.
 - 수정 시 `updatedAt`을 갱신한다. 발행 시 `publishedAt`을 기록하고, 초안 복귀 시 공개 목록에서 즉시 제외한다.
 - 영구 삭제는 관리자만 할 수 있다. 보관은 복구 가능한 비공개 상태다.
 
@@ -59,10 +59,10 @@ type Article = {
 | 경로                                      | 권한                                     | 동작                          |
 | ----------------------------------------- | ---------------------------------------- | ----------------------------- |
 | `POST /api/articles/ingest`               | `ARTICLE_INGEST_TOKEN` Bearer 토큰       | 새 초안 생성만 가능           |
-| `/api/admin/articles`                     | Firebase ID token + `ARTICLE_ADMIN_UIDS` | 관리자 목록·생성              |
-| `/api/admin/articles/[id]`                | Firebase ID token + `ARTICLE_ADMIN_UIDS` | 단건 조회·수정·상태 변경·삭제 |
+| `/api/admin/articles`                     | 이메일 인증된 지정 Google 계정의 Firebase ID token | 관리자 목록·생성              |
+| `/api/admin/articles/[id]`                | 이메일 인증된 지정 Google 계정의 Firebase ID token | 단건 조회·수정·상태 변경·삭제 |
 | `/articles`, `/articles/[slug]`           | 공개                                     | 발행 글만 조회                |
-| `/admin/articles`, `/admin/articles/[id]` | 로그인 및 서버 API UID 허용              | 관리자용 편집 UI              |
+| `/admin/articles`, `/admin/articles/[id]` | 이메일 인증된 지정 Google 계정            | 관리자용 편집 UI              |
 
 자동 수집 요청 예시는 다음 계약을 사용한다. 응답의 `status`는 서버가 부여하며 요청 본문에는 넣지 않는다.
 
@@ -96,7 +96,7 @@ Firebase Admin SDK는 Firestore Security Rules를 우회하므로 API가 매 요
 ## 운영 환경
 
 - Firestore의 `articles` 컬렉션, `articleSlugs` 예약 문서, `articleMetadata/publicTags` 요약 문서와 필요한 복합 인덱스를 사용한다. 기존 Firebase 프로젝트 및 계정 데이터와 분리 컬렉션으로 보관한다. 사이트맵은 500개씩 페이지를 읽고 Sitemap 프로토콜 한도보다 낮은 49,900개 아티클까지 포함한다.
-- Production에는 `ARTICLE_ADMIN_UIDS`와 긴 무작위 `ARTICLE_INGEST_TOKEN`을 설정한다. 관리자 UID는 Firebase 로그인 후 확인해 허용 목록에 등록한다.
+- Production에는 긴 무작위 `ARTICLE_INGEST_TOKEN`을 설정한다. 관리자 계정은 `ohsong656565@gmail.com` Google 로그인으로 고정되며 UID 환경변수 설정은 필요하지 않다.
 - Production 연결은 Vercel의 `VERCEL=1`, `VERCEL_ENV=production` 조합에서만 허용한다. Preview는 항상 차단하고, 로컬은 Auth와 Firestore 에뮬레이터가 모두 연결된 경우에만 허용한다. 로컬 에뮬레이터에서 전체 흐름을 검증하고 Preview는 공개 UI/레이아웃 검토에 사용한다.
 - ChatGPT 예약 기능은 예약 작업 설정에서 Bearer 토큰을 안전하게 저장해 POST를 호출해야 한다. 예약 기능의 실제 HTTP 지원 여부는 별도로 확인한다.
 
@@ -104,7 +104,7 @@ Firebase Admin SDK는 Firestore Security Rules를 우회하므로 API가 매 요
 
 - 공개 페이지는 초안·보관 글을 전달하지 않으며 글 상세 metadata와 sitemap도 같은 공개 필터를 사용한다.
 - 수집 API는 비밀 없는 요청, 잘못된 본문, 중복 slug를 거부하고 생성된 글을 항상 초안으로 저장한다.
-- 관리자 API는 로그인하지 않은 사용자와 미허용 UID를 거부한다.
+- 관리자 API는 미인증 사용자, 이메일 미인증 사용자, 지정 이메일이 아니거나 Google provider가 아닌 계정을 거부한다. 편집기 화면도 같은 조건을 적용한다.
 - 관리자는 목록·작성·수정·미리보기·발행·보관·초안 복귀·삭제를 수행할 수 있다.
 - 외부 Markdown HTML 실행 없이 일반 Markdown 요소와 안전한 링크만 렌더링한다.
 - 타입 검사, lint, 관련 단위/에뮬레이터 검증, 운영 빌드가 통과한다. Production 실계정 연결은 별도 운영 설정 이후 smoke 확인으로 기록한다.

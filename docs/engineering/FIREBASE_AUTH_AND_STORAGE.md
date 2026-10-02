@@ -1,6 +1,6 @@
 # Firebase 인증과 계정 여행 노트
 
-기준일: 2026-09-27. 코드 구현과 에뮬레이터 검증, 실제 Firebase 프로젝트 연결을 구분한다. 실제 설정값은 저장소에 기록하지 않는다.
+기준일: 2026-10-02. 코드 구현과 에뮬레이터 검증, 실제 Firebase 프로젝트 연결을 구분한다. 실제 설정값은 저장소에 기록하지 않는다.
 
 ## 구조와 저장 범위
 
@@ -22,7 +22,7 @@ accounts/{uid}/profile/main             -> pets (stable IDs), revision
 articles/{uuid}                         -> title, slug, summary, body (Markdown), tags, status, origin, timestamps
 ```
 
-아티클은 계정 하위 데이터가 아닌 PawProof 자체 콘텐츠다. Firestore Rules는 기존처럼 브라우저 접근을 거부하고, 서버 전용 Admin SDK 어댑터만 `articles`, slug 예약 `articleSlugs`, 공개 태그 요약 `articleMetadata/publicTags`를 쓴다. 예약 작업 수집 API는 항상 draft로 생성한다. 관리자 화면/API는 로그인 Firebase UID가 `ARTICLE_ADMIN_UIDS`에 포함되는지 확인한 뒤 편집·발행·보관·삭제를 수행한다. `ARTICLE_INGEST_TOKEN`은 서버 환경변수의 32자 이상 Bearer 비밀이며 발행 권한은 없다. 두 아티클 변수는 Vercel Production에만 설정한다.
+아티클은 계정 하위 데이터가 아닌 PawProof 자체 콘텐츠다. Firestore Rules는 기존처럼 브라우저 접근을 거부하고, 서버 전용 Admin SDK 어댑터만 `articles`, slug 예약 `articleSlugs`, 공개 태그 요약 `articleMetadata/publicTags`를 쓴다. 예약 작업 수집 API는 항상 draft로 생성한다. 관리자 화면/API는 매 요청에서 Firebase ID token의 이메일 인증 상태, `ohsong656565@gmail.com` 이메일, `firebase.sign_in_provider === "google.com"` 조건을 확인한 뒤 편집·발행·보관·삭제를 수행한다. `ARTICLE_INGEST_TOKEN`은 서버 환경변수의 32자 이상 Bearer 비밀이며 초안 생성 권한만 가진다. Production에는 수집 토큰만 별도로 설정한다.
 
 계정 노트는 최대 20개다. 작성 중인 0~5개 방문지·미완성 반려견 입력도 초안으로 저장하며 한 곳 이상이면 코스 검사를 시작할 수 있다. 900ms 입력 대기 후 직렬로 저장하고 저장 중 새 입력은 다음 요청에 반영한다. 미전송 초안은 계정별 sessionStorage에 두며 성공한 최신 내용만 지운다. 실패·revision 충돌은 자동 반복하지 않고 화면에 남긴다. 새로고침·탭 닫기 때 미저장 입력이 있으면 브라우저 이탈 경고를 요청한다. 브라우저 기본 문구와 모바일 호출 제한을 따르며 저장 성공 후에는 경고하지 않는다. 로그아웃 후 다른 계정에는 이전 계정의 초안을 불러오지 않는다.
 
@@ -61,10 +61,9 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
 
 두 project ID는 동일해야 한다. private_key 안의 줄바꿈은 실제 줄바꿈 또는 `\n` 형식을 지원한다. 서비스 계정 키에 `NEXT_PUBLIC_` 접두사를 붙이지 않는다. Vercel에서도 같은 이름으로 설정하며, Firebase Web의 공개 API 키와 Admin 개인 키를 혼동하지 않는다.
 
-아티클 CMS를 켤 때 아래 두 값은 Vercel Production에만 추가한다. Preview 환경에는 Production Firebase Admin 자격증명을 복사하지 않는다.
+아티클 자동 초안 수집을 켤 때 아래 값을 Vercel Production에만 추가한다. 관리자 계정은 소스 코드의 지정 이메일·Google provider 조건으로 제한하며 UID 환경변수를 사용하지 않는다. Preview 환경에는 Production Firebase Admin 자격증명을 복사하지 않는다.
 
 ```dotenv
-ARTICLE_ADMIN_UIDS=Firebase-Auth-UID
 ARTICLE_INGEST_TOKEN=32자-이상의-무작위-비밀
 ```
 

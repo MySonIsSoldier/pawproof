@@ -17,8 +17,11 @@ export const password = "Only-Local-Test-123!";
 export function email() {
   return `test-${randomUUID()}@example.test`;
 }
-export async function createUser(verified = true, uid?: string) {
-  const address = email();
+export async function createUserWithEmail(
+  address: string,
+  verified = true,
+  uid?: string,
+) {
   const user = await auth.createUser({
     ...(uid ? { uid } : {}),
     email: address,
@@ -41,6 +44,40 @@ export async function createUser(verified = true, uid?: string) {
   if (!response.ok || !data.idToken)
     throw new Error("Emulator sign-in failed.");
   return { uid: user.uid, email: address, token: data.idToken as string };
+}
+export async function createUser(verified = true, uid?: string) {
+  return createUserWithEmail(email(), verified, uid);
+}
+export async function createGoogleUser(address: string) {
+  const claims = JSON.stringify({
+    sub: `google-${randomUUID()}`,
+    email: address,
+    email_verified: true,
+    name: "PawProof 테스트 사용자",
+  });
+  const response = await fetch(
+    "http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=demo-api-key",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        requestUri: "http://localhost",
+        postBody: new URLSearchParams({
+          providerId: "google.com",
+          id_token: claims,
+        }).toString(),
+        returnSecureToken: true,
+      }),
+    },
+  );
+  const data = await response.json();
+  if (!response.ok || !data.idToken || !data.localId)
+    throw new Error(`Google emulator sign-in failed (${response.status}).`);
+  return {
+    uid: data.localId as string,
+    email: address,
+    token: data.idToken as string,
+  };
 }
 export async function login(page: Page, email: string) {
   await page

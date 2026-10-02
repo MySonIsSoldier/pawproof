@@ -8,7 +8,7 @@ import {
 } from "../infrastructure/firebase/auth-error";
 import { FirestoreTrips } from "../infrastructure/persistence/firestore-trips";
 import { json } from "./http";
-export async function requireAccount(request: Request, verified = true) {
+export async function requireAccountToken(request: Request, verified = true) {
   const bearer = request.headers
     .get("authorization")
     ?.match(/^Bearer ([^\s]+)$/)?.[1];
@@ -39,7 +39,10 @@ export async function requireAccount(request: Request, verified = true) {
       "VERIFY_EMAIL",
       "이메일 인증을 마친 뒤 계정 저장을 이용해 주세요.",
     );
-  return token.uid;
+  return token;
+}
+export async function requireAccount(request: Request, verified = true) {
+  return (await requireAccountToken(request, verified)).uid;
 }
 export const accountTrips = () => new FirestoreTrips(adminDb());
 export async function deleteAccount(uid: string) {

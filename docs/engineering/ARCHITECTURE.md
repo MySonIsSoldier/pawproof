@@ -139,4 +139,4 @@ QueryProvider는 루트에 두고 AuthProvider와 프로필/여행에서 공유�
 
 아티클은 기존 Next.js 앱과 Firestore 프로젝트 안의 별도 `articles/{id}` 컬렉션에 저장한다. 순수 입력 계약은 `application/contracts/article`, 저장 포트는 `application/ports/article-repository`, Admin SDK 어댑터는 `FirestoreArticles`에 둔다. 고유 slug는 `articleSlugs/{slug}` 예약 문서로 보장하고 공개 태그 수는 `articleMetadata/publicTags` 문서에서 관리한다. 두 요약은 공개 상태·태그 변경과 같은 트랜잭션으로 갱신한다. 공개 App Router 페이지는 게시 글 조회만 사용하고, Markdown 렌더링은 raw HTML을 활성화하지 않는다. 편집 요청 상태는 TanStack Query, 입력값은 화면 로컬 상태가 소유한다.
 
-`POST /api/articles/ingest`의 Bearer 토큰은 초안 생성 전용이다. 관리자 API는 기존 Firebase ID token 확인 뒤 `ARTICLE_ADMIN_UIDS`의 UID 허용 목록을 검사한다. 상태 변경과 삭제 권한을 자동화 토큰에 부여하지 않는다. 공개 목록·상세·사이트맵은 Firestore에서 `published` 상태만 조회한다. Firestore Admin SDK는 Security Rules를 우회하므로 모든 쓰기는 서버 API에서 입력과 권한을 확인한다.
+`POST /api/articles/ingest`의 Bearer 토큰은 초안 생성 전용이다. 관리자 화면은 지정 계정 여부를 표시 전에 확인하고, 관리자 API는 매 요청마다 Firebase ID token의 인증 이메일 `ohsong656565@gmail.com`과 `firebase.sign_in_provider === "google.com"`을 검사한다. 상태 변경과 삭제 권한을 자동화 토큰에 부여하지 않는다. 공개 목록·상세·사이트맵은 Firestore에서 `published` 상태만 조회한다. Firestore Admin SDK는 Security Rules를 우회하므로 모든 쓰기는 서버 API에서 입력과 권한을 확인한다.

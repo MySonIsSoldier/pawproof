@@ -50,7 +50,7 @@ Import 화면의 Environment Variables 또는 **Project → Settings → Environ
 
 `.env.local`은 GitHub에 올라가지 않으므로 자동 복사되지 않는다. 아래 기존 값은 사용자가 로컬 파일에서 직접 옮긴다. 실제 키를 문서·커밋·채팅에 넣지 않는다.
 
-루트 [.env.example](../../.env.example)은 Production 기본값을 채운 템플릿이다. `[직접 입력]` 17개를 본인 값으로 채운다. 마지막 4개는 문의하기 Resend·Turnstile 설정이고, 아티클 관리자 UID와 수집 토큰 2개는 아티클 운영을 시작할 때 추가한다. APP_BASE_PATH와 선택 항목 APP_ORIGIN의 빈칸은 누락이 아니다. 실제 값은 Vercel 입력란 또는 비추적 `.env.vercel.local` 사본에 입력한다. 공개 템플릿과 기존 `.env.local`을 덮어쓰지 않는다. `.env.vercel.local`은 가져오기용 사본이며 Next.js가 자동으로 읽는 파일은 아니다.
+루트 [.env.example](../../.env.example)은 Production 기본값을 채운 템플릿이다. `[직접 입력]` 16개를 본인 값으로 채운다. 마지막 4개는 문의하기 Resend·Turnstile 설정이고, 자동화 초안 수집을 시작할 때 아티클 수집 토큰 1개를 추가한다. APP_BASE_PATH와 선택 항목 APP_ORIGIN의 빈칸은 누락이 아니다. 실제 값은 Vercel 입력란 또는 비추적 `.env.vercel.local` 사본에 입력한다. 공개 템플릿과 기존 `.env.local`을 덮어쓰지 않는다. `.env.vercel.local`은 가져오기용 사본이며 Next.js가 자동으로 읽는 파일은 아니다.
 
 | 변수                             | 입력 값                                                                      |
 | -------------------------------- | ---------------------------------------------------------------------------- |
@@ -71,7 +71,6 @@ Import 화면의 Environment Variables 또는 **Project → Settings → Environ
 | NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN | 기존 Firebase 인증 도메인 유지                                               |
 | NEXT_PUBLIC_FIREBASE_PROJECT_ID  | 기존 Firebase Web 앱 값                                                      |
 | NEXT_PUBLIC_FIREBASE_APP_ID      | 기존 Firebase Web 앱 값                                                      |
-| ARTICLE_ADMIN_UIDS               | 아티클을 편집할 Firebase 사용자 UID. 복수 UID는 쉼표로 구분                  |
 | ARTICLE_INGEST_TOKEN             | 예약 작업의 초안 등록 Bearer token. 32자 이상 무작위 값                      |
 
 두 Firebase PROJECT_ID는 같아야 한다. AUTH_DOMAIN은 기존 `<프로젝트>.firebaseapp.com` 등 설정값을 유지하며 Vercel 주소로 바꾸지 않는다. 앱 접속 도메인 허용은 다음 단계에서 처리한다.
@@ -80,7 +79,7 @@ Import 화면의 Environment Variables 또는 **Project → Settings → Environ
 
 배포에 넣지 않는 개발 설정: PORT, DEV_ALLOWED_HOSTS, VSCODE_PROXY_URI, NEXT_PUBLIC_APP_BASE_PATH, NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_URL, FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST. NODE_ENV와 PWA 릴리스 ID도 수동 설정하지 않는다.
 
-아티클 CMS의 `ARTICLE_ADMIN_UIDS`, `ARTICLE_INGEST_TOKEN`과 Firebase Admin 자격증명은 **Production 환경에만** 지정한다. Preview 배포에 Production Firebase를 연결하지 않는다. Firebase Console의 Authentication 사용자 목록에서 관리자 UID를 확인해 UID 목록에 입력하고, 강한 무작위 토큰은 비밀 관리자에만 보관해 ChatGPT 예약 작업의 `Authorization: Bearer …` 헤더로 전달한다. 토큰을 콘텐츠 본문이나 URL에 넣지 않는다. Preview UI 검증은 에뮬레이터를 사용하고, 실제 초안 생성·발행 검증은 운영에서 관리자 계정으로 확인한다.
+`ARTICLE_INGEST_TOKEN`과 Firebase Admin 자격증명은 **Production 환경에만** 지정한다. 관리자 UI와 API는 `ohsong656565@gmail.com`으로 Google 로그인한 계정만 사용할 수 있으며 별도 관리자 환경변수는 없다. Preview 배포에 Production Firebase를 연결하지 않는다. 강한 무작위 수집 토큰은 비밀 관리자에만 보관해 ChatGPT 예약 작업의 `Authorization: Bearer …` 헤더로 전달한다. 토큰을 콘텐츠 본문이나 URL에 넣지 않는다. Preview UI 검증은 에뮬레이터를 사용하고, 실제 초안 생성·발행 검증은 운영에서 관리자 계정으로 확인한다.
 
 새 Firestore 복합 인덱스는 저장소의 `firestore.indexes.json`에 정의했다. 운영 Firestore에 아직 인덱스를 배포하지 않았다면 Firebase Console의 쿼리 오류 링크에서 승인하거나, 올바른 프로젝트를 확인한 뒤 명시적으로 `firebase deploy --only firestore:indexes --project <project-id>`를 실행한다. 코드 배포만으로 원격 인덱스가 생성되지는 않는다. 공개 태그별 글 수는 `articleMetadata/publicTags`에서 아티클 발행·상태 변경·삭제 트랜잭션으로 함께 유지한다.
 

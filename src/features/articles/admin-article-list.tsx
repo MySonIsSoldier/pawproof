@@ -22,7 +22,7 @@ function formatDate(value: string) {
 
 function errorMessage(error: unknown) {
   if (error instanceof AdminArticleRequestError && error.status === 403)
-    return "이 계정은 관리자 UID 목록에 없습니다. ARTICLE_ADMIN_UIDS 설정을 확인해 주세요.";
+    return "지정된 Google 계정만 아티클 관리 기능을 사용할 수 있어요.";
   if (error instanceof AdminArticleRequestError && error.status === 503)
     return "관리자 권한 또는 Firebase 연결이 아직 설정되지 않았어요.";
   return error instanceof Error ? error.message : "아티클을 불러오지 못했어요.";

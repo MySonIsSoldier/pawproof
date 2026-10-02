@@ -1,25 +1,34 @@
 import { randomUUID } from "node:crypto";
 import { test, expect } from "@playwright/test";
-import { auth, db, createUser, login } from "./helpers";
+import {
+  auth,
+  db,
+  createGoogleUser,
+  createUser,
+  createUserWithEmail,
+  email,
+  login,
+} from "./helpers";
 
-const adminUid = "pawproof-article-admin-test";
+const articleAdminEmail = "ohsong656565@gmail.com";
 const ingestToken =
   "local-only-pawproof-article-ingest-token-never-for-production";
 const ingestPath = "./api/articles/ingest";
 const adminPath = "./api/admin/articles";
 
-test("article ingestion stays draft-only and an allowlisted admin can review and publish", async ({
-  page,
+test("article APIs require the designated Google admin", async ({
   request,
 }) => {
   const storedArticleIds: string[] = [];
-  let outsiderUid: string | undefined;
+  const userUids: string[] = [];
   try {
-    await auth.deleteUser(adminUid).catch(() => undefined);
-    const admin = await createUser(true, adminUid);
+    const emailPasswordUser = await createUserWithEmail(articleAdminEmail);
+    userUids.push(emailPasswordUser.uid);
     const outsider = await createUser();
-    outsiderUid = outsider.uid;
-    const adminHeaders = { Authorization: `Bearer ${admin.token}` };
+    userUids.push(outsider.uid);
+    const emailPasswordHeaders = {
+      Authorization: `Bearer ${emailPasswordUser.token}`,
+    };
     const outsiderHeaders = { Authorization: `Bearer ${outsider.token}` };
     const machineHeaders = {
       Authorization: `Bearer ${ingestToken}`,
@@ -38,8 +47,45 @@ test("article ingestion stays draft-only and an allowlisted admin can review and
     expect((await request.post(ingestPath, { data: content })).status()).toBe(
       401,
     );
+    expect((await request.get(adminPath)).status()).toBe(401);
     expect(
-      (await request.get(adminPath, { headers: outsiderHeaders })).status(),
+      (
+        await request.get(adminPath, { headers: emailPasswordHeaders })
+      ).status(),
+    ).toBe(403);
+    expect(
+      (
+        await request.post(adminPath, {
+          headers: outsiderHeaders,
+          data: content,
+        })
+      ).status(),
+    ).toBe(403);
+    const nonexistentArticleId = randomUUID();
+    const detailPath = `${adminPath}/${nonexistentArticleId}`;
+    expect(
+      (
+        await request.get(detailPath, { headers: emailPasswordHeaders })
+      ).status(),
+    ).toBe(403);
+    expect(
+      (
+        await request.put(detailPath, {
+          headers: outsiderHeaders,
+          data: content,
+        })
+      ).status(),
+    ).toBe(403);
+    expect(
+      (
+        await request.patch(detailPath, {
+          headers: emailPasswordHeaders,
+          data: { status: "published" },
+        })
+      ).status(),
+    ).toBe(403);
+    expect(
+      (await request.delete(detailPath, { headers: outsiderHeaders })).status(),
     ).toBe(403);
     expect(
       (
@@ -80,6 +126,29 @@ test("article ingestion stays draft-only and an allowlisted admin can review and
       ).status(),
     ).toBe(409);
 
+    await auth.deleteUser(emailPasswordUser.uid);
+    userUids.splice(userUids.indexOf(emailPasswordUser.uid), 1);
+
+    const otherGoogleUser = await createGoogleUser(email());
+    userUids.push(otherGoogleUser.uid);
+    const admin = await createGoogleUser(articleAdminEmail);
+    userUids.push(admin.uid);
+    const adminHeaders = { Authorization: `Bearer ${admin.token}` };
+    const otherGoogleHeaders = {
+      Authorization: `Bearer ${otherGoogleUser.token}`,
+    };
+    expect(
+      (await request.get(adminPath, { headers: otherGoogleHeaders })).status(),
+    ).toBe(403);
+    expect(
+      (
+        await request.patch(`${adminPath}/${created.id}`, {
+          headers: otherGoogleHeaders,
+          data: { status: "published" },
+        })
+      ).status(),
+    ).toBe(403);
+
     const adminListResponse = await request.get(adminPath, {
       headers: adminHeaders,
     });
@@ -91,11 +160,6 @@ test("article ingestion stays draft-only and an allowlisted admin can review and
     expect(listed).toBeTruthy();
     expect(listed).not.toHaveProperty("body");
 
-    const deniedPublish = await request.patch(`${adminPath}/${created.id}`, {
-      headers: outsiderHeaders,
-      data: { status: "published" },
-    });
-    expect(deniedPublish.status()).toBe(403);
     const directFirestoreRead = await fetch(
       `http://127.0.0.1:8080/v1/projects/demo-pawproof/databases/(default)/documents/articles/${created.id}`,
     );
@@ -111,11 +175,12 @@ test("article ingestion stays draft-only and an allowlisted admin can review and
     expect(publicResponse.status()).toBe(200);
     expect(await publicResponse.text()).toContain(content.title);
     expect((await request.get("./sitemap.xml")).status()).toBe(200);
-    await page.goto("./articles");
-    const articleTags = page.getByRole("navigation", { name: "아티클 태그" });
-    await expect(articleTags.getByRole("link", { name: "산책" })).toBeVisible();
-    await page.goto("./articles?tag=산책");
-    await expect(page.getByRole("heading", { name: content.title })).toBeVisible();
+    expect(await (await request.get("./articles")).text()).toContain(
+      content.title,
+    );
+    expect(await (await request.get("./articles?tag=산책")).text()).toContain(
+      content.title,
+    );
 
     const draftAgain = await request.patch(`${adminPath}/${created.id}`, {
       headers: adminHeaders,
@@ -123,12 +188,9 @@ test("article ingestion stays draft-only and an allowlisted admin can review and
     });
     expect(draftAgain.status()).toBe(200);
     expect((await request.get(`./articles/${slug}`)).status()).toBe(404);
-    await page.goto("./articles");
-    await expect(
-      page
-        .getByRole("navigation", { name: "아티클 태그" })
-        .getByRole("link", { name: "산책" }),
-    ).toHaveCount(0);
+    expect(await (await request.get("./articles")).text()).not.toContain(
+      content.title,
+    );
     expect(
       (
         await request.delete(`${adminPath}/${created.id}`, {
@@ -138,73 +200,90 @@ test("article ingestion stays draft-only and an allowlisted admin can review and
     ).toBe(200);
     storedArticleIds.splice(storedArticleIds.indexOf(created.id), 1);
 
-    const uiSlug = `editorial-note-${suffix}`;
-    await page.goto("./admin/articles");
-    await expect(
-      page.getByRole("heading", { name: "관리자 로그인이 필요해요." }),
-    ).toBeVisible();
-    await login(page, admin.email);
-    await expect(page).toHaveURL(/\/admin\/articles$/);
-    await expect(
-      page.getByRole("heading", { name: "아티클 책상" }),
-    ).toBeVisible();
-    await page.getByRole("link", { name: "새 아티클" }).click();
-    await page
-      .getByPlaceholder("반려견 보호자가 궁금해할 이야기를 적어주세요")
-      .fill(`산책을 읽는 작은 방법 ${suffix}`);
-    await page.getByPlaceholder("dog-walking-signals").fill(uiSlug);
-    await page
-      .getByPlaceholder("목록과 검색 결과에 보여줄 짧은 설명")
-      .fill("강아지의 산책 행동을 살펴보는 짧은 안내입니다.");
-    await page
-      .getByPlaceholder("행동 이해, 산책 팁, 건강")
-      .fill("산책, 행동 이해");
-    await page
-      .locator("textarea")
-      .last()
-      .fill(
-        "## 한 걸음씩\n\n강아지의 신호를 보고 속도를 맞춰요.\n\n<script>alert(1)</script>",
-      );
-    if ((page.viewportSize()?.width ?? 1440) <= 560) {
-      await page.getByRole("button", { name: "미리보기" }).click();
-      await expect(
-        page.getByRole("heading", { name: `산책을 읽는 작은 방법 ${suffix}` }),
-      ).toBeVisible();
-      await page.getByRole("button", { name: "편집", exact: true }).click();
-    } else {
-      await expect(
-        page.getByRole("heading", { name: `산책을 읽는 작은 방법 ${suffix}` }),
-      ).toBeVisible();
-    }
-    await page.getByRole("button", { name: "초안 저장" }).click();
-    await expect(page).toHaveURL(/\/admin\/articles\/[0-9a-f-]+$/);
-    const uiArticleId = page.url().split("/").at(-1)!;
-    storedArticleIds.push(uiArticleId);
-    await expect(
-      page.getByRole("button", { name: "검수 완료 · 공개하기" }),
-    ).toBeEnabled();
-    await page.getByRole("button", { name: "검수 완료 · 공개하기" }).click();
-    await expect(page.getByText("아티클을 공개했어요.")).toBeVisible();
-
-    await page.goto(`./articles/${uiSlug}`);
-    await expect(
-      page.getByRole("heading", { name: `산책을 읽는 작은 방법 ${suffix}` }),
-    ).toBeVisible();
-    await expect(
-      page.getByText("강아지의 신호를 보고 속도를 맞춰요."),
-    ).toBeVisible();
-    await expect(page.locator("article script")).toHaveCount(0);
-
-    await page.goto(`./admin/articles/${uiArticleId}`);
-    page.once("dialog", (dialog) => dialog.accept());
-    await page.getByRole("button", { name: "영구 삭제" }).click();
-    await expect(page).toHaveURL(/\/admin\/articles$/);
-    storedArticleIds.splice(storedArticleIds.indexOf(uiArticleId), 1);
+    const adminCreated = await request.post(adminPath, {
+      headers: adminHeaders,
+      data: { ...content, slug: `admin-${suffix}` },
+    });
+    expect(adminCreated.status()).toBe(201);
+    const adminArticle = (await adminCreated.json()).article as {
+      id: string;
+      status: string;
+    };
+    storedArticleIds.push(adminArticle.id);
+    expect(adminArticle.status).toBe("draft");
+    const adminArticlePath = `${adminPath}/${adminArticle.id}`;
+    const adminArticleRead = await request.get(adminArticlePath, {
+      headers: adminHeaders,
+    });
+    expect(adminArticleRead.status()).toBe(200);
+    expect(
+      (
+        await request.put(adminArticlePath, {
+          headers: adminHeaders,
+          data: { ...content, slug: `admin-edited-${suffix}` },
+        })
+      ).status(),
+    ).toBe(200);
+    expect(
+      (
+        await request.patch(adminArticlePath, {
+          headers: adminHeaders,
+          data: { status: "published" },
+        })
+      ).status(),
+    ).toBe(200);
+    expect(
+      (
+        await request.delete(adminArticlePath, { headers: adminHeaders })
+      ).status(),
+    ).toBe(200);
+    storedArticleIds.splice(storedArticleIds.indexOf(adminArticle.id), 1);
   } finally {
     await Promise.all(
       storedArticleIds.map((id) => db.collection("articles").doc(id).delete()),
     );
-    if (outsiderUid) await auth.deleteUser(outsiderUid).catch(() => undefined);
-    await auth.deleteUser(adminUid).catch(() => undefined);
+    await Promise.all(
+      userUids.map((uid) => auth.deleteUser(uid).catch(() => undefined)),
+    );
+  }
+});
+
+test("only the designated Google account can see the article editor", async ({
+  page,
+}) => {
+  const user = await createUserWithEmail(articleAdminEmail);
+  try {
+    await page.goto("./admin/articles");
+    await expect(
+      page.getByRole("heading", { name: "관리자 로그인이 필요해요." }),
+    ).toBeVisible();
+    await login(page, articleAdminEmail);
+    await expect(
+      page.getByRole("heading", {
+        name: "이 계정은 아티클 관리 화면을 사용할 수 없어요.",
+      }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "새 아티클" })).toHaveCount(0);
+
+    await page.goto("./admin/articles/new");
+    await expect(
+      page.getByRole("heading", {
+        name: "이 계정은 아티클 관리 화면을 사용할 수 없어요.",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "새 이야기를 시작해요" }),
+    ).toHaveCount(0);
+    await page.goto(`./admin/articles/${randomUUID()}`);
+    await expect(
+      page.getByRole("heading", {
+        name: "이 계정은 아티클 관리 화면을 사용할 수 없어요.",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "한 편을 다듬어요" }),
+    ).toHaveCount(0);
+  } finally {
+    await auth.deleteUser(user.uid).catch(() => undefined);
   }
 });

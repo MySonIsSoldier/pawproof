@@ -49,7 +49,7 @@ function errorMessage(error: unknown) {
   if (error instanceof AdminArticleRequestError && error.status === 409)
     return "같은 slug를 사용하는 글이 있어요. 다른 주소를 입력해 주세요.";
   if (error instanceof AdminArticleRequestError && error.status === 403)
-    return "이 계정은 관리자 UID 목록에 없습니다. ARTICLE_ADMIN_UIDS 설정을 확인해 주세요.";
+    return "지정된 Google 계정만 아티클 관리 기능을 사용할 수 있어요.";
   return error instanceof Error
     ? error.message
     : "저장하지 못했어요. 다시 시도해 주세요.";
