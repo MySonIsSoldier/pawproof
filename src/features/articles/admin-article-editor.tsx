@@ -88,7 +88,7 @@ function ArticleEditorForm({ article }: { article: Article | undefined }) {
   const [form, setForm] = useState<EditorForm>(() =>
     article ? toForm(article) : emptyForm,
   );
-  const [previewOnMobile, setPreviewOnMobile] = useState(false);
+  const [previewMode, setPreviewMode] = useState(false);
   const [message, setMessage] = useState("");
   const [fieldError, setFieldError] = useState("");
 
@@ -177,7 +177,7 @@ function ArticleEditorForm({ article }: { article: Article | undefined }) {
   const statusDirty = isDirty || contentResult.success === false;
 
   return (
-    <div className={styles.adminPage}>
+    <div className={`${styles.adminPage} ${styles.editorPage}`}>
       <header className={styles.editorHero}>
         <div>
           <Link href="/admin/articles" className={styles.backLink}>
@@ -185,11 +185,7 @@ function ArticleEditorForm({ article }: { article: Article | undefined }) {
           </Link>
           <p className={styles.eyebrow}>PAWPROOF EDITORIAL · WRITE & REVIEW</p>
           <h1>{article ? "한 편을 다듬어요" : "새 이야기를 시작해요"}</h1>
-          <p>
-            {article
-              ? "마크다운으로 고치고 미리보기에서 문장을 살펴보세요."
-              : "초안으로 저장한 뒤 언제든 다시 이어 쓸 수 있어요."}
-          </p>
+          <p>넓은 편집 화면에서 작성하고 미리보기로 공개 모습을 확인하세요.</p>
         </div>
         {article && (
           <span className={`${styles.status} ${styles[article.status]}`}>
@@ -199,18 +195,24 @@ function ArticleEditorForm({ article }: { article: Article | undefined }) {
       </header>
 
       <div className={styles.editorToolbar}>
-        <div className={styles.mobileTabs} aria-label="편집과 미리보기">
+        <div
+          className={styles.viewToggle}
+          role="group"
+          aria-label="아티클 보기 모드"
+        >
           <button
             type="button"
-            aria-pressed={!previewOnMobile}
-            onClick={() => setPreviewOnMobile(false)}
+            aria-controls="article-editor-form"
+            aria-pressed={!previewMode}
+            onClick={() => setPreviewMode(false)}
           >
             편집
           </button>
           <button
             type="button"
-            aria-pressed={previewOnMobile}
-            onClick={() => setPreviewOnMobile(true)}
+            aria-controls="article-editor-preview"
+            aria-pressed={previewMode}
+            onClick={() => setPreviewMode(true)}
           >
             미리보기
           </button>
@@ -225,9 +227,13 @@ function ArticleEditorForm({ article }: { article: Article | undefined }) {
       </div>
 
       <div
-        className={`${styles.editorGrid} ${previewOnMobile ? styles.previewOnly : ""}`}
+        className={`${styles.editorContent} ${previewMode ? styles.previewMode : ""}`}
       >
-        <section className={styles.formPanel} aria-label="아티클 편집">
+        <section
+          id="article-editor-form"
+          className={styles.formPanel}
+          aria-label="아티클 편집"
+        >
           <label className={styles.field}>
             <span>
               제목 <small>{form.title.length}/120</small>
@@ -302,7 +308,11 @@ function ArticleEditorForm({ article }: { article: Article | undefined }) {
           )}
         </section>
 
-        <section className={styles.previewPanel} aria-label="아티클 미리보기">
+        <section
+          id="article-editor-preview"
+          className={styles.previewPanel}
+          aria-label="아티클 미리보기"
+        >
           <div className={styles.previewTopline}>
             <span>PREVIEW</span>
             <span>PUBLIC ARTICLE</span>

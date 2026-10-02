@@ -287,3 +287,64 @@ test("only the designated Google account can see the article editor", async ({
     await auth.deleteUser(user.uid).catch(() => undefined);
   }
 });
+
+test("article editor toggles between full-width writing and preview views", async ({
+  page,
+}) => {
+  try {
+    await page.goto("./");
+    await page
+      .getByRole("banner")
+      .getByRole("button", { name: "로그인", exact: true })
+      .click();
+    const popupEvent = page.waitForEvent("popup");
+    await page.getByRole("button", { name: "Google로 계속하기" }).click();
+    const popup = await popupEvent;
+    await popup.getByRole("button", { name: "Add new account" }).click();
+    const emailInput = popup.locator("#email-input");
+    await emailInput.fill(articleAdminEmail);
+    await popup.getByRole("button", { name: "Sign in with Google" }).click();
+
+    await page.goto("./admin/articles/new");
+    await expect(
+      page.getByRole("heading", { name: "새 이야기를 시작해요" }),
+    ).toBeVisible();
+
+    const main = page.getByRole("main");
+    const editor = page.getByRole("region", { name: "아티클 편집" });
+    const preview = page.getByRole("region", { name: "아티클 미리보기" });
+    const editorMode = page.getByRole("button", { name: "편집", exact: true });
+    const previewMode = page.getByRole("button", {
+      name: "미리보기",
+      exact: true,
+    });
+    await expect(editor).toBeVisible();
+    await expect(preview).toBeHidden();
+    const mainWidth = await main.evaluate(
+      (element) => element.getBoundingClientRect().width,
+    );
+    const editorWidth = await editor.evaluate(
+      (element) => element.getBoundingClientRect().width,
+    );
+    expect(editorWidth).toBeGreaterThan(mainWidth * 0.98);
+
+    const title = "넓은 편집 화면 미리보기 확인";
+    await page.getByRole("textbox", { name: /제목/u }).fill(title);
+    await previewMode.click();
+    await expect(previewMode).toHaveAttribute("aria-pressed", "true");
+    await expect(editor).toBeHidden();
+    await expect(preview).toBeVisible();
+    await expect(preview.getByRole("heading", { name: title })).toBeVisible();
+
+    await editorMode.click();
+    await expect(editorMode).toHaveAttribute("aria-pressed", "true");
+    await expect(editor).toBeVisible();
+    await expect(preview).toBeHidden();
+    await expect(page.getByRole("textbox", { name: /제목/u })).toHaveValue(
+      title,
+    );
+  } finally {
+    const user = await auth.getUserByEmail(articleAdminEmail).catch(() => null);
+    if (user) await auth.deleteUser(user.uid).catch(() => undefined);
+  }
+});

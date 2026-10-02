@@ -105,6 +105,11 @@
   background: var(--forest);
   color: #fff;
 }
+.tagBar .activeTag:hover {
+  border-color: var(--forest);
+  background: var(--forest);
+  color: #fff;
+}
 
 .collection {
   padding-top: 1px;

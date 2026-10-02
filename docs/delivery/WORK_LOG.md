@@ -2,6 +2,16 @@
 
 상세 구현 이력은 [구현 기록](IMPLEMENTATION_STATUS.md), 결정 근거는 [결정 이력](../history/DECISION_HISTORY.md)에 둔다. 다음 작업자는 이 문서와 루트 AGENTS.md부터 확인한다.
 
+## 2026-10-02 · 아티클 편집기 전체 폭 작성·미리보기 전환
+
+- 편집기 데스크톱 좌우 분할을 없애고 작성/미리보기 모드를 모든 화면 크기에서 전환하도록 바꿨다. 작성 화면은 본문 폭을 넓게 사용하고, 미리보기는 한 화면 전체에서 공개 글 모습을 확인한다.
+- 지정 Google 관리자 계정의 Firebase 에뮬레이터 Playwright 데스크톱·모바일 6개 통과. 화면 전환, 작성 내용 유지, 전체 폭을 확인했다. lint, typecheck, production build도 통과했다.
+
+## 2026-10-02 · 전체 글 필터 hover 색상 유지
+
+- 선택된 `전체 글` 필터에 hover 스타일이 덮어씌워지던 우선순위를 수정해 선택 상태의 숲색 배경과 흰 글자를 유지한다.
+- `tests/e2e/articles.spec.ts` 데스크톱·모바일 2개 통과. lint, typecheck, production build도 통과했다.
+
 ## 2026-10-02 · 아티클 관리자 계정 제한
 
 - 관리자 API와 편집기 화면을 이메일 인증이 완료된 `ohsong656565@gmail.com` Google 로그인 계정으로 제한했다. 서버는 매 요청에서 Firebase ID token의 이메일과 `firebase.sign_in_provider`를 확인하며, UID 환경변수 허용 목록은 제거했다.
