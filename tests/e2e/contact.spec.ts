@@ -5,7 +5,7 @@ test("contact page exposes an accessible form and footer entry point", async ({
 }) => {
   await page.goto("contact");
   await expect(
-    page.getByRole("heading", { name: /작은 목소리/u }),
+    page.getByRole("heading", { name: /작은 이야기/u }),
   ).toBeVisible();
   await expect(page.getByLabel("답변받을 이메일")).toBeVisible();
   await expect(page.getByLabel("문의 유형")).toBeVisible();
@@ -13,6 +13,23 @@ test("contact page exposes an accessible form and footer entry point", async ({
   await expect(
     page.getByRole("contentinfo").getByRole("link", { name: /문의하기/u }),
   ).toHaveAttribute("href", /\/contact$/u);
+  const footer = page.getByRole("contentinfo");
+  await expect(
+    footer.getByRole("navigation", { name: "콘텐츠" }),
+  ).toContainText("반려견 정보 아티클");
+  await expect(
+    footer.getByRole("navigation", { name: "서비스와 도움말" }),
+  ).toContainText("서비스와 데이터 안내");
+  await expect(footer.getByRole("navigation", { name: "정책" })).toContainText(
+    "개인정보처리방침",
+  );
+  const footerColumns = await footer
+    .locator(".site-footer-main")
+    .evaluate((element) => getComputedStyle(element).gridTemplateColumns);
+  const viewportWidth = page.viewportSize()?.width ?? 1440;
+  expect(footerColumns.split(" ")).toHaveLength(
+    viewportWidth <= 600 ? 1 : viewportWidth <= 720 ? 2 : 4,
+  );
 });
 test("contact form posts through the app API and shows delivery success", async ({
   page,
@@ -32,7 +49,9 @@ test("contact form posts through the app API and shows delivery success", async 
     .getByLabel("문의 내용")
     .fill("파주 장소 정보의 최신 동반 조건을 확인하고 싶어요.");
   await page.getByRole("button", { name: "문의 보내기" }).click();
-  await expect(page.getByRole("heading", { name: "문의가 잘 도착했어요." })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "문의가 잘 도착했어요." }),
+  ).toBeVisible();
   await expect(page.getByText(/답변드릴게요/u)).toBeVisible();
 });
 

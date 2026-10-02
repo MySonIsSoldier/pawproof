@@ -9,6 +9,11 @@
 - 검증: 단위 테스트 138개, lint, typecheck, production build, Firebase 에뮬레이터 Playwright 데스크톱·모바일 4개 통과. 미인증 요청 401, 이메일/비밀번호 계정과 다른 Google 계정 거부, 지정 Google 계정의 관리 흐름을 확인했다.
 - 실제 Production Google OAuth와 관리자 작업은 검증하지 않았다. 운영 환경변수 `ARTICLE_INGEST_TOKEN` 설정은 계속 필요하다.
 
+## 2026-10-02 · Footer 링크 목적별 정리
+
+- Footer를 브랜드 소개, 콘텐츠, 서비스·도움말, 정책의 세로형 섹션으로 나눴다. 넓은 화면은 4열, 태블릿은 2열, 모바일은 한 열로 배치하고 저작권·서비스 문구는 구분선 아래에 뒀다.
+- 문의 페이지 Playwright에서 세 섹션의 제목·링크와 데스크톱 4열·모바일 1열 구성을 확인했다. CSS에는 태블릿 2열도 적용했으며 Footer 전용 데스크톱·모바일 검사 2개가 통과했다. 같은 테스트 파일의 문의 폼 제출 시나리오는 외부 Cloudflare Turnstile `110200` 오류로 45초 시간 초과되어 통과 여부를 확인하지 못했다.
+
 ## 2026-10-01 · 반려견 정보 아티클 큐레이션
 
 - 구현 전에 [아티클 제품·운영 계획](../product/ARTICLE_CURATION.md)을 작성하고 제품 범위·상태 전이·API 권한·Production/Preview 경계를 고정했다. 별도 Firebase·Notion·이미지·자동 발행 없이 Production Firestore 초안 → 관리자 검수/편집 → 명시적 발행 흐름을 구현했다.

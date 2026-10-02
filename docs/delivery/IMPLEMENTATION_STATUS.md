@@ -20,6 +20,11 @@
 - 검증: 단위 검사 138개, lint, typecheck, production build 통과. Firebase 에뮬레이터 Playwright 데스크톱·모바일 4개 통과. 미인증 요청 401, 이메일/비밀번호 로그인과 다른 Google 계정 거부, 지정 Google 계정의 관리자 작업 및 초안 전용 자동화 흐름을 확인했다.
 - Production Firebase/Vercel에 대한 실제 계정 OAuth 및 관리자 작업은 검증하지 않았다.
 
+## Footer 링크 목적별 정리 (2026-10-02)
+
+- Footer 링크를 콘텐츠, 서비스·도움말, 정책 세로 섹션으로 묶고 브랜드 설명과 하단 안내를 분리했다. 데스크톱 4열, 태블릿 2열, 모바일 1열 레이아웃을 적용했다.
+- 관련 Playwright 데스크톱·모바일 2개 통과.
+
 ## SEO·GEO discoverability 최적화 (2026-09-27)
 
 - 설치한 skill 진입점: `discoverability`, `geo`, `seo-audit`. 기술 audit은 redirect·canonical·metadata·JSON-LD를 확인하고, GEO audit은 AI crawler 접근·인용 가능한 사실·`llms.txt`를 확인하는 범위로 사용했다.
