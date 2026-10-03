@@ -2,6 +2,11 @@
 
 상세 구현 이력은 [구현 기록](IMPLEMENTATION_STATUS.md), 결정 근거는 [결정 이력](../history/DECISION_HISTORY.md)에 둔다. 다음 작업자는 이 문서와 루트 AGENTS.md부터 확인한다.
 
+## 2026-10-03 · 운영 Firestore 아티클 인덱스 반영
+
+- `pawproof-f4ac4` 프로젝트의 `(default)` Firestore에 `pnpm exec firebase deploy --only firestore:indexes --project pawproof-f4ac4`로 인덱스를 배포했다. 첫 시도에서 자동 단일 필드 인덱스와 동등하거나 equality 인덱스 병합으로 처리 가능한 중복 복합 인덱스 두 개가 거부되어 저장소 설정에서 제거했다.
+- 재배포 성공 후 `firebase firestore:indexes`로 공개 아티클 조회용 복합 인덱스 두 개와 `trips`의 세 인덱싱 제외 설정을 확인했다. 인덱스의 Serving 상태는 Firebase Console에서 별도 확인해야 한다.
+
 ## 2026-10-02 · 아티클 편집기 전체 폭 작성·미리보기 전환
 
 - 편집기 데스크톱 좌우 분할을 없애고 작성/미리보기 모드를 모든 화면 크기에서 전환하도록 바꿨다. 작성 화면은 본문 폭을 넓게 사용하고, 미리보기는 한 화면 전체에서 공개 글 모습을 확인한다.

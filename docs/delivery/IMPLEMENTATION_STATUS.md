@@ -11,7 +11,7 @@
 - Production API는 Vercel의 `VERCEL=1`과 `VERCEL_ENV=production`에서만 운영 Firebase 연결을 허용한다. Preview는 차단하며, 로컬은 Firebase Auth와 Firestore 에뮬레이터가 모두 설정될 때만 허용한다. 수집 토큰은 Bearer 헤더를 constant-time 비교하고 초안만 만들 수 있다.
 - 검증: 138개 단위 검사, `pnpm typecheck`, `pnpm lint`, `pnpm build`, Firebase 에뮬레이터 Playwright 2개(데스크톱·모바일) 통과. production Firebase/Vercel 변수 설정과 운영 데이터에 대한 검증은 수행하지 않았다.
 - 배포 기록: `9286e94` main push의 Vercel 체크는 성공했다. 운영 `/articles`와 `/sitemap.xml`은 HTTP 200이다. `/articles`는 운영 Firestore 데이터를 불러오지 못한 상태를 표시했으며, 해당 런타임 원문 오류는 조회하지 않았다.
-- 후속 운영: Vercel Production에 `ARTICLE_INGEST_TOKEN` 설정 후 재배포, 운영 Firestore에 `firestore.indexes.json` 인덱스 적용, 실제 관리자 초안 작성/수동 발행 smoke 확인. 실제 운영 아티클은 없다.
+- 후속 운영: 운영 Firestore 인덱스는 2026-10-03 적용했다([작업 로그](WORK_LOG.md)). Vercel Production의 `ARTICLE_INGEST_TOKEN` 설정 및 재배포, 실제 관리자 초안 작성/수동 발행 smoke 확인이 남아 있다. 실제 운영 아티클은 없다.
 
 ## 아티클 관리자 권한·편집기 접근 제한 (2026-10-02)
 
