@@ -40,6 +40,7 @@ PawProof는 반려견 동반 여행 코스를 규정과 일정에 대조하고 �
 - [기술 스택](docs/engineering/STACK_DECISION.md), [아키텍처](docs/engineering/ARCHITECTURE.md), [코드·커밋 규칙](docs/engineering/CODE_STANDARDS.md)
 - [개발 환경·경로 유틸](docs/engineering/DEVELOPMENT_ENVIRONMENT.md), [호스팅·비용](docs/operations/HOSTING_AND_COST.md)
 - [제품 기획](docs/product/PRODUCT_PLAN.md), [판정·복구](docs/product/RULES_AND_RECOVERY.md), [데이터 전략](docs/data/DATA_STRATEGY.md)
+- 반려견 아티클 작성 요청은 [편집 계획·진행표](docs/product/ARTICLE_EDITORIAL_PLAN.md), [작성 system prompt](docs/product/ARTICLE_WRITING_SYSTEM_PROMPT.md), [아티클 운영 기준](docs/product/ARTICLE_CURATION.md)을 먼저 읽는다.
 - [공모전 요건](docs/competition/COMPETITION.md), [개발·제출 계획](docs/delivery/DELIVERY_PLAN.md), [결정 이력](docs/history/DECISION_HISTORY.md)
 
 결정이나 동작을 바꾸면 해당 기준 문서와 이력을 함께 갱신한다. 사용자 최신 지시를 우선하며, 기획·구현·실측 결과를 혼동하지 않는다.

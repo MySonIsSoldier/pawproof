@@ -18,6 +18,8 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | [공모전 개요](competition/COMPETITION.md)                             | 지정과제, 심사 기준, 일정, 제출 항목, API 활용·출처 규정         |
 | [제품 기획](product/PRODUCT_PLAN.md)                                  | 사용자, 가치 제안, 핵심 경험, 화면 흐름, 차별성, 사업 확장       |
 | [반려견 정보 아티클](product/ARTICLE_CURATION.md)                     | 공개 아티클·Markdown 편집·초안 수집 API·관리자 검수와 발행 기준  |
+| [아티클 편집 계획](product/ARTICLE_EDITORIAL_PLAN.md)                | 브랜드 콘텐츠 축·우선 주제 8편·키워드 후보·글별 진행 체크        |
+| [아티클 작성 system prompt](product/ARTICLE_WRITING_SYSTEM_PROMPT.md) | 에이전트용 브랜드 문체·출처·사실성·초안 출력 지침                |
 | [판정·일정 복구 기준](product/RULES_AND_RECOVERY.md)                  | 네 가지 상태, 규정 해석, 불확실성, 대체 장소, 코스 재검증        |
 | [데이터 전략](data/DATA_STRATEGY.md)                                  | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙     |
 | [지도 중심 탐색 작업](delivery/MAP_DISCOVERY_PLAN.md)                 | 카카오맵·위치·조건 필터·문의·노트 연결의 단계별 구현과 검증      |
@@ -58,7 +60,7 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 docs/
   README.md
   competition/   # 대회 기준·제출 요건
-  product/       # 사용자 경험·판정·일정 복구
+  product/       # 사용자 경험·판정·일정 복구·아티클 편집
   data/          # 데이터 확보·검증·보관
   engineering/   # 스택·아키텍처·개발 환경·코드 원칙
   operations/    # 호스팅·비용·도메인·운영
