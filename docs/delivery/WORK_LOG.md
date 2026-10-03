@@ -4,7 +4,7 @@
 
 ## 2026-10-03 · 운영 Firestore 아티클 인덱스 반영
 
-- `pawproof-f4ac4` 프로젝트의 `(default)` Firestore에 `pnpm exec firebase deploy --only firestore:indexes --project pawproof-f4ac4`로 인덱스를 배포했다. 첫 시도에서 자동 단일 필드 인덱스와 동등하거나 equality 인덱스 병합으로 처리 가능한 중복 복합 인덱스 두 개가 거부되어 저장소 설정에서 제거했다.
+- `pawproof-f4ac4` 프로젝트의 `(default)` Firestore에 `pnpm exec firebase deploy --only firestore:indexes --project pawproof-f4ac4`로 인덱스를 배포했다. 첫 시도는 불필요한 복합 인덱스에 대한 400 오류로 실패했다. 쿼리와 Firebase의 자동 단일 필드 인덱스·equality 인덱스 병합 지원을 대조해 중복 정의 두 개를 저장소 설정에서 제거했다.
 - 재배포 성공 후 `firebase firestore:indexes`로 공개 아티클 조회용 복합 인덱스 두 개와 `trips`의 세 인덱싱 제외 설정을 확인했다. 인덱스의 Serving 상태는 Firebase Console에서 별도 확인해야 한다.
 
 ## 2026-10-02 · 아티클 편집기 전체 폭 작성·미리보기 전환
