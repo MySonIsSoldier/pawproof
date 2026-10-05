@@ -13,7 +13,7 @@ export function SiteFooter() {
         <nav className="site-footer-section" aria-label="콘텐츠">
           <h2>콘텐츠</h2>
           <div className="site-footer-links">
-            <Link href="/articles">반려견 정보 아티클</Link>
+            <Link href="/articles">반려견 알아가기</Link>
           </div>
         </nav>
         <nav className="site-footer-section" aria-label="서비스와 도움말">

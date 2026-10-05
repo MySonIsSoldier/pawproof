@@ -16,7 +16,7 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
         {!compact && <Link href="/#how-it-works">이용 방법</Link>}
         {!compact && (
           <Link className="site-header-articles" href="/articles">
-            반려견 정보
+            반려견 알아가기
           </Link>
         )}
         <Link href={compact ? "/" : "/plan"} className="button small">

@@ -41,7 +41,7 @@ export function ArticleJsonLd({ article }: { article: Article }) {
         {
           "@type": "ListItem",
           position: 2,
-          name: "반려견 정보",
+          name: "반려견 알아가기",
           item: `${siteOrigin}/articles`,
         },
         { "@type": "ListItem", position: 3, name: article.title, item: url },

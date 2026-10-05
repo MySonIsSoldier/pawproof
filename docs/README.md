@@ -17,8 +17,8 @@ PawProof(포프루프)는 반려견의 조건과 여행 일정을 장소별 동�
 | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [공모전 개요](competition/COMPETITION.md)                             | 지정과제, 심사 기준, 일정, 제출 항목, API 활용·출처 규정         |
 | [제품 기획](product/PRODUCT_PLAN.md)                                  | 사용자, 가치 제안, 핵심 경험, 화면 흐름, 차별성, 사업 확장       |
-| [반려견 정보 아티클](product/ARTICLE_CURATION.md)                     | 공개 아티클·Markdown 편집·초안 수집 API·관리자 검수와 발행 기준  |
-| [아티클 편집 계획](product/ARTICLE_EDITORIAL_PLAN.md)                | 브랜드 콘텐츠 축·우선 주제 8편·키워드 후보·글별 진행 체크        |
+| [반려견 알아가기 콘텐츠 운영](product/ARTICLE_CURATION.md)            | 공개 아티클·Markdown 편집·초안 수집 API·관리자 검수와 발행 기준  |
+| [아티클 편집 계획](product/ARTICLE_EDITORIAL_PLAN.md)                | 초보 보호자 중심 콘텐츠 축·우선 주제 8편·키워드·글별 진행 체크   |
 | [아티클 작성 system prompt](product/ARTICLE_WRITING_SYSTEM_PROMPT.md) | 에이전트용 브랜드 문체·출처·사실성·초안 출력 지침                |
 | [판정·일정 복구 기준](product/RULES_AND_RECOVERY.md)                  | 네 가지 상태, 규정 해석, 불확실성, 대체 장소, 코스 재검증        |
 | [데이터 전략](data/DATA_STRATEGY.md)                                  | 데이터별 역할, 과거 API 검증 기록, 지역 선정, 저장·운영 원칙     |

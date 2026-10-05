@@ -18,9 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     // A disconnected Preview must not expose an empty editorial page to crawlers.
   }
   return {
-    title: "반려견 정보 아티클",
+    title: "반려견 알아가기",
     description:
-      "반려견의 행동 이해, 산책과 돌봄에 관한 PawProof의 짧고 실용적인 글을 읽어보세요.",
+      "처음 반려견과 살아가는 보호자도 편하게 읽을 수 있는 행동·소통·돌봄 이야기를 모았습니다.",
     alternates: { canonical: "/articles" },
     robots: hasPublishedArticle
       ? { index: true, follow: true }
@@ -74,16 +74,16 @@ export default async function ArticlesPage({
         <header className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.kicker}>
-              PAWPROOF READING ROOM · 반려견과 사는 감각
+              PAWPROOF READING ROOM · 반려견 알아가기
             </p>
             <h1>
-              오늘의 산책에
+              우리 강아지를
               <br />
-              작은 힌트를 더해요.
+              조금 더 알아가는 시간
             </h1>
             <p className={styles.intro}>
-              행동을 이해하는 법부터 산책과 돌봄까지. 반려견과 함께 지내며 자주
-              궁금해지는 이야기를 한 편씩 모았습니다.
+              처음 함께 살기 시작한 날부터 행동과 소통, 일상 돌봄과 나들이까지.
+              반려견을 알아가며 생기는 질문에 차근차근 답하는 이야기를 모아요.
             </p>
           </div>
           <div className={styles.heroAside}>

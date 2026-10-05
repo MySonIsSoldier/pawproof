@@ -70,7 +70,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
       <ArticleJsonLd article={article} />
       <main id="main" className={`${styles.page} wrap`}>
         <Link href="/articles" className={styles.backLink}>
-          <span aria-hidden="true">←</span> 반려견 정보 아티클
+          <span aria-hidden="true">←</span> 반려견 알아가기
         </Link>
         <article>
           <header className={styles.header}>
