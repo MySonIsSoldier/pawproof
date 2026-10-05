@@ -72,8 +72,11 @@ PawProof의 글은 일반적인 반려견 상식 모음이 아니다. 보호자�
 - **PawProof 관점:** 준비물을 나열하는 데서 끝내지 않고 장소·방문 시간·조건·남은 문의를 한 번에 확인하는 출발 전 체크리스트를 제공한다.
 - **필수 경계:** 일반 권장 준비물과 업체가 요구하는 조건을 구분한다.
 - **제품 연결:** 내 코스 검사 시작.
-- **진행:** [x] 주제 후보 등록 · [ ] 키워드 검증 · [ ] 출처 조사 · [ ] 개요·초안 · [ ] 사실·브랜드 검수 · [ ] CMS 초안 · [ ] 발행
-- **CMS slug/ID:** 미등록
+- **진행:** [x] 주제 후보 등록 · [x] 키워드 검증 · [x] 출처 조사 · [x] 개요·초안 · [x] 사실·브랜드 검수 · [ ] CMS 초안 · [ ] 발행
+- **조사 기록:** 2026-10-05 검색 결과에서 `강아지 여행 준비물`은 물품 목록형 의도로 확인했다. 검색량·경쟁도는 미확인.
+- **공식 출처:** [동물보호법 제9조](https://law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1028781825), [동물보호법 제16조](https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1028318147), [시행규칙 제11조](https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lspttninfSeq=180233), [농림축산식품부 안내](https://www.mafra.go.kr/bbs/home/792/595567/download.do), [한국관광공사 안내](https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=defeb6df-e72b-4070-86c8-417674981d7d) (2026-10-05 확인)
+- **초안·출처 기록:** 2026-10-05 대화에서 조사·작성 완료. 저장소와 CMS에는 미등록.
+- **CMS slug/ID:** 미등록 (slug 후보 `dog-day-trip-checklist`, 고유성 미확인)
 
 ### A02 · ‘반려견 동반 가능’ 안내, 실제 방문 전 확인할 조건
 
