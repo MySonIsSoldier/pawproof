@@ -6,11 +6,12 @@ import type {
 } from "../contracts/article";
 
 export type ArticleOrigin = Article["origin"];
+export type PublishedArticleTag = { tag: string; count: number };
 
 export interface ArticleRepository {
   listPublished(input: { tag?: string; cursor?: string }): Promise<ArticleList>;
   listAdmin(cursor?: string): Promise<ArticleList>;
-  listPublishedTags(): Promise<string[]>;
+  listPublishedTags(): Promise<PublishedArticleTag[]>;
   listPublishedForSitemap(cursor?: string): Promise<ArticleList>;
   getPublishedBySlug(slug: string): Promise<Article | null>;
   getById(id: string): Promise<Article | null>;

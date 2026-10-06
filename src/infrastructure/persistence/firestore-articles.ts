@@ -14,6 +14,7 @@ import {
   ArticleRepositoryError,
   type ArticleOrigin,
   type ArticleRepository,
+  type PublishedArticleTag,
 } from "../../application/ports/article-repository";
 
 const PAGE_SIZE = 20;
@@ -173,7 +174,7 @@ export class FirestoreArticles implements ArticleRepository {
     };
   }
 
-  async listPublishedTags(): Promise<string[]> {
+  async listPublishedTags(): Promise<PublishedArticleTag[]> {
     const metadata = await this.db
       .collection(METADATA_COLLECTION)
       .doc(PUBLIC_TAGS_DOCUMENT)
@@ -182,8 +183,12 @@ export class FirestoreArticles implements ArticleRepository {
     if (typeof counts !== "object" || counts === null) return [];
     return Object.entries(counts)
       .filter(([, count]) => typeof count === "number" && count > 0)
-      .map(([tag]) => tag)
-      .sort((left, right) => left.localeCompare(right, "ko-KR"));
+      .map(([tag, count]) => ({ tag, count: count as number }))
+      .sort(
+        (left, right) =>
+          right.count - left.count ||
+          left.tag.localeCompare(right.tag, "ko-KR"),
+      );
   }
 
   async listPublishedForSitemap(cursor?: string): Promise<ArticleList> {

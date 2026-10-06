@@ -6,6 +6,7 @@ import {
   getPublicArticleTags,
   getPublicArticles,
 } from "../../server/public-articles";
+import { ArticleTagFilters } from "./article-tag-filters";
 import styles from "./articles.module.css";
 
 export const dynamic = "force-dynamic";
@@ -55,7 +56,7 @@ export default async function ArticlesPage({
   let result = { articles: [], nextCursor: null } as Awaited<
     ReturnType<typeof getPublicArticles>
   >;
-  let tags: string[] = [];
+  let tags: Awaited<ReturnType<typeof getPublicArticleTags>> = [];
   let available = true;
   try {
     [result, tags] = await Promise.all([
@@ -95,25 +96,7 @@ export default async function ArticlesPage({
           </div>
         </header>
 
-        <nav className={styles.tagBar} aria-label="아티클 태그">
-          <Link
-            href="/articles"
-            className={!tag ? styles.activeTag : undefined}
-            aria-current={!tag ? "page" : undefined}
-          >
-            전체 글
-          </Link>
-          {tags.map((item) => (
-            <Link
-              key={item}
-              href={`/articles?tag=${encodeURIComponent(item)}`}
-              className={tag === item ? styles.activeTag : undefined}
-              aria-current={tag === item ? "page" : undefined}
-            >
-              {item}
-            </Link>
-          ))}
-        </nav>
+        <ArticleTagFilters tags={tags} selectedTag={tag} />
 
         {!available ? (
           <section className={styles.emptyState} role="status">
@@ -155,7 +138,13 @@ export default async function ArticlesPage({
                     <time dateTime={first.publishedAt ?? undefined}>
                       {displayDate(first.publishedAt)}
                     </time>
-                    <span>차분히 읽어보기 ↗</span>
+                    <Link
+                      className={styles.featuredReadLink}
+                      href={`/articles/${first.slug}`}
+                      aria-label={`${first.title} 아티클 읽기`}
+                    >
+                      차분히 읽어보기 <span aria-hidden="true">↗</span>
+                    </Link>
                   </div>
                 </div>
                 <div className={styles.featuredSeal} aria-hidden="true">
@@ -176,43 +165,41 @@ export default async function ArticlesPage({
               </span>
             </div>
             <div className={styles.grid}>
-              {result.articles
-                .filter((article) => article.id !== first?.id || cursor || tag)
-                .map((article, index) => (
-                  <article className={styles.card} key={article.id}>
-                    <div className={styles.cardTopline}>
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <time dateTime={article.publishedAt ?? undefined}>
-                        {displayDate(article.publishedAt)}
-                      </time>
+              {result.articles.map((article, index) => (
+                <article className={styles.card} key={article.id}>
+                  <div className={styles.cardTopline}>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <time dateTime={article.publishedAt ?? undefined}>
+                      {displayDate(article.publishedAt)}
+                    </time>
+                  </div>
+                  <h3>
+                    <Link href={`/articles/${article.slug}`}>
+                      {article.title}
+                    </Link>
+                  </h3>
+                  <p>{article.summary}</p>
+                  <div className={styles.cardBottom}>
+                    <div className={styles.tags}>
+                      {article.tags.slice(0, 3).map((item) => (
+                        <Link
+                          href={`/articles?tag=${encodeURIComponent(item)}`}
+                          key={item}
+                        >
+                          #{item}
+                        </Link>
+                      ))}
                     </div>
-                    <h3>
-                      <Link href={`/articles/${article.slug}`}>
-                        {article.title}
-                      </Link>
-                    </h3>
-                    <p>{article.summary}</p>
-                    <div className={styles.cardBottom}>
-                      <div className={styles.tags}>
-                        {article.tags.slice(0, 3).map((item) => (
-                          <Link
-                            href={`/articles?tag=${encodeURIComponent(item)}`}
-                            key={item}
-                          >
-                            #{item}
-                          </Link>
-                        ))}
-                      </div>
-                      <Link
-                        className={styles.readLink}
-                        href={`/articles/${article.slug}`}
-                        aria-label={`${article.title} 읽기`}
-                      >
-                        읽기 <span aria-hidden="true">↗</span>
-                      </Link>
-                    </div>
-                  </article>
-                ))}
+                    <Link
+                      className={styles.readLink}
+                      href={`/articles/${article.slug}`}
+                      aria-label={`${article.title} 읽기`}
+                    >
+                      읽기 <span aria-hidden="true">↗</span>
+                    </Link>
+                  </div>
+                </article>
+              ))}
             </div>
             {result.nextCursor && (
               <div className={styles.more}>

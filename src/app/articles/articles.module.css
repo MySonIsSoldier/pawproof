@@ -75,11 +75,10 @@
 
 .tagBar {
   display: flex;
+  flex-wrap: wrap;
   gap: 9px;
   margin-block: 25px 34px;
-  overflow-x: auto;
-  padding: 2px 2px 8px;
-  scrollbar-width: thin;
+  padding: 2px;
 }
 
 .tagBar a {
@@ -87,6 +86,7 @@
   min-height: 40px;
   flex: 0 0 auto;
   align-items: center;
+  gap: 8px;
   padding: 0 16px;
   border: 1px solid #dce5dc;
   border-radius: 999px;
@@ -94,6 +94,35 @@
   color: #53685b;
   font-size: 13px;
   transition: 0.18s ease;
+}
+.tagCount {
+  color: #8a998d;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.tagBar .activeTag .tagCount {
+  color: #d5e5d5;
+}
+.moreTags {
+  min-height: 40px;
+  flex: 0 0 auto;
+  gap: 7px;
+  padding: 0 15px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 68%);
+  color: #53685b;
+  font-size: 13px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+.moreTags:hover {
+  transform: none;
+  box-shadow: none;
+}
+.moreTags > span {
+  color: var(--forest);
+  font-size: 15px;
+  line-height: 1;
 }
 
 .tagBar a:hover {
@@ -109,6 +138,90 @@
   border-color: var(--forest);
   background: var(--forest);
   color: #fff;
+}
+.tagBar a:focus-visible,
+.moreTags:focus-visible,
+.featuredReadLink:focus-visible,
+.tagDialogClose:focus-visible,
+.tagDialogOption:focus-visible {
+  outline: 3px solid #b6d3a5;
+  outline-offset: 3px;
+}
+
+.tagDialog {
+  --dialog-width: 610px;
+  --dialog-padding: 25px;
+}
+.tagDialogHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 19px;
+  border-bottom: 1px solid #e8ece3;
+}
+.tagDialogTitle {
+  color: var(--ink);
+  font-size: 24px;
+  letter-spacing: -0.055em;
+}
+.tagDialogDescription {
+  max-width: 420px;
+  margin-top: 7px;
+  color: #68796b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.tagDialogClose {
+  min-height: 40px;
+  padding: 6px 12px;
+  color: #526b59;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.tagDialogOptions {
+  display: grid;
+  max-height: min(58dvh, 520px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  overflow-y: auto;
+  padding: 18px 3px 3px;
+  overscroll-behavior: contain;
+}
+.tagDialogOption {
+  display: flex;
+  min-width: 0;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 13px;
+  border: 1px solid #e1e8de;
+  border-radius: 10px;
+  background: #fffefa;
+  color: #425b49;
+  font-size: 13px;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+.tagDialogOption:hover {
+  border-color: #b9cbb4;
+  background: #f1f5ec;
+  color: var(--ink);
+}
+.tagDialogOption[aria-current="page"] {
+  border-color: var(--forest);
+  background: #edf4ed;
+  color: var(--forest);
+  font-weight: 650;
+}
+.tagDialogCount {
+  flex: 0 0 auto;
+  color: #829184;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 
 .collection {
@@ -175,14 +288,42 @@
 }
 .cardMeta {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   margin-top: 36px;
   color: #b8c8b6;
   font-size: 11px;
 }
-.cardMeta span {
+.featuredReadLink {
+  display: inline-flex;
+  min-height: 40px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid rgb(239 241 223 / 32%);
+  border-radius: 999px;
   color: #f1df9f;
+  font-size: 12px;
+  font-weight: 650;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+.featuredReadLink:hover {
+  transform: translateY(-1px);
+  border-color: rgb(239 241 223 / 65%);
+  background: rgb(255 255 255 / 8%);
+}
+.featuredReadLink > span {
+  display: inline-block;
+  transition: transform 160ms ease;
+}
+.featuredReadLink:hover > span {
+  transform: translate(2px, -2px);
 }
 
 .featuredSeal {
@@ -395,6 +536,22 @@
   .tagBar {
     margin-block: 19px 24px;
   }
+  .tagDialog {
+    --dialog-padding: 21px 17px;
+  }
+  .tagDialogHeader {
+    gap: 10px;
+  }
+  .tagDialogTitle {
+    font-size: 21px;
+  }
+  .tagDialogDescription {
+    font-size: 12px;
+  }
+  .tagDialogOptions {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
   .featured {
     min-height: 360px;
     grid-template-columns: 35px minmax(0, 1fr);
@@ -410,8 +567,9 @@
     font-size: 30px;
   }
   .cardMeta {
-    flex-direction: column;
-    gap: 7px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 9px;
     margin-top: 25px;
   }
   .gridHeading {
@@ -429,5 +587,21 @@
   .card {
     min-height: 220px;
     padding: 21px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tagBar a,
+  .moreTags,
+  .featuredReadLink,
+  .featuredReadLink > span,
+  .tagDialogOption {
+    transition: none;
+  }
+  .featuredReadLink:hover {
+    transform: none;
+  }
+  .featuredReadLink:hover > span {
+    transform: none;
   }
 }
