@@ -80,17 +80,6 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
           <span aria-hidden="true">←</span> 반려견 알아가기
         </Link>
         <article>
-          <figure className={styles.cover}>
-            <Image
-              src={articleCover.src}
-              alt={articleCover.alt}
-              width={articleCover.width}
-              height={articleCover.height}
-              sizes="(max-width: 932px) calc(100vw - 2rem), 900px"
-              fetchPriority="high"
-              className={styles.coverImage}
-            />
-          </figure>
           <header className={styles.header}>
             <p className={styles.kicker}>PAWPROOF FIELD NOTE</p>
             <div className={styles.tags}>
@@ -117,6 +106,17 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
               )}
             </div>
           </header>
+          <figure className={styles.cover}>
+            <Image
+              src={articleCover.src}
+              alt={articleCover.alt}
+              width={articleCover.width}
+              height={articleCover.height}
+              sizes="(max-width: 932px) calc(100vw - 2rem), 900px"
+              fetchPriority="high"
+              className={styles.coverImage}
+            />
+          </figure>
           <MarkdownContent
             body={article.body}
             className={`${styles.body} article-markdown`}

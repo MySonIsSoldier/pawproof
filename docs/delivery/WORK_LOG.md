@@ -2,9 +2,14 @@
 
 상세 구현 이력은 [구현 기록](IMPLEMENTATION_STATUS.md), 결정 근거는 [결정 이력](../history/DECISION_HISTORY.md)에 둔다. 다음 작업자는 이 문서와 루트 AGENTS.md부터 확인한다.
 
+## 2026-10-06 · 아티클 커버 위치 조정
+
+- 상세 글 첫 화면에서 큰 이미지가 제목보다 먼저 보이지 않도록, 커버를 제목·요약·태그·발행 정보 다음이자 본문 직전으로 옮겼다. 커버 크기와 반응형 비율은 유지한다.
+- 검증: `pnpm lint`, `pnpm typecheck`, `pnpm build` 통과. 배포 후 운영 HTML에서 요소 순서를 확인한다.
+
 ## 2026-10-06 · 아티클 대표 이미지와 크롤러 응답 개선
 
-- 기존 `public/media/travel-companion.jpg` 한 장을 모든 아티클 상세 상단 커버, Open Graph/Twitter 공유 이미지, Article JSON-LD 이미지로 연결했다. `next/image`로 표시하고 alt·intrinsic 크기·반응형 sizes·높은 로딩 우선순위를 제공한다. 글별 파일 업로드나 이미지 저장은 추가하지 않았다.
+- 기존 `public/media/travel-companion.jpg` 한 장을 모든 아티클 상세의 제목·요약·태그 아래, 본문 위 커버와 Open Graph/Twitter 공유 이미지, Article JSON-LD 이미지로 연결했다. `next/image`로 표시하고 alt·intrinsic 크기·반응형 sizes·높은 로딩 우선순위를 제공한다. 글별 파일 업로드나 이미지 저장은 추가하지 않았다.
 - 목록 메타데이터가 일시적 조회 오류를 빈 콘텐츠로 처리해 noindex를 내보내던 동작을 제거했다. 상세 조회 실패가 notFound(404)로 바뀌거나 사이트맵 조회 실패가 글 없는 정상 사이트맵으로 처리되던 동작도 제거했다. 정상적인 빈 목록·실제 없는 글은 기존 처리를 유지한다.
 - 목록 2페이지 이후 canonical에 현재 tag/cursor 쿼리를 반영한다. 첫 페이지는 `/articles` canonical을 유지한다. 운영 sitemap에서 A02 URL을 확인해 편집 계획의 발행 체크를 갱신하고, 키워드 검증은 미완료로 남겼다.
 - 검증: `pnpm lint`, `pnpm typecheck`, `pnpm build` 통과. discoverability metadata audit은 A02 상세에서 clean, JSON-LD audit은 Article 이미지 누락 경고가 사라졌음을 확인했다. 남은 안내는 실제 공식 프로필·사이트 검색 기능이 없어 추가하지 않는 Organization `sameAs`와 `SearchAction`이다. `a024a43`을 main에 push했고 Vercel 배포 완료 상태를 확인했다. 운영 A02 응답 200과 OG/Twitter/JSON-LD 이미지, 커버 이미지 최적화 응답 200, sitemap 내 공개 URL을 확인했다. 브라우저 자동화·실계정 작업은 수행하지 않았다.
