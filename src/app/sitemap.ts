@@ -6,12 +6,7 @@ import { getPublicArticlesForSitemap } from "../server/public-articles";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  let articles: Awaited<ReturnType<typeof getPublicArticlesForSitemap>> = [];
-  try {
-    articles = await getPublicArticlesForSitemap();
-  } catch {
-    // Keep the static product URLs available if Firebase is temporarily offline.
-  }
+  const articles = await getPublicArticlesForSitemap();
   return [
     {
       url: `${siteOrigin}${appPath("/")}`,

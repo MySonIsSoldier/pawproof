@@ -11,28 +11,46 @@ import styles from "./articles.module.css";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata(): Promise<Metadata> {
-  let hasPublishedArticle = false;
-  try {
-    hasPublishedArticle = (await getPublicArticles()).articles.length > 0;
-  } catch {
-    // A disconnected Preview must not expose an empty editorial page to crawlers.
-  }
-  return {
-    title: "반려견 알아가기",
-    description:
-      "처음 반려견과 살아가는 보호자도 편하게 읽을 수 있는 행동·소통·돌봄 이야기를 모았습니다.",
-    alternates: { canonical: "/articles" },
-    robots: hasPublishedArticle
-      ? { index: true, follow: true }
-      : { index: false, follow: true },
-  };
-}
-
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 function single(value: string | string[] | undefined) {
   return typeof value === "string" ? value : undefined;
+}
+
+function articleFilters(params: Record<string, string | string[] | undefined>) {
+  return {
+    tag: single(params.tag)?.trim().slice(0, 30) || undefined,
+    cursor: single(params.cursor)?.slice(0, 512) || undefined,
+  };
+}
+
+function listCanonical({
+  tag,
+  cursor,
+}: ReturnType<typeof articleFilters>) {
+  if (!cursor) return "/articles";
+  const query = new URLSearchParams();
+  if (tag) query.set("tag", tag);
+  query.set("cursor", cursor);
+  return `/articles?${query.toString()}`;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const filters = articleFilters(await searchParams);
+  const { articles } = await getPublicArticles(filters.tag, filters.cursor);
+  return {
+    title: "반려견 알아가기",
+    description:
+      "처음 반려견과 살아가는 보호자도 편하게 읽을 수 있는 행동·소통·돌봄 이야기를 모았습니다.",
+    alternates: { canonical: listCanonical(filters) },
+    robots: articles.length > 0
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
+  };
 }
 
 function displayDate(value: string | null) {
@@ -51,21 +69,11 @@ export default async function ArticlesPage({
   searchParams: SearchParams;
 }) {
   const params = await searchParams;
-  const tag = single(params.tag)?.trim().slice(0, 30) || undefined;
-  const cursor = single(params.cursor)?.slice(0, 512) || undefined;
-  let result = { articles: [], nextCursor: null } as Awaited<
-    ReturnType<typeof getPublicArticles>
-  >;
-  let tags: Awaited<ReturnType<typeof getPublicArticleTags>> = [];
-  let available = true;
-  try {
-    [result, tags] = await Promise.all([
-      getPublicArticles(tag, cursor),
-      getPublicArticleTags(),
-    ]);
-  } catch {
-    available = false;
-  }
+  const { tag, cursor } = articleFilters(params);
+  const [result, tags] = await Promise.all([
+    getPublicArticles(tag, cursor),
+    getPublicArticleTags(),
+  ]);
   const first = result.articles[0];
 
   return (
@@ -98,13 +106,7 @@ export default async function ArticlesPage({
 
         <ArticleTagFilters tags={tags} selectedTag={tag} />
 
-        {!available ? (
-          <section className={styles.emptyState} role="status">
-            <span className={styles.emptyMark}>읽을거리</span>
-            <h2>아티클을 잠시 불러오지 못했어요.</h2>
-            <p>연결을 확인한 뒤 다시 방문해 주세요.</p>
-          </section>
-        ) : result.articles.length === 0 ? (
+        {result.articles.length === 0 ? (
           <section className={styles.emptyState}>
             <span className={styles.emptyMark}>다음 이야기를 준비 중</span>
             <h2>

@@ -1,4 +1,5 @@
 import { siteOrigin } from "../../config/site";
+import { articleCover } from "../../config/article-cover";
 import type { Article } from "../../application/contracts/article";
 
 export function ArticleJsonLd({ article }: { article: Article }) {
@@ -25,6 +26,7 @@ export function ArticleJsonLd({ article }: { article: Article }) {
       datePublished: article.publishedAt,
       dateModified: article.updatedAt,
       keywords: article.tags,
+      image: [articleCover.url],
       author: { "@id": `${siteOrigin}/#organization` },
       publisher: { "@id": `${siteOrigin}/#organization` },
       mainEntityOfPage: { "@id": `${url}#webpage` },

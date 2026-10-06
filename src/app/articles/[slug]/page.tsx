@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleJsonLd } from "../../../components/articles/article-json-ld";
 import { MarkdownContent } from "../../../components/articles/markdown-content";
+import { articleCover } from "../../../config/article-cover";
 import { SiteFooter } from "../../../components/site-footer";
 import { SiteHeader } from "../../../components/site-header";
 import { getPublicArticleBySlug } from "../../../server/public-articles";
@@ -15,11 +17,7 @@ type ArticlePageProps = { params: Promise<{ slug: string }> };
 async function articleFromParams(params: ArticlePageProps["params"]) {
   const { slug } = await params;
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
-  try {
-    return await getPublicArticleBySlug(slug);
-  } catch {
-    return null;
-  }
+  return getPublicArticleBySlug(slug);
 }
 
 export async function generateMetadata({
@@ -42,11 +40,20 @@ export async function generateMetadata({
       publishedTime: article.publishedAt ?? undefined,
       modifiedTime: article.updatedAt,
       tags: article.tags,
+      images: [
+        {
+          url: articleCover.url,
+          width: articleCover.width,
+          height: articleCover.height,
+          alt: articleCover.alt,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: article.title,
       description: article.summary,
+      images: [articleCover.url],
     },
   };
 }
@@ -73,6 +80,17 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
           <span aria-hidden="true">←</span> 반려견 알아가기
         </Link>
         <article>
+          <figure className={styles.cover}>
+            <Image
+              src={articleCover.src}
+              alt={articleCover.alt}
+              width={articleCover.width}
+              height={articleCover.height}
+              sizes="(max-width: 932px) calc(100vw - 2rem), 900px"
+              fetchPriority="high"
+              className={styles.coverImage}
+            />
+          </figure>
           <header className={styles.header}>
             <p className={styles.kicker}>PAWPROOF FIELD NOTE</p>
             <div className={styles.tags}>

@@ -2,6 +2,13 @@
 
 상세 구현 이력은 [구현 기록](IMPLEMENTATION_STATUS.md), 결정 근거는 [결정 이력](../history/DECISION_HISTORY.md)에 둔다. 다음 작업자는 이 문서와 루트 AGENTS.md부터 확인한다.
 
+## 2026-10-06 · 아티클 대표 이미지와 크롤러 응답 개선
+
+- 기존 `public/media/travel-companion.jpg` 한 장을 모든 아티클 상세 상단 커버, Open Graph/Twitter 공유 이미지, Article JSON-LD 이미지로 연결했다. `next/image`로 표시하고 alt·intrinsic 크기·반응형 sizes·높은 로딩 우선순위를 제공한다. 글별 파일 업로드나 이미지 저장은 추가하지 않았다.
+- 목록 메타데이터가 일시적 조회 오류를 빈 콘텐츠로 처리해 noindex를 내보내던 동작을 제거했다. 상세 조회 실패가 notFound(404)로 바뀌거나 사이트맵 조회 실패가 글 없는 정상 사이트맵으로 처리되던 동작도 제거했다. 정상적인 빈 목록·실제 없는 글은 기존 처리를 유지한다.
+- 목록 2페이지 이후 canonical에 현재 tag/cursor 쿼리를 반영한다. 첫 페이지는 `/articles` canonical을 유지한다. 운영 sitemap에서 A02 URL을 확인해 편집 계획의 발행 체크를 갱신하고, 키워드 검증은 미완료로 남겼다.
+- 검증: lint·typecheck·production build, 변경 경로 메타데이터/JSON-LD audit, 배포 뒤 운영 HTML·사이트맵 smoke 확인 예정. 브라우저 자동화·실계정 작업은 수행하지 않는다.
+
 ## 2026-10-03 · 운영 Firestore 아티클 인덱스 반영
 
 - `pawproof-f4ac4` 프로젝트의 `(default)` Firestore에 `pnpm exec firebase deploy --only firestore:indexes --project pawproof-f4ac4`로 인덱스를 배포했다. 첫 시도는 불필요한 복합 인덱스에 대한 400 오류로 실패했다. 쿼리와 Firebase의 자동 단일 필드 인덱스·equality 인덱스 병합 지원을 대조해 중복 정의 두 개를 저장소 설정에서 제거했다.
