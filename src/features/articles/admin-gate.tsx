@@ -11,11 +11,8 @@ export function AdminGate({ children }: { children: ReactNode }) {
     return (
       <section className={styles.gate} role="status">
         <span className={styles.gateMark}>ADMIN ACCESS</span>
-        <h1>운영 로그인 설정을 확인해 주세요.</h1>
-        <p>
-          관리 화면은 Production Firebase 인증이 연결된 운영 환경에서 사용할 수
-          있어요.
-        </p>
+        <h1>관리자 기능을 아직 사용할 수 없어요.</h1>
+        <p>잠시 후 다시 이용해 주세요.</p>
       </section>
     );
   if (!auth.ready)

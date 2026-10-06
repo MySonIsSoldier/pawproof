@@ -42,7 +42,7 @@ function assertArticleEnvironmentEnabled() {
   if (!isVercelProduction && !isLocalEmulator)
     throw new ArticleAccessError(
       "ARTICLE_ENV_DISABLED",
-      "Preview와 기본 로컬 환경에서는 운영 아티클 저장소를 사용할 수 없습니다.",
+      "아티클 관리 기능을 잠시 이용할 수 없어요. 나중에 다시 시도해 주세요.",
     );
 }
 

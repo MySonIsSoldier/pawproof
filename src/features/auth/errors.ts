@@ -19,7 +19,7 @@ export function authErrorMessage(error: unknown): string {
       "로그인을 취소했어요. 원할 때 다시 시도할 수 있어요.",
     "auth/cancelled-popup-request": "진행 중인 로그인 창에서 계속해 주세요.",
     "auth/unauthorized-domain":
-      "현재 접속 주소의 로그인 연결을 준비하고 있어요. 비로그인으로 계속 이용할 수 있어요.",
+      "이 주소에서는 로그인을 이용할 수 없어요. 비회원으로 계속 이용할 수 있어요.",
     "auth/network-request-failed": "연결을 확인한 뒤 다시 시도해 주세요.",
     "auth/too-many-requests": "요청이 많아요. 잠시 후 다시 시도해 주세요.",
     "auth/operation-not-allowed": "이 로그인 방법을 아직 준비하고 있어요.",

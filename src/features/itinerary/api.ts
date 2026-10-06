@@ -23,7 +23,7 @@ export async function callApi<T>(
       // Preserve cancellation; never expose raw parser/proxy content in the UI.
       if (error instanceof SyntaxError)
         throw new Error(
-          "서버 응답을 읽을 수 없어요. 잠시 후 다시 시도해 주세요.",
+          "요청 결과를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.",
         );
       throw error;
     });

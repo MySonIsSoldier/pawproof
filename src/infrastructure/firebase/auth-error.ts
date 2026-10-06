@@ -69,7 +69,7 @@ export function firebaseAuthError(error: unknown): FirebaseAccountAuthError {
     );
   return new FirebaseAccountAuthError(
     "UNAVAILABLE",
-    "계정 인증 서버에 연결하지 못했어요. 입력은 그대로 두고 잠시 후 다시 시도해 주세요.",
+    "로그인을 확인하지 못했어요. 입력은 그대로 두고 잠시 후 다시 시도해 주세요.",
     reason,
   );
 }

@@ -62,8 +62,8 @@ export function DeleteAccount() {
       <div>
         <h2 id="delete-account-title">계정과 저장 정보 삭제</h2>
         <p>
-          Firebase에 저장된 반려견 프로필·여행 노트와 로그인 계정을 함께
-          삭제합니다. 삭제 후에는 복구할 수 없습니다.
+          반려견 프로필과 여행 노트, 로그인 계정을 함께 삭제합니다. 삭제 후에는
+          복구할 수 없습니다.
         </p>
       </div>
       <Dialog open={open} onOpenChange={close}>
@@ -73,7 +73,7 @@ export function DeleteAccount() {
         <DialogContent>
           <DialogTitle>정말 계정을 삭제할까요?</DialogTitle>
           <DialogDescription>
-            저장된 프로필과 여행 노트, Firebase 로그인 계정이 삭제됩니다. 이
+            저장된 반려견 프로필과 여행 노트, 계정 정보가 모두 삭제됩니다. 이
             작업은 되돌릴 수 없습니다.
           </DialogDescription>
           <label className="field-label" htmlFor="delete-account-confirmation">

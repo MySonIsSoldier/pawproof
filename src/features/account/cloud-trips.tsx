@@ -209,7 +209,7 @@ function Editor({
           </DialogTitle>
           <DialogDescription>
             {confirmation?.action === "load"
-              ? "현재 미전송 초안을 버리고 선택한 노트를 열어요. 서버에 저장된 내용은 바뀌지 않아요."
+              ? "현재 미전송 초안을 버리고 선택한 노트를 열어요. 기존에 저장된 노트는 바뀌지 않아요."
               : "이 노트를 계정에서 삭제해요. 현재 열린 노트라면 화면의 입력은 유지되고, 다음 편집부터 새 노트로 자동 저장돼요."}
           </DialogDescription>
           <p>{confirmation?.trip.title}</p>

@@ -20,7 +20,7 @@ export async function requireAccountToken(request: Request, verified = true) {
   } catch {
     throw new AccountError(
       "UNAVAILABLE",
-      "계정 저장 연결을 준비하고 있어요. 지금은 여행 노트를 저장할 수 없어요.",
+      "계정 기능을 잠시 이용할 수 없어요. 조금 뒤 다시 시도해 주세요.",
     );
   }
   let token;
