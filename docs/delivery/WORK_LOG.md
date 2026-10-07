@@ -419,3 +419,12 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - 사용자 화면으로 전달될 수 있는 네트워크 오류와 관리자 요청의 원시 오류 문구도 일반 안내로 바꿨다. 개발 환경 전용 점검 화면과 내부 코드·문서는 유지한다.
 
 검증: `git diff --check`, `pnpm lint`, `pnpm typecheck`, `pnpm build` 통과. UI 자동화와 실계정 흐름은 실행하지 않았다.
+
+## 2026-10-07 · Search Console 색인 알림 라이브 점검
+
+- 사용자가 받은 Search Console 알림의 `/about`, `/contact`, 루트 호스트 별칭, `/articles`를 현재 운영 응답과 비교했다. `http://pawproof.kr`는 HTTPS apex를 거쳐 `https://www.pawproof.kr`로, HTTPS apex는 바로 `www`로 308 이동한다. 경로의 후행 슬래시도 정규 경로로 이동하며 순환은 재현되지 않았다.
+- 정규 주소 `/about`·`/contact`는 HTTP 200, 자체 canonical, `index, follow`다. `http`·apex 주소는 비정규 별칭이므로 검색 결과용 주소로 제출하지 않는다.
+- 운영 `robots.txt`는 공개 크롤링을 허용하고 sitemap을 안내한다. sitemap의 12개 URL은 모두 `https://www.pawproof.kr` 호스트를 사용하며 이번 확인에서 모두 HTTP 200이었다.
+- `/articles`는 HTTP 200, 자체 canonical, `index, follow`이며 사이트 헤더·푸터에서 링크되고 sitemap에도 있다. A03 상세 페이지도 현재 공개 HTTP 200으로 확인되어 [편집 계획](../product/ARTICLE_EDITORIAL_PLAN.md)의 발행 상태를 동기화했다.
+- 현재 응답에서 코드 차원의 색인 차단이나 redirect loop는 확인되지 않았다. GSC Page indexing report는 이전 수집 시점의 상태일 수 있으므로 URL Inspection의 live test로 실제 보고 URL과 Google 선택 canonical을 확인해야 한다. `/articles`의 `Discovered - currently not indexed`는 Google이 URL을 찾았지만 아직 크롤링하지 않았다는 상태다.
+- Search Console 계정 연결은 제공되지 않아 URL Inspection, `Validate fix`, 색인 요청은 실행하지 않았다. 코드 변경은 하지 않았다.
