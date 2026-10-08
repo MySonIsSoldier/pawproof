@@ -428,3 +428,10 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - `/articles`는 HTTP 200, 자체 canonical, `index, follow`이며 사이트 헤더·푸터에서 링크되고 sitemap에도 있다. A03 상세 페이지도 현재 공개 HTTP 200으로 확인되어 [편집 계획](../product/ARTICLE_EDITORIAL_PLAN.md)의 발행 상태를 동기화했다.
 - 현재 응답에서 코드 차원의 색인 차단이나 redirect loop는 확인되지 않았다. GSC Page indexing report는 이전 수집 시점의 상태일 수 있으므로 URL Inspection의 live test로 실제 보고 URL과 Google 선택 canonical을 확인해야 한다. `/articles`의 `Discovered - currently not indexed`는 Google이 URL을 찾았지만 아직 크롤링하지 않았다는 상태다.
 - Search Console 계정 연결은 제공되지 않아 URL Inspection, `Validate fix`, 색인 요청은 실행하지 않았다. 코드 변경은 하지 않았다.
+
+## 2026-10-08 · A04 산책 중 멈춤 아티클 작성 및 CMS 초안 저장
+
+- 편집 계획·아티클 운영 기준·작성 system prompt와 제품·판정 기준을 확인하고, 통증·절뚝임·과열은 VCA, 더운 날 바닥 산책은 RSPCA, 몸짓 해석은 Dogs Trust, 보상 중심의 점진적 행동 지원은 AVSAB 자료를 확인해 원고에 연결했다.
+- 검색량이나 키워드 성과는 확인하지 않았다. 원고는 건강 진단으로 단정하지 않고, 산책 중 관찰·부담 낮추기·수의사 상담 기준을 설명한다.
+- 운영 `/api/articles/ingest`가 A04를 `draft`로 생성했다: slug `dog-stops-during-walk`, ID `211be5ff-a93e-4381-9e70-6e2bfe76a823`.
+- 수집 API는 항상 초안만 저장하며 발행 상태 변경은 지정 Google 계정의 인증된 관리자 화면/API에서만 가능하다. 이번 실행 환경에 관리자 로그인 세션이 없어 공개 발행은 완료하지 않았다. 편집 계획의 발행 체크는 미완료로 유지한다.
