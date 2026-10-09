@@ -435,3 +435,10 @@ localhost 실제 smoke(`scripts/check-map-discovery.mjs http://localhost:3000 --
 - 검색량이나 키워드 성과는 확인하지 않았다. 원고는 건강 진단으로 단정하지 않고, 산책 중 관찰·부담 낮추기·수의사 상담 기준을 설명한다.
 - 운영 `/api/articles/ingest`가 A04를 `draft`로 생성했다: slug `dog-stops-during-walk`, ID `211be5ff-a93e-4381-9e70-6e2bfe76a823`.
 - 수집 API는 항상 초안만 저장하며 발행 상태 변경은 지정 Google 계정의 인증된 관리자 화면/API에서만 가능하다. 이번 실행 환경에 관리자 로그인 세션이 없어 공개 발행은 완료하지 않았다. 편집 계획의 발행 체크는 미완료로 유지한다.
+
+## 2026-10-09 · A05 산책 중 냄새 맡기 아티클 작성 및 CMS 초안 저장
+
+- 편집 계획·아티클 운영 기준·작성 system prompt와 제품 기준을 확인했다. Dogs Trust의 후각·환경 풍부화 안내와 2019년 nosework 연구, 2024년 개 후각 활동 scoping review를 확인해 글에 링크했다.
+- 2019년 연구는 성견 20마리의 집 안 nosework 활동을 비교한 것이므로 산책 중 냄새 맡기의 보편적 효과로 확대하지 않았다. 2024년 review가 지적한 근거 공백도 본문에 반영했다. 검색량은 확인하지 않았다.
+- 운영 `/api/articles/ingest`가 A05를 `draft`로 생성했다: slug `dog-sniffing-on-walk`, ID `577ea126-0972-48c5-a027-d26df2e003fd`.
+- 수집 API는 항상 초안만 저장한다. 지정 Google 계정의 관리자 인증 세션이 이번 실행 환경에 없어 공개 발행은 완료하지 않았고, 편집 계획의 발행 체크는 미완료로 유지한다.
